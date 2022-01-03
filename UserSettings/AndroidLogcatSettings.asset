@@ -3,7 +3,7 @@
     "m_SelectedPackage": {
         "deviceId": "ce12160cf0a758fe0c",
         "name": "com.EnuriSoft.AeroMaster",
-        "processId": 23644,
+        "processId": 12903,
         "exited": false
     },
     "m_SelectedPriority": 0,
@@ -30,6 +30,18 @@
             "deviceId": "ce12160cf0a758fe0c",
             "name": "com.EnuriSoft.AeroMaster",
             "processId": 23644,
+            "exited": false
+        },
+        {
+            "deviceId": "ce12160cf0a758fe0c",
+            "name": "com.EnuriSoft.AeroMaster",
+            "processId": 10188,
+            "exited": false
+        },
+        {
+            "deviceId": "ce12160cf0a758fe0c",
+            "name": "com.EnuriSoft.AeroMaster",
+            "processId": 12903,
             "exited": false
         }
     ],

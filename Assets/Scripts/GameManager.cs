@@ -1,29 +1,27 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 public class GameManager : MonoBehaviour
 {
-    private static GameManager instance;
+    private static GameManager _instance;
 
     // Singleton instantiation
     public static GameManager Instance
     {
         get
         {
-            if (instance == null) instance = GameObject.FindObjectOfType<GameManager>();
-            return instance;
+            if (_instance == null) 
+            {
+                _instance = GameObject.FindObjectOfType<GameManager>();
+            }
+            return _instance;
         }
     }
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
 #if UNITY_ANDROID
-    Vector2 GetAltitudeTouchDelta()
+    public Vector2 GetAltitudeTouchDelta()
     {
         for(int i=0; i<Input.touchCount; ++i)
         {
@@ -36,6 +34,20 @@ public class GameManager : MonoBehaviour
         return Vector2.zero;
     }
 #endif
+
+    // Start is called before the first frame update
+    void Start()
+    {
+        Reset();
+    }
+
+    public void Reset()
+    {
+        LevelManager.Instance.Reset();
+        Vector3 startPoint = LevelManager.Instance.GetStartPoint();
+        Player.Instance.Reset(startPoint);
+        MainCamera.Instance.Reset();
+    }
 
     // Update is called once per frame
     void Update()

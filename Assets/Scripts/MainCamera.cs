@@ -4,15 +4,18 @@ using UnityEngine;
 
 public class MainCamera : MonoBehaviour
 {
-    private static MainCamera instance;
+    private static MainCamera _instance;
 
     // Singleton instantiation
     public static MainCamera Instance
     {
         get
         {
-            if (instance == null) instance = GameObject.FindObjectOfType<MainCamera>();
-            return instance;
+            if (_instance == null) 
+            {
+                _instance = GameObject.FindObjectOfType<MainCamera>();
+            }
+            return _instance;
         }
     }
     
@@ -22,12 +25,22 @@ public class MainCamera : MonoBehaviour
         
     }
 
-    // Update is called once per frame
-    void Update()
-    {   
+    public void Reset()
+    {
+        TrakingPlayer();
+    }
+
+    void TrakingPlayer()
+    {
         Vector3 cameraPosition = Player.Instance.transform.position;
         cameraPosition.y += Constants.CAMERA_OFFSET_Y;
         cameraPosition.z = transform.position.z;
         transform.position = cameraPosition;
+    }
+
+    // Update is called once per frame
+    void Update()
+    {   
+        TrakingPlayer();        
     }
 }

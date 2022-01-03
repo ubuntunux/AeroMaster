@@ -8,19 +8,23 @@ public class Player : MonoBehaviour
     public GameObject _textVelocityX;
     public GameObject _textVelocityY;
 
-    private static Player instance;
+    private static Player _instance;
 
     private Vector2 _velocity = new Vector2(0.0f, 0.0f);
     private bool _isAcceleration = false;
-    private bool _isBreaking = false;
+    private bool _isBreaking = false;   
+    private bool _frontDirectionFlag = true; 
 
     // Singleton instantiation
     public static Player Instance
     {
         get
         {
-            if (instance == null) instance = GameObject.FindObjectOfType<Player>();
-            return instance;
+            if (_instance == null) 
+            {
+                _instance = GameObject.FindObjectOfType<Player>();
+            }
+            return _instance;
         }
     }
 
@@ -43,6 +47,24 @@ public class Player : MonoBehaviour
     {
         _isBreaking = false;
     }
+
+    public void OnClickTurn()
+    {
+        _frontDirectionFlag = !_frontDirectionFlag;
+        _velocity.x = -_velocity.x;
+    }
+
+    public void Reset(Vector3 startPoint)
+    {
+        float heightHalf = GetComponent<MeshRenderer>().bounds.size.y * 0.5f;
+        startPoint.y += heightHalf;
+        transform.position = startPoint;
+
+        _velocity = new Vector2(0.0f, 0.0f);
+        _isAcceleration = false;
+        _isBreaking = false;
+        _frontDirectionFlag = true;
+    }
     
     // Start is called before the first frame update
     void Start()
@@ -56,7 +78,7 @@ public class Player : MonoBehaviour
         #if UNITY_ANDROID
             if(0 < Input.touchCount)
             {
-                input = Input.GetTouch(0).deltaPosition * Constants.TOUCH_DELTA;
+                input = GameManager.Instance.GetAltitudeTouchDelta() * Constants.TOUCH_DELTA;
             }
         #elif UNITY_IPHONE
             // todo
@@ -65,15 +87,19 @@ public class Player : MonoBehaviour
             input.y = Input.GetAxis("Vertical");
         #endif
 
+        // Acceleration
         if(_isAcceleration)
         {
-            _velocity.x += Constants.ACCEL_X * Time.deltaTime;
+            float velocityX = Constants.ACCEL_X * Time.deltaTime;
+            _velocity.x += _frontDirectionFlag ? velocityX : -velocityX;
+            
             if(Constants.VELOCITY_LIMIT_X < Mathf.Abs(_velocity.x))
             {
                 _velocity.x = Mathf.Sign(_velocity.x) * Constants.VELOCITY_LIMIT_X;
             }
         }
 
+        // Break
         if(_isBreaking)
         {
             float damping = Constants.ACCEL_X * Time.deltaTime;
@@ -139,6 +165,9 @@ public class Player : MonoBehaviour
                 _velocity.y = 0.0f;
             }
         }
+
+        //transform.rotation = Quaternion.Euler(0.0f, 0.0f, 0.0f);
+        transform.localScale = new Vector3(_frontDirectionFlag ? 2.0f : -2.0f, 1.0f, 1.0f);
         transform.position = position;
 
         // update text

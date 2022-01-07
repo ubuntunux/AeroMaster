@@ -33,8 +33,11 @@ public class MainCamera : MonoBehaviour
     void TrakingPlayer()
     {
         Vector3 cameraPosition = Player.Instance.transform.position;
-        cameraPosition.y += Constants.CAMERA_OFFSET_Y;
+        const float CAMERA_PADDING = 1.0f;
+        cameraPosition.x += Player.Instance._velocityRatioX * CAMERA_PADDING;
+        cameraPosition.y += Player.Instance._velocityRatioY * CAMERA_PADDING + Constants.CAMERA_OFFSET_Y;
         cameraPosition.z = transform.position.z;
+
         transform.position = cameraPosition;
     }
 

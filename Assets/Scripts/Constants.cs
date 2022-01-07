@@ -4,13 +4,17 @@ using UnityEngine;
 
 public class Constants : MonoBehaviour
 {
+    public const float CAMERA_OFFSET_X = 3.0f;
     public const float CAMERA_OFFSET_Y = 3.0f;
     public const float TOUCH_DELTA = 0.1f;
-    public const float ACCEL_X = 10.0f;
-    public const float ACCEL_Y = 5.0f;
+    public const float ACCEL_X = 2.0f;
+    public const float ACCEL_Y = 20.0f;
     public const float VELOCITY_LIMIT_X = 10.0f;
     public const float VELOCITY_LIMIT_Y = 5.0f;
+    public const float DAMPING_X = 2.0f;
     public const float DAMPING_Y = 5.0f;
-    public const float GROUND_HEIGHT = 0.5f;
+    public const float TAKE_OFF_TIME = 2.0f;
+    public const float TAKE_OFF_ACCEL_Y = 5.0f;
+    public const float GROUND_HEIGHT = 0.0f;
     public const float GRAVITY = 9.8f;
 }

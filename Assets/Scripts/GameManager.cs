@@ -45,7 +45,7 @@ public class GameManager : MonoBehaviour
     {
         LevelManager.Instance.Reset();
         Vector3 startPoint = LevelManager.Instance.GetStartPoint();
-        Player.Instance.Reset(startPoint);
+        Player.Instance.ResetPlayer(startPoint);
         MainCamera.Instance.Reset();
     }
 

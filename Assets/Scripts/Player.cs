@@ -7,6 +7,7 @@ public class Player : MonoBehaviour
 {
     public GameObject _textVelocityX;
     public GameObject _textVelocityY;
+    public GameObject _meshObject;
 
     private static Player _instance;
 
@@ -14,6 +15,8 @@ public class Player : MonoBehaviour
     private bool _isAcceleration = false;
     private bool _isBreaking = false;   
     private bool _frontDirectionFlag = true; 
+    public float _velocityRatioX = 0.0f;
+    public float _velocityRatioY = 0.0f;
 
     // Singleton instantiation
     public static Player Instance
@@ -31,6 +34,7 @@ public class Player : MonoBehaviour
     public void OnClickAcceleration()
     {
         _isAcceleration = true;
+        _isBreaking = false;
     }
 
     public void OnReleaseAcceleration()
@@ -40,10 +44,11 @@ public class Player : MonoBehaviour
 
     public void OnClickBreak()
     {
+        _isAcceleration = false;
         _isBreaking = true;
     }
 
-    public void OnReleaseBreak()
+    public void OnReleasekBreak()
     {
         _isBreaking = false;
     }
@@ -54,10 +59,8 @@ public class Player : MonoBehaviour
         _velocity.x = -_velocity.x;
     }
 
-    public void Reset(Vector3 startPoint)
+    public void ResetPlayer(Vector3 startPoint)
     {
-        float heightHalf = GetComponent<MeshRenderer>().bounds.size.y * 0.5f;
-        startPoint.y += heightHalf;
         transform.position = startPoint;
 
         _velocity = new Vector2(0.0f, 0.0f);
@@ -76,16 +79,20 @@ public class Player : MonoBehaviour
     {
         Vector2 input = Vector2.zero;        
         #if UNITY_ANDROID
-            if(0 < Input.touchCount)
-            {
-                input = GameManager.Instance.GetAltitudeTouchDelta() * Constants.TOUCH_DELTA;
-            }
+            input = GameManager.Instance.GetAltitudeTouchDelta() * Constants.TOUCH_DELTA;
         #elif UNITY_IPHONE
             // todo
         #else
             input.x = Input.GetAxis("Horizontal");
             input.y = Input.GetAxis("Vertical");
         #endif
+
+        // clamp input
+        if(1.0f < input.x) input.x = 1.0f;
+        else if(input.x < -1.0f) input.x = -1.0f;
+        
+        if(1.0f < input.y) input.y = 1.0f;
+        else if(input.y < -1.0f) input.y = -1.0f;
 
         // Acceleration
         if(_isAcceleration)
@@ -116,29 +123,30 @@ public class Player : MonoBehaviour
         }
 
         // apply gravity
-        float velocityRatioX = Mathf.Min(1.0f, Mathf.Abs(_velocity.x) / Constants.VELOCITY_LIMIT_X);
-        if(velocityRatioX < 1.0f)
+        float velocityRatioX = _velocity.x / Constants.VELOCITY_LIMIT_X;
+        float absVelocityRatioX = Mathf.Min(1.0f, Mathf.Abs(_velocity.x) / Constants.VELOCITY_LIMIT_X);
+        if(absVelocityRatioX < 1.0f)
         {
-            _velocity.y -= Constants.GRAVITY * (1.0f - velocityRatioX) * Time.deltaTime;
+            _velocity.y -= Constants.GRAVITY * (1.0f - absVelocityRatioX) * Time.deltaTime;
         }
 
         if(0.0f != input.y)
         {
             // flying
-            _velocity.y += Constants.ACCEL_Y * input.y * Time.deltaTime;
+            _velocity.y += Constants.ACCEL_Y * absVelocityRatioX * input.y * Time.deltaTime;
 
             if(Constants.VELOCITY_LIMIT_Y < _velocity.y)
             {
                 _velocity.y = Constants.VELOCITY_LIMIT_Y;
             }
         }
-        else if(0.0f != _velocity.y && 1.0f <= velocityRatioX)
+        else if(0.0f != _velocity.y)
         {
             // maintain altitude
             float sign = Mathf.Sign(_velocity.y);
             float velocityY = Mathf.Abs(_velocity.y);
 
-            velocityY -= Constants.DAMPING_Y * Time.deltaTime;
+            velocityY -= Constants.DAMPING_Y * absVelocityRatioX * Time.deltaTime;
             if(velocityY < 0.0f)
             {
                 velocityY = 0.0f;
@@ -149,6 +157,8 @@ public class Player : MonoBehaviour
             }
             _velocity.y = velocityY;
         }
+
+        float velocityRatioY = _velocity.y / Constants.VELOCITY_LIMIT_Y;
 
         // apply velocity
         Vector3 position = transform.position;
@@ -166,9 +176,13 @@ public class Player : MonoBehaviour
             }
         }
 
-        //transform.rotation = Quaternion.Euler(0.0f, 0.0f, 0.0f);
-        transform.localScale = new Vector3(_frontDirectionFlag ? 2.0f : -2.0f, 1.0f, 1.0f);
+        float pitch = absVelocityRatioX * velocityRatioY * 30.0f;
+        float yaw = _frontDirectionFlag ? 0.0f : 180.0f;
+        transform.rotation = Quaternion.Euler(0.0f, yaw, pitch);
         transform.position = position;
+
+        _velocityRatioX = velocityRatioX;
+        _velocityRatioY = velocityRatioY;
 
         // update text
         _textVelocityX.GetComponent<TextMeshProUGUI>().text = Mathf.Abs(_velocity.x).ToString();

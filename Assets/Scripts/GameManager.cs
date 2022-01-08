@@ -6,6 +6,7 @@ using TMPro;
 public class GameManager : MonoBehaviour
 {
     private static GameManager _instance;
+    public AudioSource _audioSource; //A primary audioSource a large portion of game sounds are passed through
 
     // Singleton instantiation
     public static GameManager Instance
@@ -38,6 +39,8 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        _audioSource = GetComponent<AudioSource>();
+
         Reset();
     }
 

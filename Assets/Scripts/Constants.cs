@@ -4,9 +4,8 @@ using UnityEngine;
 
 public class Constants : MonoBehaviour
 {
-    public const float CAMERA_OFFSET_X = 3.0f;
-    public const float CAMERA_OFFSET_Y = 3.0f;
     public const float TOUCH_DELTA = 0.1f;
+    public const float TURN_SPEED = 1.5f;
     public const float ACCEL_X = 2.0f;
     public const float ACCEL_Y = 20.0f;
     public const float VELOCITY_LIMIT_X = 10.0f;

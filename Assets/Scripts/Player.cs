@@ -9,14 +9,21 @@ public class Player : MonoBehaviour
     public GameObject _textVelocityY;
     public GameObject _meshObject;
 
+    public AudioSource _jetEngineStart;
+    public AudioSource _jetEngineEnd;
+    public AudioSource _flyingLoop;
+    public AudioSource _jetFlyby;
+    public GameObject _afterBurnerParticle;
+
     private static Player _instance;
 
-    private Vector2 _velocity = new Vector2(0.0f, 0.0f);
+    private float _absVelocityX = 0.0f;
+    private float _absVelocityRatioX = 0.0f;
+    private float _velocityY = 0.0f;
     private bool _isAcceleration = false;
     private bool _isBreaking = false;   
-    private bool _frontDirectionFlag = true; 
-    public float _velocityRatioX = 0.0f;
-    public float _velocityRatioY = 0.0f;
+    private bool _goalFrontDirectionFlag = true; 
+    private float _frontDirection = 1.0f;
 
     // Singleton instantiation
     public static Player Instance
@@ -33,8 +40,13 @@ public class Player : MonoBehaviour
 
     public void OnClickAcceleration()
     {
-        _isAcceleration = true;
-        _isBreaking = false;
+        if(false == _isAcceleration)
+        {
+            _isAcceleration = true;
+            _isBreaking = false;
+            _jetEngineStart.Play();
+            _jetEngineEnd.Stop();
+        }
     }
 
     public void OnReleaseAcceleration()
@@ -44,8 +56,13 @@ public class Player : MonoBehaviour
 
     public void OnClickBreak()
     {
-        _isAcceleration = false;
-        _isBreaking = true;
+        if(false == _isBreaking)
+        {
+            _isAcceleration = false;
+            _isBreaking = true;
+            _jetEngineStart.Stop();
+            _jetEngineEnd.Play();
+        }
     }
 
     public void OnReleasekBreak()
@@ -55,23 +72,75 @@ public class Player : MonoBehaviour
 
     public void OnClickTurn()
     {
-        _frontDirectionFlag = !_frontDirectionFlag;
-        _velocity.x = -_velocity.x;
+        if(0.0f != _absVelocityRatioX && (-1.0f == _frontDirection || 1.0f == _frontDirection))
+        {
+            _goalFrontDirectionFlag = !_goalFrontDirectionFlag;
+            _jetFlyby.Play();
+        }
+    }
+
+    public float GetAbsVelocityRatioX()
+    {
+        return _absVelocityRatioX;
+    }
+
+    public float GetFrontDirection()
+    {
+        return _frontDirection;
     }
 
     public void ResetPlayer(Vector3 startPoint)
     {
         transform.position = startPoint;
 
-        _velocity = new Vector2(0.0f, 0.0f);
+        _absVelocityX = 0.0f;
+        _absVelocityRatioX = 0.0f;
+        _velocityY = 0.0f;
         _isAcceleration = false;
         _isBreaking = false;
-        _frontDirectionFlag = true;
+        _goalFrontDirectionFlag = true;
+        _frontDirection = 1.0f;
     }
     
     // Start is called before the first frame update
     void Start()
     { 
+        _jetEngineStart.Stop();
+        _jetEngineEnd.Stop();
+        _flyingLoop.Stop();
+        _jetFlyby.Stop();
+        _afterBurnerParticle.GetComponent<ParticleScript>().SetEmission(false);
+    }
+
+    void UpdateAudios(float _absVelocityRatioX)
+    {
+        float flyingAudioVolume = _absVelocityRatioX;
+        if(false == _flyingLoop.isPlaying && 0.0f < flyingAudioVolume)
+        {
+            _flyingLoop.Play();
+        }
+        else if(_flyingLoop.isPlaying && 0.0f == flyingAudioVolume)
+        {
+            _flyingLoop.Stop();
+        }
+        
+        _flyingLoop.volume = flyingAudioVolume;
+        _jetEngineStart.volume = 1.0f - flyingAudioVolume;
+        _jetEngineEnd.volume = flyingAudioVolume;
+    }
+
+    void UpdateParticles(float _absVelocityRatioX)
+    {
+        bool setActive = 0.0f != _absVelocityRatioX;
+        bool actived = _afterBurnerParticle.GetComponent<ParticleScript>().isEmission();
+        if(setActive && false == actived)
+        {
+            _afterBurnerParticle.GetComponent<ParticleScript>().SetEmission(true);
+        }
+        else if(false == setActive && actived)
+        {
+            _afterBurnerParticle.GetComponent<ParticleScript>().SetEmission(false);
+        }
     }
 
     // Update is called once per frame
@@ -89,64 +158,50 @@ public class Player : MonoBehaviour
 
         // clamp input
         if(1.0f < input.x) input.x = 1.0f;
-        else if(input.x < -1.0f) input.x = -1.0f;
-        
+        else if(input.x < -1.0f) input.x = -1.0f;        
         if(1.0f < input.y) input.y = 1.0f;
         else if(input.y < -1.0f) input.y = -1.0f;
+
+        // Front direction
+        _frontDirection += (_goalFrontDirectionFlag ? Time.deltaTime : -Time.deltaTime) * _absVelocityRatioX * Constants.TURN_SPEED;
+        _frontDirection = Mathf.Min(1.0f, Mathf.Max(-1.0f, _frontDirection));
 
         // Acceleration
         if(_isAcceleration)
         {
-            float velocityX = Constants.ACCEL_X * Time.deltaTime;
-            _velocity.x += _frontDirectionFlag ? velocityX : -velocityX;
-            
-            if(Constants.VELOCITY_LIMIT_X < Mathf.Abs(_velocity.x))
-            {
-                _velocity.x = Mathf.Sign(_velocity.x) * Constants.VELOCITY_LIMIT_X;
-            }
+            _absVelocityX = Mathf.Min(Constants.VELOCITY_LIMIT_X, _absVelocityX + Constants.ACCEL_X * Time.deltaTime);
         }
 
         // Break
         if(_isBreaking)
         {
-            float damping = Constants.ACCEL_X * Time.deltaTime;
-            float sign = Mathf.Sign(_velocity.x);
-            float velocityX = Mathf.Abs(_velocity.x);
-            if(velocityX <= damping)
-            {
-                _velocity.x = 0.0f;
-            }
-            else
-            {
-                _velocity.x = (velocityX - damping) * sign;
-            }
+            _absVelocityX = Mathf.Max(0.0f, _absVelocityX - Constants.ACCEL_X * Time.deltaTime);
         }
+        _absVelocityRatioX = _absVelocityX / Constants.VELOCITY_LIMIT_X;
 
         // apply gravity
-        float velocityRatioX = _velocity.x / Constants.VELOCITY_LIMIT_X;
-        float absVelocityRatioX = Mathf.Min(1.0f, Mathf.Abs(_velocity.x) / Constants.VELOCITY_LIMIT_X);
-        if(absVelocityRatioX < 1.0f)
+        if(_absVelocityRatioX < 1.0f)
         {
-            _velocity.y -= Constants.GRAVITY * (1.0f - absVelocityRatioX) * Time.deltaTime;
+            _velocityY -= Constants.GRAVITY * (1.0f - _absVelocityRatioX) * Time.deltaTime;
         }
 
         if(0.0f != input.y)
         {
             // flying
-            _velocity.y += Constants.ACCEL_Y * absVelocityRatioX * input.y * Time.deltaTime;
+            _velocityY += Constants.ACCEL_Y * _absVelocityRatioX * input.y * Time.deltaTime;
 
-            if(Constants.VELOCITY_LIMIT_Y < _velocity.y)
+            if(Constants.VELOCITY_LIMIT_Y < _velocityY)
             {
-                _velocity.y = Constants.VELOCITY_LIMIT_Y;
+                _velocityY = Constants.VELOCITY_LIMIT_Y;
             }
         }
-        else if(0.0f != _velocity.y)
+        else if(0.0f != _velocityY && false == _isBreaking)
         {
             // maintain altitude
-            float sign = Mathf.Sign(_velocity.y);
-            float velocityY = Mathf.Abs(_velocity.y);
+            float sign = Mathf.Sign(_velocityY);
+            float velocityY = Mathf.Abs(_velocityY);
 
-            velocityY -= Constants.DAMPING_Y * absVelocityRatioX * Time.deltaTime;
+            velocityY -= Constants.DAMPING_Y * _absVelocityRatioX * Time.deltaTime;
             if(velocityY < 0.0f)
             {
                 velocityY = 0.0f;
@@ -155,37 +210,39 @@ public class Player : MonoBehaviour
             {
                 velocityY *= sign;
             }
-            _velocity.y = velocityY;
+            _velocityY = velocityY;
         }
-
-        float velocityRatioY = _velocity.y / Constants.VELOCITY_LIMIT_Y;
 
         // apply velocity
         Vector3 position = transform.position;
-        position.x += _velocity.x * Time.deltaTime;
-        position.y += _velocity.y * Time.deltaTime;
+        position.x += _absVelocityX * _frontDirection * Time.deltaTime;
+        position.y += _velocityY * Time.deltaTime;
 
         // check ground
         if(position.y < Constants.GROUND_HEIGHT)
         {
             position.y = Constants.GROUND_HEIGHT;
 
-            if(_velocity.y < 0.0f)
+            if(_velocityY < 0.0f)
             {
-                _velocity.y = 0.0f;
+                _velocityY = 0.0f;
             }
         }
 
-        float pitch = absVelocityRatioX * velocityRatioY * 30.0f;
-        float yaw = _frontDirectionFlag ? 0.0f : 180.0f;
-        transform.rotation = Quaternion.Euler(0.0f, yaw, pitch);
+        UpdateAudios(_absVelocityRatioX);
+        UpdateParticles(_absVelocityRatioX);
+
+        // update transform
+        float invGroundRatio = Mathf.Max(0.0f, Mathf.Min(1.0f, (position.y - Constants.GROUND_HEIGHT) * 0.2f));
+        float velocityRatioY = Mathf.Max(-1.0f, Mathf.Min(1.0f, _velocityY / Constants.VELOCITY_LIMIT_Y));
+        float pitch = _absVelocityRatioX * velocityRatioY * invGroundRatio * 30.0f;
+        float yaw = (_frontDirection * 0.5f + 0.5f) * (_goalFrontDirectionFlag ? -180.0f : 180.0f) + 180.0f;
+        float roll = Mathf.Cos(_frontDirection * Mathf.PI * 0.5f) * 90.0f * invGroundRatio;
+        transform.localRotation = Quaternion.Euler(roll, yaw, pitch);
         transform.position = position;
 
-        _velocityRatioX = velocityRatioX;
-        _velocityRatioY = velocityRatioY;
-
         // update text
-        _textVelocityX.GetComponent<TextMeshProUGUI>().text = Mathf.Abs(_velocity.x).ToString();
-        _textVelocityY.GetComponent<TextMeshProUGUI>().text = Mathf.Abs(_velocity.y).ToString();
+        _textVelocityX.GetComponent<TextMeshProUGUI>().text = Mathf.Abs(_absVelocityX).ToString();
+        _textVelocityY.GetComponent<TextMeshProUGUI>().text = Mathf.Abs(_velocityY).ToString();
     }
 }

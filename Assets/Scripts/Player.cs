@@ -38,20 +38,36 @@ public class Player : MonoBehaviour
         }
     }
 
-    public void OnClickAcceleration()
+    void SetAccleration(bool isRightDirection)
     {
-        if(false == _isAcceleration)
+        if(isRightDirection == _goalFrontDirectionFlag || 0.0f == _absVelocityRatioX)
         {
-            _isAcceleration = true;
-            _isBreaking = false;
-            _jetEngineStart.Play();
-            _jetEngineEnd.Stop();
+            if(false == _isAcceleration)
+            {
+                _isAcceleration = true;
+                _isBreaking = false;
+                _jetEngineStart.Play();
+                _jetEngineEnd.Stop();
+            }
+        }
+        else
+        {
+            if(0.0f != _absVelocityRatioX && (-1.0f == _frontDirection || 1.0f == _frontDirection))
+            {
+                _goalFrontDirectionFlag = isRightDirection;
+                _jetFlyby.Play();
+            }
         }
     }
 
-    public void OnReleaseAcceleration()
+    public void OnClickGoRight()
     {
-        _isAcceleration = false;
+        SetAccleration(true);
+    }
+
+    public void OnClickGoLeft()
+    {
+        SetAccleration(false);
     }
 
     public void OnClickBreak()
@@ -62,20 +78,6 @@ public class Player : MonoBehaviour
             _isBreaking = true;
             _jetEngineStart.Stop();
             _jetEngineEnd.Play();
-        }
-    }
-
-    public void OnReleasekBreak()
-    {
-        _isBreaking = false;
-    }
-
-    public void OnClickTurn()
-    {
-        if(0.0f != _absVelocityRatioX && (-1.0f == _frontDirection || 1.0f == _frontDirection))
-        {
-            _goalFrontDirectionFlag = !_goalFrontDirectionFlag;
-            _jetFlyby.Play();
         }
     }
 

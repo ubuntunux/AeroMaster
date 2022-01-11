@@ -2,12 +2,32 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+public class LevelBase: MonoBehaviour
+{
+    virtual public Vector3 GetStartPoint()
+    {
+        return Vector3.zero;
+    }
+
+    virtual public Vector3 GetGoalPosition()
+    {
+        return Vector3.zero;
+    }
+    
+    virtual public void Reset()
+    {
+    }
+
+    public void Update()
+    {
+    }
+}
+
 public class LevelManager : MonoBehaviour
 {
-    public GameObject _start;
-    public GameObject _goal;
+    public GameObject _levelTutorial;
 
-    private static LevelManager _instance;
+    private static LevelManager _instance;    
 
     // Singleton instantiation
     public static LevelManager Instance
@@ -30,20 +50,22 @@ public class LevelManager : MonoBehaviour
 
     public void Reset()
     {
+        _levelTutorial.GetComponent<LevelBase>().Reset();
     }
 
     public Vector3 GetStartPoint()
     {
-        float heightHalf = _start.GetComponent<MeshRenderer>().bounds.size.y * 0.5f;
-        Vector3 position = _start.transform.position;
-        position.x -= 2.0f;
-        position.y -= heightHalf;
-        return position;
+        return _levelTutorial.GetComponent<LevelBase>().GetStartPoint();
+    }
+
+    public Vector3 GetGoalPosition()
+    {
+        return _levelTutorial.GetComponent<LevelBase>().GetGoalPosition();
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+        _levelTutorial.GetComponent<LevelBase>().Update();
     }
 }

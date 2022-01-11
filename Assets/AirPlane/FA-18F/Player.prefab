@@ -183,6 +183,7 @@ MonoBehaviour:
   _flyingLoop: {fileID: 4199025847822108342}
   _jetFlyby: {fileID: 9046121383184408448}
   _afterBurnerParticle: {fileID: 1910542315100626378}
+  _destroyFX: {fileID: 0}
 --- !u!1 &4575294152207306748
 GameObject:
   m_ObjectHideFlags: 0
@@ -370,8 +371,8 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 5596651175626585437, guid: 2fbda9eb7ce5acf0896975aa9b12f543, type: 3}
-  - {fileID: 8556262120643298411, guid: 2fbda9eb7ce5acf0896975aa9b12f543, type: 3}
+  - {fileID: 2100000, guid: 7ba15eb30dba4d32d8346a4dd55623d2, type: 2}
+  - {fileID: 2100000, guid: 7ba15eb30dba4d32d8346a4dd55623d2, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

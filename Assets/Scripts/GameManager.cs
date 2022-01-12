@@ -6,7 +6,6 @@ using TMPro;
 
 public class GameManager : MonoBehaviour
 {
-    private static GameManager _instance;
     public AudioSource _audioSource; //A primary audioSource a large portion of game sounds are passed through
     public AudioMixer _audioMaster;
     public AudioClip _missionCompleteAudio;
@@ -15,6 +14,8 @@ public class GameManager : MonoBehaviour
     private float _musicVolumeStore = 0.0f;
     private bool _paused = false;
     private bool _missionComplete = false;
+
+    private static GameManager _instance;
 
     // Singleton instantiation
     public static GameManager Instance
@@ -105,6 +106,7 @@ public class GameManager : MonoBehaviour
         SetPause(false);
         SetMissionComplete(false);
 
+        UIManager.Instance.Reset();
         LevelManager.Instance.Reset();
         Vector3 startPoint = LevelManager.Instance.GetStartPoint();
         Player.Instance.ResetPlayer(startPoint);

@@ -18,6 +18,11 @@ public class LevelBase: MonoBehaviour
     {
     }
 
+    virtual public void OnExit()
+    {
+
+    }
+
     public void Update()
     {
     }

@@ -10,19 +10,18 @@ public enum TutorialPhase
     TakeOff,
     Turn,
     Landing,
-    Complete
+    Complete,
+    Exit
 };
 
 public class LevelTutorial : LevelBase
 {
     public GameObject _start;
-    public GameObject _goal;
     public GameObject _panelPause;
     public GameObject _textTutorial;
 
     private TutorialPhase _phase = TutorialPhase.None;
 
-    // Start is called before the first frame update
     void Start()
     {   
     }
@@ -36,38 +35,84 @@ public class LevelTutorial : LevelBase
         return position;
     }
 
-    override public Vector3 GetGoalPosition()
-    {
-        float heightHalf = _goal.GetComponent<MeshRenderer>().bounds.size.y * 0.5f;
-        Vector3 position = _goal.transform.position;
-        position.x -= 2.0f;
-        position.y -= heightHalf;
-        return position;
-    }
-
     override public void Reset()
     {
-        _phase = TutorialPhase.None;
         _panelPause.SetActive(false);
         _textTutorial.SetActive(false);
-        Player.Instance._callbackOnClickGoRight = CallbackOnClickGoRight;
-    }
-
-    void SetPhaseAcceleration()
-    {
-        GameManager.Instance.SetPause(true);
-        _phase = TutorialPhase.Acceleration;
-        _panelPause.SetActive(true);
-        _textTutorial.SetActive(true);
-        _textTutorial.GetComponent<TextMeshProUGUI>().text = "Acceleration";
+        _phase = TutorialPhase.None;
     }
 
     public void CallbackOnClickGoRight()
     {
-        GameManager.Instance.SetPause(false);
-        _panelPause.SetActive(false);
+        Player.Instance.SetAccleration(true);
+        Player.Instance.SetCallbackOnClickGoRight(null);
+        UIManager.Instance.SetInteractableGoRightButton(false);
         _textTutorial.SetActive(false);
+    }
+
+    public void CallbackOnClickGoLeft()
+    {
+        Player.Instance.SetAccleration(false);
+        Player.Instance.SetCallbackOnClickGoLeft(null);
+        UIManager.Instance.SetInteractableGoLeftButton(false);
+        _textTutorial.SetActive(false);
+    }
+
+    public void CallbackOnClickLanding()
+    {
+        Player.Instance.SetCallbackOnClickLanding(null);
+        Player.Instance.SetBreaking();        
+        UIManager.Instance.SetInteractableLandingButton(false);
+        _textTutorial.SetActive(false);
+    }
+
+    void SetPhaseAcceleration()
+    {
+        Player.Instance.SetCallbackOnClickGoRight(CallbackOnClickGoRight);        
+        UIManager.Instance.SetInteractableButtonAll(false);
+        UIManager.Instance.SetInteractableGoRightButton(true);
+        _textTutorial.SetActive(true);
+        _textTutorial.GetComponent<TextMeshProUGUI>().text = "Acceleration";
+        _phase = TutorialPhase.Acceleration;
+    }
+
+    void SetPhaseTakeOff()
+    {
+        UIManager.Instance.SetInteractableButtonAll(false);
+        _textTutorial.SetActive(true);
+        _textTutorial.GetComponent<TextMeshProUGUI>().text = "Take Off";
         _phase = TutorialPhase.TakeOff;
+    }
+
+    void SetPhaseTurn()
+    {
+        Player.Instance.SetCallbackOnClickGoLeft(CallbackOnClickGoLeft);
+        UIManager.Instance.SetInteractableButtonAll(false);
+        UIManager.Instance.SetInteractableGoLeftButton(true);
+        _textTutorial.SetActive(true);
+        _textTutorial.GetComponent<TextMeshProUGUI>().text = "Turn";
+        _phase = TutorialPhase.Turn;
+    }
+
+    void SetPhaseLanding()
+    {
+        Player.Instance.SetCallbackOnClickLanding(CallbackOnClickLanding);
+        UIManager.Instance.SetInteractableButtonAll(false);
+        UIManager.Instance.SetInteractableLandingButton(true);
+        _textTutorial.SetActive(true);
+        _textTutorial.GetComponent<TextMeshProUGUI>().text = "Landing";
+        _phase = TutorialPhase.Landing;
+    }
+
+    void SetPhaseComplete()
+    {
+        _phase = TutorialPhase.Complete;
+    }
+
+    override public void OnExit()
+    {
+        Player.Instance.SetControllable(true);
+        Player.Instance.SetInvincibility(false);        
     }
 
     // Update is called once per frame
@@ -75,14 +120,71 @@ public class LevelTutorial : LevelBase
     {
         if(TutorialPhase.None == _phase)
         {
+            // first update
+            Player.Instance.SetControllable(false);
+            Player.Instance.SetInvincibility(true);
+            
             SetPhaseAcceleration();
         }
+        else if(TutorialPhase.Acceleration == _phase)
+        {
+            if(1.0f == Player.Instance.GetAbsVelocityRatioX())
+            {
+                SetPhaseTakeOff();
+            }
+        }
+        else if(TutorialPhase.TakeOff == _phase)
+        {
+            if(Player.Instance.GetAutoTakeOff())
+            {
+                const float TAKE_OFF_ALTITUDE = 1.0f;
+                if(TAKE_OFF_ALTITUDE <= Player.Instance.GetAltitude())
+                {
+                    Player.Instance.SetAutoTakeOff(false);
+                    SetPhaseTurn();
+                }
+            }
+            else
+            {
+                Vector2 input = Vector2.zero;
+            #if UNITY_ANDROID
+                input = GameManager.Instance.GetAltitudeTouchDelta();
+            #elif UNITY_IPHONE
+                // todo
+            #else
+                input.x = Input.GetAxis("Horizontal");
+                input.y = Input.GetAxis("Vertical");
+            #endif
 
-        Vector3 goalPoint = GetGoalPosition();
-        float playerPosX = Player.Instance.transform.position.x;        
-        if(goalPoint.x <= playerPosX)
+                if(0.0f < input.y)
+                {
+                    // TakeOff
+                    Player.Instance.SetAutoTakeOff(true);
+                }
+            }
+        }
+        else if(TutorialPhase.Turn == _phase)
+        {
+            if(Player.Instance.GetFrontDirection() <= -0.9f)
+            {
+                SetPhaseLanding();
+            }
+        }
+        else if(TutorialPhase.Landing == _phase)
+        {
+            if(0.0f == Player.Instance.GetAbsVelocityRatioX() && Player.Instance.GetIsGround())
+            {
+                SetPhaseComplete();
+            }
+        }
+        else if(TutorialPhase.Complete == _phase)
         {
             GameManager.Instance.SetMissionComplete(true);
+            _phase = TutorialPhase.Exit;
+        }
+        else if(TutorialPhase.Exit == _phase)
+        {
+            OnExit();
         }
     }
 }

@@ -6,9 +6,6 @@ using TMPro;
 
 public class Player : MonoBehaviour
 {
-    public delegate void Callback(); 
-    public Callback _callbackOnClickGoRight = null;
-
     public GameObject _textVelocityX;
     public GameObject _textVelocityY;
     public GameObject _meshObject;
@@ -23,6 +20,11 @@ public class Player : MonoBehaviour
 
     private static Player _instance;
 
+    public delegate void Callback(); 
+    private Callback _callbackOnClickGoRight = null;
+    private Callback _callbackOnClickGoLeft = null;
+    private Callback _callbackOnClickLanding = null;
+
     private float _absVelocityX = 0.0f;
     private float _absVelocityRatioX = 0.0f;
     private float _velocityY = 0.0f;
@@ -33,6 +35,8 @@ public class Player : MonoBehaviour
     private bool _isAlive = false;
     private bool _isGround = false;
     private bool _controllable = false;
+    private bool _autoTakeOff = false;
+    private bool _invincibility = false;
 
     // Singleton instantiation
     public static Player Instance
@@ -47,7 +51,42 @@ public class Player : MonoBehaviour
         }
     }
 
-    void SetAccleration(bool isRightDirection)
+    public bool GetIsGround()
+    {
+        return _isGround;
+    }
+
+    public Vector3 GetPosition()
+    {
+        return transform.position;
+    }
+
+    public float GetAltitude()
+    {
+        return GetPosition().y - Constants.GROUND_HEIGHT;
+    }
+
+    public bool GetAutoTakeOff()
+    {
+        return _autoTakeOff;
+    }
+
+    public void SetAutoTakeOff(bool autoTakeOff)
+    {
+        if(false == _isAlive)
+        {
+            return;
+        }
+
+        _autoTakeOff = autoTakeOff;
+    }
+
+    public void SetInvincibility(bool invincibility)
+    {
+        _invincibility = invincibility;
+    }
+
+    public void SetAccleration(bool isRightDirection)
     {
         if(false == _isAlive)
         {
@@ -85,6 +124,21 @@ public class Player : MonoBehaviour
         }
     }
 
+    public void SetCallbackOnClickGoRight(Callback callback)
+    {
+        _callbackOnClickGoRight = callback;
+    }
+
+    public void SetCallbackOnClickGoLeft(Callback callback)
+    {
+        _callbackOnClickGoLeft = callback;
+    }
+
+    public void SetCallbackOnClickLanding(Callback callback)
+    {
+        _callbackOnClickLanding = callback;
+    }
+
     public void OnClickGoRight()
     {
         if(null != _callbackOnClickGoRight)
@@ -100,6 +154,11 @@ public class Player : MonoBehaviour
 
     public void OnClickGoLeft()
     {
+        if(null != _callbackOnClickGoLeft)
+        {
+            _callbackOnClickGoLeft();
+        }
+
         if(_controllable)
         {
             SetAccleration(false);
@@ -108,6 +167,11 @@ public class Player : MonoBehaviour
 
     public void OnClickBreak()
     {
+        if(null != _callbackOnClickLanding)
+        {
+            _callbackOnClickLanding();
+        }
+
         if(_controllable)
         {
             SetBreaking();
@@ -136,8 +200,9 @@ public class Player : MonoBehaviour
 
     public void ResetPlayer(Vector3 startPoint)
     {
-        SetControllable(true);
         transform.position = startPoint;
+        SetControllable(true);
+        SetInvincibility(false);
         SetVisible(true);
         SetAfterBurnerEmission(false);
         _jetEngineStart.Stop();
@@ -145,6 +210,7 @@ public class Player : MonoBehaviour
         _flyingLoop.Stop();
         _jetFlyby.Stop();
 
+        _autoTakeOff = false;
         _absVelocityX = 0.0f;
         _absVelocityRatioX = 0.0f;
         _velocityY = 0.0f;
@@ -198,7 +264,7 @@ public class Player : MonoBehaviour
 
     void SetDestroy()
     {
-        if(_isAlive)
+        if(false == _invincibility && _isAlive)
         {
             GameObject destroyFX = (GameObject)GameObject.Instantiate(_destroyFX);
             destroyFX.transform.SetParent(transform, false);
@@ -224,6 +290,11 @@ public class Player : MonoBehaviour
                 input.x = Input.GetAxis("Horizontal");
                 input.y = Input.GetAxis("Vertical");
             #endif
+            }
+
+            if(_autoTakeOff)
+            {
+                input.y = 1.0f;
             }
         
             // clamp input

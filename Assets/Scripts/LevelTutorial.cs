@@ -11,7 +11,8 @@ public enum TutorialPhase
     Turn,
     Landing,
     Complete,
-    Exit
+    Exit,
+    End
 };
 
 public class LevelTutorial : LevelBase
@@ -20,26 +21,16 @@ public class LevelTutorial : LevelBase
     public GameObject _panelPause;
     public GameObject _textTutorial;
 
-    private TutorialPhase _phase = TutorialPhase.None;
+    TutorialPhase _phase = TutorialPhase.None;
+    float _exitTime = 0.0f;
 
-    void Start()
-    {   
-    }
-
-    override public Vector3 GetStartPoint()
+    public Vector3 GetStartPoint()
     {
         float heightHalf = _start.GetComponent<MeshRenderer>().bounds.size.y * 0.5f;
         Vector3 position = _start.transform.position;
         position.x -= 2.0f;
         position.y -= heightHalf;
         return position;
-    }
-
-    override public void Reset()
-    {
-        _panelPause.SetActive(false);
-        _textTutorial.SetActive(false);
-        _phase = TutorialPhase.None;
     }
 
     public void CallbackOnClickGoRight()
@@ -109,24 +100,31 @@ public class LevelTutorial : LevelBase
         _phase = TutorialPhase.Complete;
     }
 
-    override public void OnExit()
+    override public void ResetLevel()
     {
-        Player.Instance.SetControllable(true);
-        Player.Instance.SetInvincibility(false);        
+        _exitTime = 0.0f;
+        _panelPause.SetActive(false);
+        _textTutorial.SetActive(false);
+        _phase = TutorialPhase.None;
+
+        bool controllable = false;
+        bool invincibility = true;
+        GameManager.Instance.ResetOnChangeLevel(controllable, invincibility, GetStartPoint());
     }
 
-    // Update is called once per frame
-    void Update()
+    override public bool IsEndLevel()
+    {
+        return TutorialPhase.End == _phase;
+    }
+
+    override public void UpdateLevel()
     {
         if(TutorialPhase.None == _phase)
         {
             // first update
-            Player.Instance.SetControllable(false);
-            Player.Instance.SetInvincibility(true);
-            
             SetPhaseAcceleration();
         }
-        else if(TutorialPhase.Acceleration == _phase)
+        if(TutorialPhase.Acceleration == _phase)
         {
             if(1.0f == Player.Instance.GetAbsVelocityRatioX())
             {
@@ -184,7 +182,12 @@ public class LevelTutorial : LevelBase
         }
         else if(TutorialPhase.Exit == _phase)
         {
-            OnExit();
+            const float EXIT_TIME = 3.0f;
+            if(EXIT_TIME <= _exitTime)
+            {
+                _phase = TutorialPhase.End;
+            }
+            _exitTime += Time.deltaTime;
         }
     }
 }

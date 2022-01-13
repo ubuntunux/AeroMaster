@@ -2,37 +2,21 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class LevelBase: MonoBehaviour
+abstract public class LevelBase: MonoBehaviour
 {
-    virtual public Vector3 GetStartPoint()
-    {
-        return Vector3.zero;
-    }
-
-    virtual public Vector3 GetGoalPosition()
-    {
-        return Vector3.zero;
-    }
-    
-    virtual public void Reset()
-    {
-    }
-
-    virtual public void OnExit()
-    {
-
-    }
-
-    public void Update()
-    {
-    }
+    abstract public void ResetLevel();
+    abstract public bool IsEndLevel();
+    abstract public void UpdateLevel();
 }
 
 public class LevelManager : MonoBehaviour
 {
+    public GameObject _levelStart;
     public GameObject _levelTutorial;
-
-    private static LevelManager _instance;    
+    
+    private static LevelManager _instance;
+    GameObject _currentLevel = null;
+    bool _firstUpdate = true;
 
     // Singleton instantiation
     public static LevelManager Instance
@@ -47,30 +31,63 @@ public class LevelManager : MonoBehaviour
         }
     }
 
-    // Start is called before the first frame update
     void Start()
-    {
-        
+    {   
     }
 
-    public void Reset()
+    public void SetCurrentLevel(GameObject level)
     {
-        _levelTutorial.GetComponent<LevelBase>().Reset();
+        if(level != _currentLevel)
+        {
+            if(null != _currentLevel)
+            {
+                _currentLevel.SetActive(false);
+            }            
+            _currentLevel = level;
+
+            if(null != level)
+            {
+                level.SetActive(true);
+                level.GetComponent<LevelBase>().ResetLevel();
+            }
+
+            GameManager.Instance.SetMissionComplete(false);
+        }
     }
 
-    public Vector3 GetStartPoint()
+    public void StartTutorial()
     {
-        return _levelTutorial.GetComponent<LevelBase>().GetStartPoint();
+        SetCurrentLevel(_levelTutorial);
     }
 
-    public Vector3 GetGoalPosition()
+    public bool IsEndCurrentLevel()
     {
-        return _levelTutorial.GetComponent<LevelBase>().GetGoalPosition();
+        return (null != _currentLevel) ? _currentLevel.GetComponent<LevelBase>().IsEndLevel() : true;
     }
 
-    // Update is called once per frame
+    public void ResetLevelManager()
+    {
+    }
+
     void Update()
     {
-        _levelTutorial.GetComponent<LevelBase>().Update();
+        if(_firstUpdate)
+        {
+            SetCurrentLevel(_levelStart);
+            _firstUpdate = false;
+        }
+
+        if(null != _currentLevel)
+        {   
+            LevelBase currentLevel = _currentLevel.GetComponent<LevelBase>();
+            currentLevel.UpdateLevel();
+            if(currentLevel.IsEndLevel())
+            {
+                if(_levelTutorial == _currentLevel)
+                {
+                    SetCurrentLevel(_levelStart);
+                }
+            }
+        }
     }
 }

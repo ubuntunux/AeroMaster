@@ -6,8 +6,6 @@ using TMPro;
 
 public class Player : MonoBehaviour
 {
-    public GameObject _textVelocityX;
-    public GameObject _textVelocityY;
     public GameObject _meshObject;
 
     public AudioSource _jetEngineStart;
@@ -59,6 +57,11 @@ public class Player : MonoBehaviour
     public Vector3 GetPosition()
     {
         return transform.position;
+    }
+
+    public void SetPosition(Vector3 position)
+    {
+        transform.position = position;
     }
 
     public float GetAltitude()
@@ -198,9 +201,10 @@ public class Player : MonoBehaviour
         _afterBurnerParticle.GetComponent<ParticleScript>().SetEmission(emission);
     }
 
-    public void ResetPlayer(Vector3 startPoint)
+    public void ResetPlayer()
     {
-        transform.position = startPoint;
+        transform.localRotation = Quaternion.Euler(0.0f, 0.0f, 0.0f);
+
         SetControllable(true);
         SetInvincibility(false);
         SetVisible(true);
@@ -410,9 +414,5 @@ public class Player : MonoBehaviour
         float roll = Mathf.Cos(_frontDirection * Mathf.PI * 0.5f) * 90.0f * invGroundRatio;
         transform.localRotation = Quaternion.Euler(roll, yaw, pitch);
         transform.position = position;
-
-        // update text
-        _textVelocityX.GetComponent<TextMeshProUGUI>().text = Mathf.Abs(_absVelocityX).ToString();
-        _textVelocityY.GetComponent<TextMeshProUGUI>().text = Mathf.Abs(_velocityY).ToString();
     }
 }

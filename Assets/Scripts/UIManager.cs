@@ -49,11 +49,10 @@ public class UIManager : MonoBehaviour
 
     // Start is called before the first frame update
     void Start()
-    {
-        
+    {   
     }
 
-    public void Reset()
+    public void ResetUIManager()
     {
         SetInteractableButtonAll(true);
     }

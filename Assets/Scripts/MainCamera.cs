@@ -27,7 +27,7 @@ public class MainCamera : MonoBehaviour
     {
     }
 
-    public void Reset()
+    public void ResetMainCamera()
     {
         SetTrackingPlayer(true);
         TrakingPlayer();

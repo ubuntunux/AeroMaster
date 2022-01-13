@@ -92,25 +92,38 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    // Start is called before the first frame update
+    public void ResetOnChangeLevel(bool controllable, bool invincibility, Vector3 startPoint)
+    {
+        Player.Instance.ResetPlayer();        
+        MainCamera.Instance.ResetMainCamera();
+        Player.Instance.SetControllable(controllable);
+        Player.Instance.SetInvincibility(invincibility);
+        Player.Instance.SetPosition(startPoint);
+    }
+
+    public void StartGame()
+    {
+        LevelManager.Instance.StartTutorial();
+    }
+
     void Start()
     {
         _audioMaster.GetFloat("MasterVolume", out _masterVolumeStore);
         _audioMaster.GetFloat("MusicVolume", out _musicVolumeStore);
-
-        Reset();
+        ResetGameManager();
     }
 
-    public void Reset()
+    public void ResetGameManager()
     {
         SetPause(false);
         SetMissionComplete(false);
 
-        UIManager.Instance.Reset();
-        LevelManager.Instance.Reset();
-        Vector3 startPoint = LevelManager.Instance.GetStartPoint();
-        Player.Instance.ResetPlayer(startPoint);
-        MainCamera.Instance.Reset();
+        UIManager.Instance.ResetUIManager();
+        LevelManager.Instance.ResetLevelManager();
+        Player.Instance.ResetPlayer();
+        Player.Instance.SetControllable(false);
+        Player.Instance.SetInvincibility(false);
+        MainCamera.Instance.ResetMainCamera();
 
         _audioMaster.SetFloat("MasterVolume", _masterVolumeStore);
         _audioMaster.SetFloat("MusicVolume", _musicVolumeStore);

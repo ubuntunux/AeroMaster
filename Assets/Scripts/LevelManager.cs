@@ -4,7 +4,8 @@ using UnityEngine;
 
 abstract public class LevelBase: MonoBehaviour
 {
-    abstract public void ResetLevel();
+    abstract public void OnStartLevel();
+    abstract public void OnExitLevel();
     abstract public bool IsEndLevel();
     abstract public void UpdateLevel();
 }
@@ -15,6 +16,7 @@ public class LevelManager : MonoBehaviour
     public GameObject _levelTutorial;
     
     private static LevelManager _instance;
+    GameObject _previousLevel = null;
     GameObject _currentLevel = null;
     bool _firstUpdate = true;
 
@@ -35,24 +37,36 @@ public class LevelManager : MonoBehaviour
     {   
     }
 
+    public void SetCurrentLevelToPreviousLevel()
+    {
+        SetCurrentLevel(_previousLevel);
+    }
+
     public void SetCurrentLevel(GameObject level)
     {
         if(level != _currentLevel)
         {
             if(null != _currentLevel)
             {
+                _currentLevel.GetComponent<LevelBase>().OnExitLevel();
                 _currentLevel.SetActive(false);
-            }            
+            }
+            _previousLevel = _currentLevel;
             _currentLevel = level;
 
             if(null != level)
             {
                 level.SetActive(true);
-                level.GetComponent<LevelBase>().ResetLevel();
+                level.GetComponent<LevelBase>().OnStartLevel();
             }
 
             GameManager.Instance.SetMissionComplete(false);
         }
+    }
+
+    public bool IsStartLevel()
+    {
+        return _levelStart == _currentLevel;
     }
 
     public void StartTutorial()
@@ -67,6 +81,9 @@ public class LevelManager : MonoBehaviour
 
     public void ResetLevelManager()
     {
+        _firstUpdate = true;
+        _previousLevel = null;
+        _currentLevel = null;
     }
 
     void Update()
@@ -83,6 +100,9 @@ public class LevelManager : MonoBehaviour
             currentLevel.UpdateLevel();
             if(currentLevel.IsEndLevel())
             {
+                // TODO: failed to tutorial
+
+                // End of Tutorial
                 if(_levelTutorial == _currentLevel)
                 {
                     SetCurrentLevel(_levelStart);

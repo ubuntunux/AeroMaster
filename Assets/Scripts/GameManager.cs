@@ -69,9 +69,16 @@ public class GameManager : MonoBehaviour
         _paused = pause;
     }
 
-    public void OnClickPause()
+    public void RunBack()
     {
-        SetPause(!_paused);
+        if(LevelManager.Instance.IsStartLevel())
+        {
+            Application.Quit();
+        }
+        else
+        {
+            LevelManager.Instance.SetCurrentLevelToPreviousLevel();
+        }
     }
 
     public void SetMissionComplete(bool missionComplete)
@@ -92,13 +99,17 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public void ResetOnChangeLevel(bool controllable, bool invincibility, Vector3 startPoint)
+    public void ResetOnChangeLevel(bool controllable, bool invincibility, Vector3 startPoint, bool isFlying = false, bool autoFlyingToRight = true)
     {
         Player.Instance.ResetPlayer();        
         MainCamera.Instance.ResetMainCamera();
         Player.Instance.SetControllable(controllable);
         Player.Instance.SetInvincibility(invincibility);
         Player.Instance.SetPosition(startPoint);
+        if(isFlying)
+        {
+            Player.Instance.SetAutoFlying(autoFlyingToRight);
+        }
     }
 
     public void StartGame()

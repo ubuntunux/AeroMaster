@@ -6,8 +6,10 @@ public class MainCamera : MonoBehaviour
 {
     private static MainCamera _instance;
 
-    private float _initialPosZ = 0.0f;
-    private bool _trackingPlayer = false;
+    float _initialPosZ = 0.0f;
+    bool _trackingPlayer = false;
+    ShakeObject _cameraShake = new ShakeObject();
+    ShakeObject _cameraHandMove = new ShakeObject();
 
     // Singleton instantiation
     public static MainCamera Instance
@@ -30,7 +32,19 @@ public class MainCamera : MonoBehaviour
     public void ResetMainCamera()
     {
         SetTrackingPlayer(true);
-        TrakingPlayer();
+        TrakingPlayer(Vector3.zero);
+
+        _cameraShake.ResetShakeObject();
+        _cameraHandMove.ResetShakeObject();
+        _cameraHandMove.SetShake(0.0f, 0.5f, 3.0f);
+    }
+
+    public void SetCameraShakeByDestroy()
+    {
+        const float CameraShakeDuration = 1.0f;
+        const  float CameraShakeRandomTerm = 0.01f;
+        const  float CameraShakeIntensity = 1.0f;
+        _cameraShake.SetShake(CameraShakeDuration, CameraShakeIntensity, CameraShakeRandomTerm);
     }
 
     public void SetTrackingPlayer(bool trackingPlayer)
@@ -38,7 +52,7 @@ public class MainCamera : MonoBehaviour
         _trackingPlayer = trackingPlayer;
     }
 
-    void TrakingPlayer()
+    void TrakingPlayer(Vector3 cameraOffset)
     {
         if(_trackingPlayer)
         {
@@ -54,13 +68,17 @@ public class MainCamera : MonoBehaviour
             cameraPosition.y += 1.0f + AbsVelocityRatioX * groundRatio * CAMERA_OFFSET_Y;
             cameraPosition.z = _initialPosZ - (4.0f + AbsVelocityRatioX * CAMERA_OFFSET_Z);
 
-            transform.position = cameraPosition;
+            transform.position = cameraPosition + cameraOffset;
         }
     }
 
     // Update is called once per frame
     void Update()
     {   
-        TrakingPlayer();        
+        Vector3 cameraOffset = new Vector3(0.0f, 0.0f, 0.0f);
+        _cameraShake.UpdateShakeObject(ref cameraOffset);
+        _cameraHandMove.UpdateShakeObject(ref cameraOffset);
+
+        TrakingPlayer(cameraOffset);        
     }
 }

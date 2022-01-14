@@ -1,7 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization; 
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class UIManager : MonoBehaviour
 {
@@ -9,6 +11,13 @@ public class UIManager : MonoBehaviour
     public GameObject _btnGoLeft;
     public GameObject _btnLanding;
     public GameObject _slideVerticalVelocity;
+    public GameObject _textVelocityX;
+    public GameObject _textVelocityY;
+    public GameObject _textAltitude;
+    public GameObject _textLanguage;
+
+    public GameObject _layerControllerUI;
+    public GameObject _layeyExit;
 
     private static UIManager _instance;
 
@@ -47,19 +56,64 @@ public class UIManager : MonoBehaviour
         SetInteractableLandingButton(interactable);
     }
 
-    // Start is called before the first frame update
+    public bool GetVisibleControllerUI()
+    {
+        return _layerControllerUI.activeSelf;
+    }
+
+    public void SetVisibleControllerUI(bool show)
+    {
+        _layerControllerUI.SetActive(show);
+    }
+
+    void PopupExit(bool open)
+    {
+        _layeyExit.SetActive(open);
+        GameManager.Instance.SetPause(open);
+    }
+
+    void TogglePopupExit()
+    {
+        PopupExit(!_layeyExit.activeSelf);
+    }
+
+    public void OnClickBack()
+    {
+        PopupExit(true);
+    }
+
+    public void OnClickBackYes()
+    {
+        PopupExit(false);
+        GameManager.Instance.RunBack();
+    }
+
+    public void OnClickBackNo()
+    {
+        PopupExit(false);
+    }
+
     void Start()
-    {   
+    {
+        _textLanguage.GetComponent<TextMeshProUGUI>().text = "Language: " + CultureInfo.CurrentCulture.Name;
+        _layeyExit.SetActive(false);
     }
 
     public void ResetUIManager()
     {
+        _layeyExit.SetActive(false);        
         SetInteractableButtonAll(true);
     }
 
-    // Update is called once per frame
     void Update()
     {
-        
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            TogglePopupExit();
+        }
+
+        _textVelocityX.GetComponent<TextMeshProUGUI>().text = string.Format("Horizontal Speed: {0:F1}", Player.Instance.GetAbsVelocityX());
+        _textVelocityY.GetComponent<TextMeshProUGUI>().text = string.Format("Vertical Speed: {0:F1}", Player.Instance.GetVelocityY());
+        _textAltitude.GetComponent<TextMeshProUGUI>().text = string.Format("Altitude: {0:F1}", Player.Instance.GetAltitude());
     }
 }

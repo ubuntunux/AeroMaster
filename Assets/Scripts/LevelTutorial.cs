@@ -100,7 +100,7 @@ public class LevelTutorial : LevelBase
         _phase = TutorialPhase.Complete;
     }
 
-    override public void ResetLevel()
+    override public void OnStartLevel()
     {
         _exitTime = 0.0f;
         _panelPause.SetActive(false);
@@ -110,6 +110,10 @@ public class LevelTutorial : LevelBase
         bool controllable = false;
         bool invincibility = true;
         GameManager.Instance.ResetOnChangeLevel(controllable, invincibility, GetStartPoint());
+    }
+
+    override public void OnExitLevel()
+    {
     }
 
     override public bool IsEndLevel()
@@ -177,6 +181,7 @@ public class LevelTutorial : LevelBase
         }
         else if(TutorialPhase.Complete == _phase)
         {
+            // Mission Complete
             GameManager.Instance.SetMissionComplete(true);
             _phase = TutorialPhase.Exit;
         }

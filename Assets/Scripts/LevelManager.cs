@@ -42,9 +42,9 @@ public class LevelManager : MonoBehaviour
         SetCurrentLevel(_previousLevel);
     }
 
-    public void SetCurrentLevel(GameObject level)
+    public void SetCurrentLevel(GameObject level, bool force = false)
     {
-        if(level != _currentLevel)
+        if(level != _currentLevel || force)
         {
             if(null != _currentLevel)
             {
@@ -82,8 +82,7 @@ public class LevelManager : MonoBehaviour
     public void ResetLevelManager()
     {
         _firstUpdate = true;
-        _previousLevel = null;
-        _currentLevel = null;
+        SetCurrentLevel(null);
     }
 
     void Update()

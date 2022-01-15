@@ -2,14 +2,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class LevelStart : LevelBase
+public class LevelProfile : LevelBase
 {
     bool _isFirstUpdate = true;
     bool _backUpShowControllerUI = false;
 
     public void OnClickStart()
     {
-        GameManager.Instance.StartGame();
+        LevelManager.Instance.GoToLevelLobby();
     }
 
     override public void OnStartLevel()

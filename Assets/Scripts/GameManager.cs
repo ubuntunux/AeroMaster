@@ -71,13 +71,17 @@ public class GameManager : MonoBehaviour
 
     public void RunBack()
     {
-        if(LevelManager.Instance.IsStartLevel())
+        if(LevelManager.Instance.IsLevelProfile())
         {
             Application.Quit();
         }
+        else if(LevelManager.Instance.IsLevelLobby())
+        {
+            LevelManager.Instance.GoToLevelProfile();
+        }
         else
         {
-            LevelManager.Instance.SetCurrentLevelToPreviousLevel();
+            LevelManager.Instance.GoToLevelLobby();
         }
     }
 
@@ -101,8 +105,8 @@ public class GameManager : MonoBehaviour
 
     public void ResetOnChangeLevel(bool controllable, bool invincibility, Vector3 startPoint, bool isFlying = false, bool autoFlyingToRight = true)
     {
-        Player.Instance.ResetPlayer();        
         MainCamera.Instance.ResetMainCamera();
+        Player.Instance.ResetPlayer();        
         Player.Instance.SetControllable(controllable);
         Player.Instance.SetInvincibility(invincibility);
         Player.Instance.SetPosition(startPoint);
@@ -110,11 +114,6 @@ public class GameManager : MonoBehaviour
         {
             Player.Instance.SetAutoFlying(autoFlyingToRight);
         }
-    }
-
-    public void StartGame()
-    {
-        LevelManager.Instance.StartTutorial();
     }
 
     void Start()

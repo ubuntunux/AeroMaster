@@ -52,7 +52,7 @@ public class LevelTutorial : LevelBase
     public void CallbackOnClickLanding()
     {
         Player.Instance.SetCallbackOnClickLanding(null);
-        Player.Instance.SetBreaking();        
+        Player.Instance.SetLanding();        
         UIManager.Instance.SetInteractableLandingButton(false);
         _textTutorial.SetActive(false);
     }
@@ -128,7 +128,7 @@ public class LevelTutorial : LevelBase
             // first update
             SetPhaseAcceleration();
         }
-        if(TutorialPhase.Acceleration == _phase)
+        else if(TutorialPhase.Acceleration == _phase)
         {
             if(1.0f == Player.Instance.GetAbsVelocityRatioX())
             {

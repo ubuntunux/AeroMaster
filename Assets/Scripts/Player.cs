@@ -27,7 +27,7 @@ public class Player : MonoBehaviour
     private float _absVelocityRatioX = 0.0f;
     private float _velocityY = 0.0f;
     private bool _isAcceleration = false;
-    private bool _isBreaking = true;
+    private bool _isLanding = true;
     private bool _goalFrontDirectionFlag = true; 
     private float _frontDirection = 1.0f;
     private bool _isAlive = false;
@@ -97,7 +97,7 @@ public class Player : MonoBehaviour
         }
 
         _isAcceleration = true;
-        _isBreaking = false;        
+        _isLanding = false;        
         _absVelocityX = Constants.VELOCITY_LIMIT_X;
         _absVelocityRatioX = 1.0f;
         _goalFrontDirectionFlag = isRightDirection;
@@ -120,23 +120,23 @@ public class Player : MonoBehaviour
         if(false == _isAcceleration)
         {
             _isAcceleration = true;
-            _isBreaking = false;
+            _isLanding = false;
             _jetEngineStart.Play();
             _jetEngineEnd.Stop();
         }
     }
 
-    public void SetBreaking()
+    public void SetLanding()
     {
         if(false == _isAlive)
         {
             return;
         }
 
-        if(false == _isBreaking)
+        if(false == _isLanding)
         {
             _isAcceleration = false;
-            _isBreaking = true;
+            _isLanding = true;
             _jetEngineStart.Stop();
             _jetEngineEnd.Play();
         }
@@ -183,7 +183,7 @@ public class Player : MonoBehaviour
         }
     }
 
-    public void OnClickBreak()
+    public void OnClickLanding()
     {
         if(null != _callbackOnClickLanding)
         {
@@ -192,7 +192,7 @@ public class Player : MonoBehaviour
 
         if(_controllable)
         {
-            SetBreaking();
+            SetLanding();
         }
     }
 
@@ -260,7 +260,7 @@ public class Player : MonoBehaviour
         _absVelocityRatioX = 0.0f;
         _velocityY = 0.0f;
         _isAcceleration = false;
-        _isBreaking = true;
+        _isLanding = true;
         _goalFrontDirectionFlag = true;
         _frontDirection = 1.0f;
         _isGround = true;
@@ -360,8 +360,8 @@ public class Player : MonoBehaviour
             _absVelocityX = Mathf.Min(Constants.VELOCITY_LIMIT_X, _absVelocityX + Constants.ACCEL_X * Time.deltaTime);
         }
 
-        // Break
-        if(_isBreaking)
+        // Landing
+        if(_isLanding)
         {
             float damping = Constants.ACCEL_X * (_isGround ? 1.0f : 0.5f);
             _absVelocityX = Mathf.Max(0.0f, _absVelocityX - damping * Time.deltaTime);
@@ -388,7 +388,7 @@ public class Player : MonoBehaviour
                 _velocityY = Constants.VELOCITY_LIMIT_Y;
             }
         }
-        else if(0.0f != _velocityY && false == _isBreaking)
+        else if(0.0f != _velocityY && false == _isLanding)
         {
             // maintain altitude
             float sign = Mathf.Sign(_velocityY);

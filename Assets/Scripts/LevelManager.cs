@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEditor;
 
 abstract public class LevelBase: MonoBehaviour
 {
@@ -12,11 +13,13 @@ abstract public class LevelBase: MonoBehaviour
 
 public class LevelManager : MonoBehaviour
 {
-    public GameObject _levelStart;
-    public GameObject _levelTutorial;
+    public GameObject _levelProfilePrefab;
+    public GameObject _levelLobbyPrefab;
+    public GameObject _levelTutorialPrefab;
     
     private static LevelManager _instance;
-    GameObject _previousLevel = null;
+    GameObject _previousLevelPrefab = null;
+    GameObject _currentLevelPrefab = null;
     GameObject _currentLevel = null;
     bool _firstUpdate = true;
 
@@ -34,49 +37,64 @@ public class LevelManager : MonoBehaviour
     }
 
     void Start()
-    {   
+    {
     }
 
-    public void SetCurrentLevelToPreviousLevel()
+    public void GoToLevelProfile()
     {
-        SetCurrentLevel(_previousLevel);
+        SetCurrentLevel(_levelProfilePrefab);
     }
 
-    public void SetCurrentLevel(GameObject level, bool force = false)
+    public void GoToLevelLobby()
     {
-        if(level != _currentLevel || force)
+        SetCurrentLevel(_levelLobbyPrefab);
+    }
+
+    public void StartTutorial()
+    {
+        SetCurrentLevel(_levelTutorialPrefab);
+    }
+
+    public void SetCurrentLevel(GameObject levelPrefab)
+    {
+        if(levelPrefab != _currentLevelPrefab)
         {
             if(null != _currentLevel)
             {
                 _currentLevel.GetComponent<LevelBase>().OnExitLevel();
                 _currentLevel.SetActive(false);
+                Destroy(_currentLevel);
+                _currentLevel = null;
             }
-            _previousLevel = _currentLevel;
-            _currentLevel = level;
 
-            if(null != level)
+            _previousLevelPrefab = _currentLevelPrefab;
+            _currentLevelPrefab = levelPrefab;
+
+            if(null != levelPrefab)
             {
-                level.SetActive(true);
-                level.GetComponent<LevelBase>().OnStartLevel();
+                _currentLevel = Instantiate(levelPrefab, Vector3.zero, Quaternion.identity);
+                _currentLevel.transform.parent = transform;
+                _currentLevel.SetActive(true);
+                _currentLevel.GetComponent<LevelBase>().OnStartLevel();
             }
 
             GameManager.Instance.SetMissionComplete(false);
         }
     }
 
-    public bool IsStartLevel()
+    public bool IsLevelProfile()
     {
-        return _levelStart == _currentLevel;
+        return _levelProfilePrefab == _currentLevelPrefab;
     }
 
-    public void StartTutorial()
+    public bool IsLevelLobby()
     {
-        SetCurrentLevel(_levelTutorial);
+        return _levelLobbyPrefab == _currentLevelPrefab;
     }
 
     public bool IsEndCurrentLevel()
     {
-        return (null != _currentLevel) ? _currentLevel.GetComponent<LevelBase>().IsEndLevel() : true;
+        return (null != _currentLevelPrefab) ? _currentLevelPrefab.GetComponent<LevelBase>().IsEndLevel() : true;
     }
 
     public void ResetLevelManager()
@@ -89,7 +107,7 @@ public class LevelManager : MonoBehaviour
     {
         if(_firstUpdate)
         {
-            SetCurrentLevel(_levelStart);
+            SetCurrentLevel(_levelProfilePrefab);
             _firstUpdate = false;
         }
 
@@ -102,9 +120,9 @@ public class LevelManager : MonoBehaviour
                 // TODO: failed to tutorial
 
                 // End of Tutorial
-                if(_levelTutorial == _currentLevel)
+                if(_levelTutorialPrefab == _currentLevelPrefab)
                 {
-                    SetCurrentLevel(_levelStart);
+                    SetCurrentLevel(_levelLobbyPrefab);
                 }
             }
         }

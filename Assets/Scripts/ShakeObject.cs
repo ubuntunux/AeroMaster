@@ -15,7 +15,7 @@ public class ShakeObject
 
     public void ResetShakeObject()
     {
-        _enableShake = false;
+        SetShakeEnable(false);
         _shakeOffset = new Vector3(0.0f, 0.0f, 0.0f);
         _prevShakeOffset = new Vector3(0.0f, 0.0f, 0.0f);
         _shakeDuration = 0.0f;
@@ -24,9 +24,14 @@ public class ShakeObject
         _shakeRandomTime = 0.0f;
     }
 
+    public void SetShakeEnable(bool enableShake)
+    {
+        _enableShake = enableShake;
+    }
+
     public void SetShake(float shakeDuration, float shakeIntensity, float shakeRandomTerm)
     {
-        _enableShake = true;
+        SetShakeEnable(true);
         _shakeDuration = shakeDuration;
         _shakeTime = shakeDuration;
         _shakeIntensity = shakeIntensity;
@@ -38,7 +43,7 @@ public class ShakeObject
 
     public void UpdateShakeObject(ref Vector3 outShakeOffset)
     {
-        if(_enableShake)
+        if(_enableShake && 0.0f != _shakeIntensity)
         {
             bool isLoop = _shakeDuration <= 0.0f;
             if (isLoop || 0.0f < _shakeTime)

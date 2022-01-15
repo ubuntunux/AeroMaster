@@ -10,6 +10,7 @@ public class MainCamera : MonoBehaviour
     bool _trackingPlayer = false;
     ShakeObject _cameraShake = new ShakeObject();
     ShakeObject _cameraHandMove = new ShakeObject();
+    Vector3 _cameraPosition = Vector3.zero;
 
     // Singleton instantiation
     public static MainCamera Instance
@@ -31,12 +32,32 @@ public class MainCamera : MonoBehaviour
 
     public void ResetMainCamera()
     {
+        SetCameraPosition(Vector3.zero);
         SetTrackingPlayer(true);
-        TrakingPlayer(Vector3.zero);
+        if(_trackingPlayer)
+        {
+            TrakingPlayer(Vector3.zero);
+        }
 
         _cameraShake.ResetShakeObject();
         _cameraHandMove.ResetShakeObject();
-        _cameraHandMove.SetShake(0.0f, 0.5f, 3.0f);
+        
+        SetCameraHandMove();
+    }
+
+    public void SetCameraPosition(Vector3 cameraPosition)
+    {
+        _cameraPosition = cameraPosition;
+    }
+
+    public void SetEnableCameraHandMove(bool enable)
+    {
+        _cameraHandMove.SetShakeEnable(enable);
+    }
+
+    public void SetCameraHandMove(float shakeDuration = 0.0f, float shakeIntensity = 0.5f, float shakeRandomTerm = 3.0f)
+    {
+        _cameraHandMove.SetShake(shakeDuration, shakeIntensity, shakeRandomTerm);
     }
 
     public void SetCameraShakeByDestroy()
@@ -54,31 +75,35 @@ public class MainCamera : MonoBehaviour
 
     void TrakingPlayer(Vector3 cameraOffset)
     {
-        if(_trackingPlayer)
-        {
-            Vector3 cameraPosition = Player.Instance.GetPosition();
-            const float CAMERA_OFFSET_X = 5.0f;
-            const float CAMERA_OFFSET_Y = 2.0f;
-            const float CAMERA_OFFSET_Z = 6.0f;
-            float frontDirection = Player.Instance.GetFrontDirection();
-            float AbsVelocityRatioX = Player.Instance.GetAbsVelocityRatioX();
-            float groundRatio = Mathf.Max(0.0f, Mathf.Min(1.0f, 1.0f - (Player.Instance.GetPosition().y - Constants.GROUND_HEIGHT) * 0.2f));
+        Vector3 cameraPosition = Player.Instance.GetPosition();
+        const float CAMERA_OFFSET_X = 5.0f;
+        const float CAMERA_OFFSET_Y = 2.0f;
+        const float CAMERA_OFFSET_Z = 6.0f;
+        float frontDirection = Player.Instance.GetFrontDirection();
+        float AbsVelocityRatioX = Player.Instance.GetAbsVelocityRatioX();
+        float groundRatio = Mathf.Max(0.0f, Mathf.Min(1.0f, 1.0f - (Player.Instance.GetPosition().y - Constants.GROUND_HEIGHT) * 0.2f));
 
-            cameraPosition.x += AbsVelocityRatioX * frontDirection * CAMERA_OFFSET_X;
-            cameraPosition.y += 1.0f + AbsVelocityRatioX * groundRatio * CAMERA_OFFSET_Y;
-            cameraPosition.z = _initialPosZ - (4.0f + AbsVelocityRatioX * CAMERA_OFFSET_Z);
+        cameraPosition.x += AbsVelocityRatioX * frontDirection * CAMERA_OFFSET_X;
+        cameraPosition.y += 1.0f + AbsVelocityRatioX * groundRatio * CAMERA_OFFSET_Y;
+        cameraPosition.z = _initialPosZ - (4.0f + AbsVelocityRatioX * CAMERA_OFFSET_Z);
 
-            transform.position = cameraPosition + cameraOffset;
-        }
+        transform.position = cameraPosition + cameraOffset;
     }
 
     // Update is called once per frame
     void Update()
     {   
-        Vector3 cameraOffset = new Vector3(0.0f, 0.0f, 0.0f);
+        Vector3 cameraOffset = Vector3.zero;
         _cameraShake.UpdateShakeObject(ref cameraOffset);
         _cameraHandMove.UpdateShakeObject(ref cameraOffset);
 
-        TrakingPlayer(cameraOffset);        
+        if(_trackingPlayer)
+        {
+            TrakingPlayer(cameraOffset);
+        }
+        else
+        {
+            transform.position = _cameraPosition + cameraOffset;
+        }
     }
 }

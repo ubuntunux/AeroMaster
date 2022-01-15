@@ -68,6 +68,12 @@ public class UIManager : MonoBehaviour
 
     void PopupExit(bool open)
     {
+        if(open && LevelManager.Instance.IsLevelLobby())
+        {
+            GameManager.Instance.RunBack();
+            return;
+        }
+
         _layeyExit.SetActive(open);
         GameManager.Instance.SetPause(open);
     }

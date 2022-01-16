@@ -7,9 +7,14 @@ public class LevelLobby : LevelBase
     bool _isFirstUpdate = true;
     bool _backUpShowControllerUI = false;
 
-    public void OnClickStart()
+    public void OnClickTutorial()
     {
         LevelManager.Instance.StartTutorial();
+    }
+
+    public void OnClickMission()
+    {
+        LevelManager.Instance.StartMission();
     }
 
     override public void OnStartLevel()

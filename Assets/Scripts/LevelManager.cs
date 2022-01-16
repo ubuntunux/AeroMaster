@@ -16,6 +16,7 @@ public class LevelManager : MonoBehaviour
     public GameObject _levelProfilePrefab;
     public GameObject _levelLobbyPrefab;
     public GameObject _levelTutorialPrefab;
+    public GameObject _levelMissionPrefab;
     
     private static LevelManager _instance;
     GameObject _previousLevelPrefab = null;
@@ -55,6 +56,11 @@ public class LevelManager : MonoBehaviour
         SetCurrentLevel(_levelTutorialPrefab);
     }
 
+    public void StartMission()
+    {
+        SetCurrentLevel(_levelMissionPrefab);
+    }
+
     public void SetCurrentLevel(GameObject levelPrefab)
     {
         if(levelPrefab != _currentLevelPrefab)
@@ -76,9 +82,9 @@ public class LevelManager : MonoBehaviour
                 _currentLevel.transform.parent = transform;
                 _currentLevel.SetActive(true);
                 _currentLevel.GetComponent<LevelBase>().OnStartLevel();
-            }
 
-            GameManager.Instance.SetMissionComplete(false);
+                GameManager.Instance.SetLevelStart();
+            }
         }
     }
 
@@ -119,11 +125,7 @@ public class LevelManager : MonoBehaviour
             {
                 // TODO: failed to tutorial
 
-                // End of Tutorial
-                if(_levelTutorialPrefab == _currentLevelPrefab)
-                {
-                    SetCurrentLevel(_levelLobbyPrefab);
-                }
+                SetCurrentLevel(_levelLobbyPrefab);
             }
         }
     }

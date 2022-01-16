@@ -182,7 +182,7 @@ public class LevelTutorial : LevelBase
         else if(TutorialPhase.Complete == _phase)
         {
             // Mission Complete
-            GameManager.Instance.SetMissionComplete(true);
+            GameManager.Instance.SetLevelEnd();
             _phase = TutorialPhase.Exit;
         }
         else if(TutorialPhase.Exit == _phase)

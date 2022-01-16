@@ -12,7 +12,7 @@ PlayerSettings:
   targetDevice: 2
   useOnDemandResources: 0
   accelerometerFrequency: 60
-  companyName: Enuri Soft
+  companyName: Ubuntunux
   productName: AeroMaster
   defaultCursor: {fileID: 0}
   cursorHotspot: {x: 0, y: 0}
@@ -146,7 +146,7 @@ PlayerSettings:
   androidSupportedAspectRatio: 1
   androidMaxAspectRatio: 2.1
   applicationIdentifier:
-    Android: com.EnuriSoft.AeroMaster
+    Android: com.Ubuntunux.AeroMaster
     Standalone: com.EnuriSoft.AeroMaster
   buildNumber:
     Standalone: 0
@@ -239,8 +239,8 @@ PlayerSettings:
   AndroidTargetArchitectures: 3
   AndroidSplashScreenScale: 0
   androidSplashScreen: {fileID: 0}
-  AndroidKeystoreName: /home/ubuntunux/Work/UnityProjects/enurisoft.keystore
-  AndroidKeyaliasName: enuri soft
+  AndroidKeystoreName: /home/ubuntunux/Work/UnityProjects/ubuntunux.keystore
+  AndroidKeyaliasName: ubuntunux
   AndroidBuildApkPerCpuArchitecture: 0
   AndroidTVCompatibility: 0
   AndroidIsGame: 1

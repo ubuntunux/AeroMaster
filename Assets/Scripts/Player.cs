@@ -49,6 +49,11 @@ public class Player : MonoBehaviour
         }
     }
 
+    public bool isAlive()
+    {
+        return _isAlive;
+    }
+
     public bool GetIsGround()
     {
         return _isGround;

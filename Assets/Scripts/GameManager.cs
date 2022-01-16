@@ -8,12 +8,14 @@ public class GameManager : MonoBehaviour
 {
     public AudioSource _audioSource; //A primary audioSource a large portion of game sounds are passed through
     public AudioMixer _audioMaster;
+    public AudioClip _readyGoAudio;
     public AudioClip _missionCompleteAudio;
+    public AudioClip _gameOverAudio;
     public GameObject _missionCompleteText;    
     private float _masterVolumeStore = 0.0f;
     private float _musicVolumeStore = 0.0f;
     private bool _paused = false;
-    private bool _missionComplete = false;
+    private bool _levelEnded = false;
 
     private static GameManager _instance;
 
@@ -85,22 +87,25 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public void SetMissionComplete(bool missionComplete)
+    public void SetLevelStart()
     {
-        if(missionComplete != _missionComplete)
-        {
-            if(missionComplete)
-            {
-                Player.Instance.SetControllable(false);
-                MainCamera.Instance.SetTrackingPlayer(false);
-                _audioMaster.GetFloat("MusicVolume", out _musicVolumeStore);
-                _audioMaster.SetFloat("MusicVolume", -80.0f);
-                _audioSource.PlayOneShot(_missionCompleteAudio);
-            }
+        _audioMaster.SetFloat("MusicVolume", _musicVolumeStore);
+        //_audioSource.PlayOneShot(_readyGoAudio);
+        _missionCompleteText.SetActive(false);
+        _levelEnded = false;
+    }
 
-            _missionCompleteText.SetActive(missionComplete);
-            _missionComplete = missionComplete;
-        }
+    public void SetLevelEnd(bool isMissionSuccess = true)
+    {
+        Player.Instance.SetControllable(!isMissionSuccess);
+        MainCamera.Instance.SetTrackingPlayer(!isMissionSuccess);
+        _audioMaster.GetFloat("MusicVolume", out _musicVolumeStore);
+        _audioMaster.SetFloat("MusicVolume", -80.0f);
+        _audioSource.PlayOneShot(isMissionSuccess ? _missionCompleteAudio : _gameOverAudio);
+
+        _missionCompleteText.SetActive(true);
+        _missionCompleteText.GetComponent<TextMeshProUGUI>().text = isMissionSuccess ? "Mission Completed" : "Mission Failed";
+        _levelEnded = true;
     }
 
     public void ResetOnChangeLevel(bool controllable, bool invincibility, Vector3 startPoint, bool isFlying = false, bool autoFlyingToRight = true)
@@ -126,7 +131,6 @@ public class GameManager : MonoBehaviour
     public void ResetGameManager()
     {
         SetPause(false);
-        SetMissionComplete(false);
 
         UIManager.Instance.ResetUIManager();
         LevelManager.Instance.ResetLevelManager();

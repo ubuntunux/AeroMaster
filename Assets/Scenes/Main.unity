@@ -1114,7 +1114,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _audioSource: {fileID: 827751235}
   _audioMaster: {fileID: 24100000, guid: b855196f30b3d2bb28c0ab793eb8d16f, type: 2}
+  _readyGoAudio: {fileID: 8300000, guid: 7eaef147d4f102677813f942f974b549, type: 3}
   _missionCompleteAudio: {fileID: 8300000, guid: dd6f14dadbfaa923da553a6bdefd8757, type: 3}
+  _gameOverAudio: {fileID: 8300000, guid: ea2f90f7fe5aae715a54c0dd5321c3c9, type: 3}
   _missionCompleteText: {fileID: 1224631455}
 --- !u!82 &827751235
 AudioSource:
@@ -1471,6 +1473,7 @@ MonoBehaviour:
   _levelProfilePrefab: {fileID: 5517161709339939457, guid: 281d291157cac4da4b4eee6f4b1f3ad3, type: 3}
   _levelLobbyPrefab: {fileID: 2108202433401076990, guid: 83b36b65bb5a90c7e9d5c769a030123a, type: 3}
   _levelTutorialPrefab: {fileID: 2091440942955239843, guid: 579c06c9fcaf9fa2bac9ca5ea62ed90a, type: 3}
+  _levelMissionPrefab: {fileID: 2091440942955239843, guid: f5ca84a47cebf8cc39d844d99e28f585, type: 3}
 --- !u!1 &1059488126
 GameObject:
   m_ObjectHideFlags: 0

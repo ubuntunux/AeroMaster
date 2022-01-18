@@ -8,7 +8,6 @@ public class GameManager : MonoBehaviour
 {
     public AudioSource _audioSource; //A primary audioSource a large portion of game sounds are passed through
     public AudioMixer _audioMaster;
-    public AudioClip _readyGoAudio;
     public AudioClip _missionCompleteAudio;
     public AudioClip _gameOverAudio;
     public GameObject _missionCompleteText;    
@@ -87,10 +86,28 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public void SetLevelStart()
+    public void OnClickToggleMusic()
     {
+        _musicVolumeStore = (_musicVolumeStore < 0.0f) ? 0.0f : -80.0f;
         _audioMaster.SetFloat("MusicVolume", _musicVolumeStore);
-        //_audioSource.PlayOneShot(_readyGoAudio);
+    }
+
+    public void SetLevelStart(bool controllable, bool invincibility, Vector3 startPoint, bool isFlying = false, bool autoFlyingToRight = true)
+    {
+        MainCamera.Instance.ResetMainCamera();
+        Player.Instance.ResetPlayer();        
+        Player.Instance.SetControllable(controllable);
+        Player.Instance.SetInvincibility(invincibility);
+        Player.Instance.SetPosition(startPoint);
+        if(isFlying)
+        {
+            Player.Instance.SetAutoFlying(autoFlyingToRight);
+        }
+
+        bool hideControllerUI = LevelManager.Instance.IsLevelProfile() || LevelManager.Instance.IsLevelLobby();
+        UIManager.Instance.SetVisibleControllerUI(!hideControllerUI);
+
+        _audioMaster.SetFloat("MusicVolume", _musicVolumeStore);
         _missionCompleteText.SetActive(false);
         _levelEnded = false;
     }
@@ -106,19 +123,6 @@ public class GameManager : MonoBehaviour
         _missionCompleteText.SetActive(true);
         _missionCompleteText.GetComponent<TextMeshProUGUI>().text = isMissionSuccess ? "Mission Completed" : "Mission Failed";
         _levelEnded = true;
-    }
-
-    public void ResetOnChangeLevel(bool controllable, bool invincibility, Vector3 startPoint, bool isFlying = false, bool autoFlyingToRight = true)
-    {
-        MainCamera.Instance.ResetMainCamera();
-        Player.Instance.ResetPlayer();        
-        Player.Instance.SetControllable(controllable);
-        Player.Instance.SetInvincibility(invincibility);
-        Player.Instance.SetPosition(startPoint);
-        if(isFlying)
-        {
-            Player.Instance.SetAutoFlying(autoFlyingToRight);
-        }
     }
 
     void Start()

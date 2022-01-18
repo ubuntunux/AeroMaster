@@ -87,7 +87,7 @@ public class MainCamera : MonoBehaviour
         cameraPosition.y += 1.0f + AbsVelocityRatioX * groundRatio * CAMERA_OFFSET_Y;
         cameraPosition.z = _initialPosZ - (4.0f + AbsVelocityRatioX * CAMERA_OFFSET_Z);
 
-        transform.position = cameraPosition + cameraOffset;
+        _cameraPosition = cameraPosition + cameraOffset;
     }
 
     // Update is called once per frame
@@ -101,9 +101,7 @@ public class MainCamera : MonoBehaviour
         {
             TrakingPlayer(cameraOffset);
         }
-        else
-        {
-            transform.position = _cameraPosition + cameraOffset;
-        }
+
+        transform.position = _cameraPosition + cameraOffset;
     }
 }

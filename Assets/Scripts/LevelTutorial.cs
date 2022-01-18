@@ -102,18 +102,20 @@ public class LevelTutorial : LevelBase
 
     override public void OnStartLevel()
     {
+        bool controllable = false;
+        bool invincibility = true;
+        GameManager.Instance.SetLevelStart(controllable, invincibility, GetStartPoint());
+        UIManager.Instance.SetInteractableButtonAll(false);
+
         _exitTime = 0.0f;
         _panelPause.SetActive(false);
         _textTutorial.SetActive(false);
         _phase = TutorialPhase.None;
-
-        bool controllable = false;
-        bool invincibility = true;
-        GameManager.Instance.ResetOnChangeLevel(controllable, invincibility, GetStartPoint());
     }
 
     override public void OnExitLevel()
     {
+        UIManager.Instance.SetInteractableButtonAll(true);
     }
 
     override public bool IsEndLevel()
@@ -187,8 +189,7 @@ public class LevelTutorial : LevelBase
         }
         else if(TutorialPhase.Exit == _phase)
         {
-            const float EXIT_TIME = 3.0f;
-            if(EXIT_TIME <= _exitTime)
+            if(Constants.LEVEL_EXIT_TIME <= _exitTime)
             {
                 _phase = TutorialPhase.End;
             }

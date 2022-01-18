@@ -5,7 +5,6 @@ using UnityEngine;
 public class LevelProfile : LevelBase
 {
     bool _isFirstUpdate = true;
-    bool _backUpShowControllerUI = false;
 
     public void OnClickStart()
     {
@@ -19,14 +18,11 @@ public class LevelProfile : LevelBase
         Vector3 startPosition = new Vector3(0.0f, 10.0f, 0.0f);
         bool isFlying = true;
         bool autoFlyingToRight = true;
-        GameManager.Instance.ResetOnChangeLevel(controllable, invincibility, startPosition, isFlying, autoFlyingToRight);
-        _backUpShowControllerUI = UIManager.Instance.GetVisibleControllerUI();
-        UIManager.Instance.SetVisibleControllerUI(false);
+        GameManager.Instance.SetLevelStart(controllable, invincibility, startPosition, isFlying, autoFlyingToRight);
     }
 
     override public void OnExitLevel()
     {
-        UIManager.Instance.SetVisibleControllerUI(_backUpShowControllerUI);
     }
 
     override public bool IsEndLevel()

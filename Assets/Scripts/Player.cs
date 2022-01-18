@@ -11,6 +11,7 @@ public class Player : MonoBehaviour
     public AudioSource _jetEngineStart;
     public AudioSource _jetEngineEnd;
     public AudioSource _flyingLoop;
+    public AudioSource _radioLoop;
     public AudioSource _jetFlyby;
     public GameObject _afterBurnerParticle;
     public GameObject _destroyFX;
@@ -18,7 +19,7 @@ public class Player : MonoBehaviour
 
     private static Player _instance;
 
-    public delegate void Callback(); 
+    public delegate void Callback();
     private Callback _callbackOnClickGoRight = null;
     private Callback _callbackOnClickGoLeft = null;
     private Callback _callbackOnClickLanding = null;
@@ -247,6 +248,7 @@ public class Player : MonoBehaviour
         _jetEngineStart.Stop();
         _jetEngineEnd.Stop();
         _flyingLoop.Stop();
+        _radioLoop.Pause();
         _jetFlyby.Stop();
     }
 
@@ -278,17 +280,20 @@ public class Player : MonoBehaviour
 
     void UpdateAudios(float absVelocityRatioX)
     {
-        float flyingAudioVolume = absVelocityRatioX;
+        float flyingAudioVolume = _isAlive ? absVelocityRatioX : 0.0f;
         if(false == _flyingLoop.isPlaying && 0.0f < flyingAudioVolume)
         {
             _flyingLoop.Play();
+            _radioLoop.Play();
         }
         else if(_flyingLoop.isPlaying && 0.0f == flyingAudioVolume)
         {
             _flyingLoop.Stop();
+            _radioLoop.Pause();
         }
         
         _flyingLoop.volume = flyingAudioVolume;
+        _radioLoop.volume = flyingAudioVolume;
         _jetFlyby.volume = flyingAudioVolume;
     }
 
@@ -326,6 +331,7 @@ public class Player : MonoBehaviour
             destroyFX.transform.SetParent(transform, false);
             SetVisible(false);
             SetControllable(false);
+            StopAllSound();
             _isAlive = false;
         }
     }

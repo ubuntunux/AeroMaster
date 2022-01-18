@@ -17,4 +17,5 @@ public class Constants : MonoBehaviour
     public const float GROUND_HEIGHT = 0.0f;
     public const float GRAVITY = 9.8f;
     public const float SPEED_FOR_DESTROY = -4.0f;
+    public const float LEVEL_EXIT_TIME = 5.0f;
 }

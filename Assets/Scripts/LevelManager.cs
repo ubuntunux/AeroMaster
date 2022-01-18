@@ -82,8 +82,6 @@ public class LevelManager : MonoBehaviour
                 _currentLevel.transform.parent = transform;
                 _currentLevel.SetActive(true);
                 _currentLevel.GetComponent<LevelBase>().OnStartLevel();
-
-                GameManager.Instance.SetLevelStart();
             }
         }
     }

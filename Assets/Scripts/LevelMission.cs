@@ -22,12 +22,12 @@ public class LevelMission : LevelBase
 
     override public void OnStartLevel()
     {
-        _exitTime = 0.0f;
-        _phase = MissionPhase.None;
-
         bool controllable = true;
         bool invincibility = false;
-        GameManager.Instance.ResetOnChangeLevel(controllable, invincibility, GetStartPoint());
+        GameManager.Instance.SetLevelStart(controllable, invincibility, GetStartPoint());
+
+        _exitTime = 0.0f;
+        _phase = MissionPhase.None;
     }
 
     override public void OnExitLevel()
@@ -97,8 +97,7 @@ public class LevelMission : LevelBase
         }
         else if(MissionPhase.Exit == _phase)
         {
-            const float EXIT_TIME = 3.0f;
-            if(EXIT_TIME <= _exitTime)
+            if(Constants.LEVEL_EXIT_TIME <= _exitTime)
             {
                 _phase = MissionPhase.End;
             }

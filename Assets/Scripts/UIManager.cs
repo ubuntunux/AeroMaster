@@ -15,6 +15,8 @@ public class UIManager : MonoBehaviour
     public GameObject _textVelocityY;
     public GameObject _textAltitude;
     public GameObject _textLanguage;
+    public GameObject _imageMissionComplete;
+    public GameObject _imageMissionFailed;
 
     public GameObject _layerControllerUI;
     public GameObject _layeyExit;
@@ -66,6 +68,12 @@ public class UIManager : MonoBehaviour
         _layerControllerUI.SetActive(show);
     }
 
+    public void ShowMissionCompleteOrFailed(bool show, bool isMissionSuccess)
+    {
+        _imageMissionComplete.SetActive(show && isMissionSuccess);
+        _imageMissionFailed.SetActive(show && false == isMissionSuccess);
+    }
+
     void PopupExit(bool open)
     {
         if(open && LevelManager.Instance.IsLevelLobby())
@@ -102,13 +110,14 @@ public class UIManager : MonoBehaviour
     void Start()
     {
         _textLanguage.GetComponent<TextMeshProUGUI>().text = "Language: " + CultureInfo.CurrentCulture.Name;
-        _layeyExit.SetActive(false);
+        _layeyExit.SetActive(false);        
     }
 
     public void ResetUIManager()
     {
         _layeyExit.SetActive(false);        
         SetInteractableButtonAll(true);
+        ShowMissionCompleteOrFailed(false, false);
     }
 
     void Update()

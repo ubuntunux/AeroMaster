@@ -468,7 +468,7 @@ public class Player : MonoBehaviour
         // update transform
         float invGroundRatio = Mathf.Max(0.0f, Mathf.Min(1.0f, (position.y - Constants.GROUND_HEIGHT) * 0.2f));
         float velocityRatioY = Mathf.Max(-1.0f, Mathf.Min(1.0f, _velocityY / Constants.VELOCITY_LIMIT_Y));
-        float pitch = _absVelocityRatioX * velocityRatioY * invGroundRatio * 35.0f;
+        float pitch = _absVelocityRatioX * velocityRatioY * invGroundRatio * 25.0f;
         float yaw = (_frontDirection * 0.5f + 0.5f) * (_goalFrontDirectionFlag ? -180.0f : 180.0f) + 180.0f;
         float roll = Mathf.Cos(_frontDirection * Mathf.PI * 0.5f) * 90.0f * invGroundRatio;
         transform.localRotation = Quaternion.Euler(roll, yaw, pitch);

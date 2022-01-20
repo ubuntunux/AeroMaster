@@ -9,6 +9,7 @@ abstract public class LevelBase: MonoBehaviour
     abstract public void OnExitLevel();
     abstract public bool IsEndLevel();
     abstract public void UpdateLevel();
+    abstract public int GetMissionTime();
 }
 
 public class LevelManager : MonoBehaviour
@@ -99,6 +100,11 @@ public class LevelManager : MonoBehaviour
     public bool IsEndCurrentLevel()
     {
         return (null != _currentLevelPrefab) ? _currentLevelPrefab.GetComponent<LevelBase>().IsEndLevel() : true;
+    }
+
+    public int GetMissionTime()
+    {
+        return (null == _currentLevel) ? 0 : _currentLevel.GetComponent<LevelBase>().GetMissionTime();
     }
 
     public void ResetLevelManager()

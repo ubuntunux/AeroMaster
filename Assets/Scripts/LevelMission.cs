@@ -19,6 +19,7 @@ public class LevelMission : LevelBase
 
     MissionPhase _phase = MissionPhase.None;
     float _exitTime = 0.0f;
+    float _missionTime = 0.0f;
 
     override public void OnStartLevel()
     {
@@ -37,6 +38,11 @@ public class LevelMission : LevelBase
     override public bool IsEndLevel()
     {
         return MissionPhase.End == _phase;
+    }
+
+    override public int GetMissionTime()
+    {
+        return (int)_missionTime; 
     }
 
     public Vector3 GetStartPoint()
@@ -103,5 +109,7 @@ public class LevelMission : LevelBase
             }
             _exitTime += Time.deltaTime;
         }
+        
+        _missionTime += Time.deltaTime;
     }
 }

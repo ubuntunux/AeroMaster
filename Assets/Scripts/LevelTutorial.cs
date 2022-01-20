@@ -123,6 +123,11 @@ public class LevelTutorial : LevelBase
         return TutorialPhase.End == _phase;
     }
 
+    override public int GetMissionTime()
+    {
+        return 0; 
+    }
+    
     override public void UpdateLevel()
     {
         if(TutorialPhase.None == _phase)

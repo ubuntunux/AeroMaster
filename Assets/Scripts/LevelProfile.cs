@@ -30,6 +30,11 @@ public class LevelProfile : LevelBase
         return false;
     }
 
+    override public int GetMissionTime()
+    {
+        return 0; 
+    }
+
     override public void UpdateLevel()
     {
         if(_isFirstUpdate)

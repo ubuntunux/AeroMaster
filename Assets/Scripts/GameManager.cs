@@ -117,12 +117,19 @@ public class GameManager : MonoBehaviour
         UIManager.Instance.ShowMissionCompleteOrFailed(true, isMissionSuccess);
         _audioMaster.GetFloat("MusicVolume", out _musicVolumeStore);
         _audioMaster.SetFloat("MusicVolume", -80.0f);
-        _audioSource.PlayOneShot(isMissionSuccess ? _missionCompleteAudio : _gameOverAudio);        
+        _audioSource.PlayOneShot(isMissionSuccess ? _missionCompleteAudio : _gameOverAudio);                
         _levelEnded = true;
+
+        // save
+        SaveData.Instance._playerData._score += 1;
+        SaveData.Instance.Save("test");
     }
 
     void Start()
     {
+        // load
+        SaveData.Instance.Load("test");        
+
         _audioMaster.GetFloat("MasterVolume", out _masterVolumeStore);
         _audioMaster.GetFloat("MusicVolume", out _musicVolumeStore);
         ResetGameManager();

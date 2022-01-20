@@ -10,16 +10,19 @@ public class UIManager : MonoBehaviour
     public GameObject _btnGoRight;
     public GameObject _btnGoLeft;
     public GameObject _btnLanding;
-    public GameObject _slideVerticalVelocity;
-    public GameObject _textVelocityX;
-    public GameObject _textVelocityY;
-    public GameObject _textAltitude;
-    public GameObject _textLanguage;
+    public GameObject _slideVerticalVelocity;    
     public GameObject _imageMissionComplete;
     public GameObject _imageMissionFailed;
-
     public GameObject _layerControllerUI;
     public GameObject _layeyExit;
+    public GameObject _textScore;
+    public GameObject _textTime;
+
+    // debug
+    public GameObject _debugTextVelocityX;
+    public GameObject _debugTextVelocityY;
+    public GameObject _debugTextAltitude;
+    public GameObject _debugTextLanguage;    
 
     private static UIManager _instance;
 
@@ -109,7 +112,6 @@ public class UIManager : MonoBehaviour
 
     void Start()
     {
-        _textLanguage.GetComponent<TextMeshProUGUI>().text = "Language: " + CultureInfo.CurrentCulture.Name;
         _layeyExit.SetActive(false);        
     }
 
@@ -127,8 +129,13 @@ public class UIManager : MonoBehaviour
             TogglePopupExit();
         }
 
-        _textVelocityX.GetComponent<TextMeshProUGUI>().text = string.Format("Horizontal Speed: {0:F1}", Player.Instance.GetAbsVelocityX());
-        _textVelocityY.GetComponent<TextMeshProUGUI>().text = string.Format("Vertical Speed: {0:F1}", Player.Instance.GetVelocityY());
-        _textAltitude.GetComponent<TextMeshProUGUI>().text = string.Format("Altitude: {0:F1}", Player.Instance.GetAltitude());
+        _textScore.GetComponent<TextMeshProUGUI>().text = "Score: " + SaveData.Instance._playerData._score.ToString();
+        _textTime.GetComponent<TextMeshProUGUI>().text = "Time: " + LevelManager.Instance.GetMissionTime().ToString();
+
+        // debug
+        _debugTextLanguage.GetComponent<TextMeshProUGUI>().text = "Language: " + CultureInfo.CurrentCulture.Name;
+        _debugTextVelocityX.GetComponent<TextMeshProUGUI>().text = string.Format("Horizontal Speed: {0:F1}", Player.Instance.GetAbsVelocityX());
+        _debugTextVelocityY.GetComponent<TextMeshProUGUI>().text = string.Format("Vertical Speed: {0:F1}", Player.Instance.GetVelocityY());
+        _debugTextAltitude.GetComponent<TextMeshProUGUI>().text = string.Format("Altitude: {0:F1}", Player.Instance.GetAltitude());        
     }
 }

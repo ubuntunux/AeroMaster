@@ -17,14 +17,19 @@ public class UIManager : MonoBehaviour
     public GameObject _layeyExit;
     public GameObject _textScore;
     public GameObject _textTime;
-
+    public GameObject _panelFadeInOut;
+    
     // debug
     public GameObject _debugTextVelocityX;
     public GameObject _debugTextVelocityY;
     public GameObject _debugTextAltitude;
     public GameObject _debugTextLanguage;    
 
-    private static UIManager _instance;
+    private static UIManager _instance;    
+    const float FADE_TIME = 0.5f;
+    const float HALF_FADE_TIME = FADE_TIME / 2.0f;
+    float _fadeTime = 0.0f;
+    GameObject _nextLevelPrefab = null;
 
     // Singleton instantiation
     public static UIManager Instance
@@ -112,7 +117,43 @@ public class UIManager : MonoBehaviour
 
     void Start()
     {
-        _layeyExit.SetActive(false);        
+    }
+
+    public bool CanFadeInOut()
+    {
+        return 0.0f == _fadeTime;
+    }
+
+    public void SetFadeInOut(GameObject levelPrefab)
+    {
+        if(CanFadeInOut() && levelPrefab != _nextLevelPrefab)
+        {
+            _fadeTime = FADE_TIME;
+            _nextLevelPrefab = levelPrefab;
+            _panelFadeInOut.SetActive(true);
+        }
+    }
+
+    void UpdateFadeInOut()
+    {
+        if(0.0f < _fadeTime)
+        {
+            float prevFadeTime = _fadeTime;
+            _fadeTime = Mathf.Max(0.0f, _fadeTime - Time.deltaTime);
+            float fade = 1.0f - Mathf.Abs((_fadeTime / FADE_TIME) * 2.0f - 1.0f);
+            _panelFadeInOut.GetComponent<Image>().color = new Color(0.0f, 0.0f, 0.0f, fade);
+            if(_fadeTime <= 0.0f)
+            {
+                _panelFadeInOut.SetActive(false);
+            }
+
+            // change level
+            if(HALF_FADE_TIME < prevFadeTime && _fadeTime <= HALF_FADE_TIME)
+            {
+                LevelManager.Instance.SetCurrentLevelCallback(_nextLevelPrefab);
+                _nextLevelPrefab = null;
+            }
+        }
     }
 
     public void ResetUIManager()
@@ -128,6 +169,8 @@ public class UIManager : MonoBehaviour
         {
             TogglePopupExit();
         }
+
+        UpdateFadeInOut();
 
         _textScore.GetComponent<TextMeshProUGUI>().text = "Score: " + SaveData.Instance._playerData._score.ToString();
         _textTime.GetComponent<TextMeshProUGUI>().text = "Time: " + LevelManager.Instance.GetMissionTime().ToString();

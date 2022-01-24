@@ -4,9 +4,21 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
+enum AnimationState
+{
+    None,
+    Idle,
+    Flying,
+    Takeoff,
+    Landing
+};
+
 public class Player : MonoBehaviour
 {
     public GameObject _meshObject;
+    private Animator _animator;
+    private AnimationState _animationState = AnimationState.None;
+    private float _landingGearRatio = 0.0f;
 
     public AudioSource _jetEngineStart;
     public AudioSource _jetEngineEnd;
@@ -235,7 +247,7 @@ public class Player : MonoBehaviour
 
     void SetVisible(bool show)
     {
-        _meshObject.GetComponent<MeshRenderer>().enabled = show;
+        _meshObject.SetActive(show);
     }
 
     void SetAfterBurnerEmission(bool emission)
@@ -260,6 +272,7 @@ public class Player : MonoBehaviour
         SetInvincibility(false);
         SetVisible(true);
         SetAfterBurnerEmission(false);
+        SetAnimationState(AnimationState.None);
         StopAllSound();
 
         _autoTakeOff = false;
@@ -276,6 +289,7 @@ public class Player : MonoBehaviour
     
     void Start()
     { 
+        _animator = _meshObject.GetComponent<Animator>();
     }
 
     void UpdateAudios(float absVelocityRatioX)
@@ -415,6 +429,82 @@ public class Player : MonoBehaviour
         }
     }
 
+    void SetAnimationState(AnimationState state)
+    {
+        if(state != _animationState)
+        {
+            Debug.Log(state.ToString());            
+            switch(state)
+            {
+                case AnimationState.Flying:
+                {
+                    _animator.SetTrigger("Flying");
+                } break;
+                case AnimationState.Takeoff:
+                {
+                    _animator.SetTrigger("Takeoff");
+                } break;
+                case AnimationState.Landing:
+                {
+                    _animator.SetTrigger("Landing");
+                } break;
+                default:
+                {
+                    _animator.SetTrigger("Idle");
+                } break;
+            }
+            _animationState = state;
+        }
+    }
+
+    void UpdateAnimationController(Vector3 prevPosition, Vector3 position, bool isGround)
+    {
+        if(0 < _animator.layerCount)
+        {
+            AnimatorStateInfo stateInfo = _animator.GetCurrentAnimatorStateInfo(0);
+            if(AnimationState.None == _animationState)
+            {
+                SetAnimationState(isGround ? AnimationState.Idle : AnimationState.Flying);
+            }
+            else if(AnimationState.Flying == _animationState || AnimationState.Takeoff == _animationState)
+            {
+                if(_isLanding)
+                {
+                    SetAnimationState(AnimationState.Landing);
+                }
+                else if(AnimationState.Takeoff == _animationState && _landingGearRatio == 0.0f)
+                {
+                    SetAnimationState(AnimationState.Flying);
+                }
+            }
+            else if(AnimationState.None == _animationState || AnimationState.Idle == _animationState || AnimationState.Landing == _animationState)
+            {
+                if(false == _isLanding)
+                {
+                    float takeOffAltitude = Constants.GROUND_HEIGHT + Constants.TAKE_OFF_HEIGHT;
+                    if(takeOffAltitude <= position.y)
+                    {
+                        SetAnimationState(AnimationState.Takeoff);
+                    }
+                }
+            }
+
+            // landing gear ratio
+            if(AnimationState.Landing == _animationState)
+            {
+                _landingGearRatio = Mathf.Min(1.0f, (float)stateInfo.normalizedTime / (float)stateInfo.length);
+            }
+            else if(AnimationState.Takeoff == _animationState)
+            {
+                _landingGearRatio = 1.0f - Mathf.Min(1.0f, (float)stateInfo.normalizedTime / (float)stateInfo.length);
+            }
+            else
+            {
+                _landingGearRatio = (AnimationState.Flying == _animationState) ? 0.0f : 1.0f;
+            }
+        }
+    }
+
     void Update()
     {
         if(_isAlive)
@@ -464,6 +554,13 @@ public class Player : MonoBehaviour
 
         UpdateAudios(_absVelocityRatioX);
         UpdateParticles(_absVelocityRatioX);
+        UpdateAnimationController(transform.position, position, _isGround);
+
+        // landing destory
+        if(_isGround && _landingGearRatio < 0.5f)
+        {
+            SetDestroy();
+        }
 
         // update transform
         float invGroundRatio = Mathf.Max(0.0f, Mathf.Min(1.0f, (position.y - Constants.GROUND_HEIGHT) * 0.2f));

@@ -64,6 +64,11 @@ public class LevelManager : MonoBehaviour
 
     public void SetCurrentLevel(GameObject levelPrefab)
     {
+        UIManager.Instance.SetFadeInOut(levelPrefab);
+    }
+
+    public void SetCurrentLevelCallback(GameObject levelPrefab)
+    {
         if(levelPrefab != _currentLevelPrefab)
         {
             if(null != _currentLevel)

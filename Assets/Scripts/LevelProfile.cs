@@ -15,7 +15,8 @@ public class LevelProfile : LevelBase
     {
         bool controllable = false;
         bool invincibility = true;
-        Vector3 startPosition = new Vector3(0.0f, 10.0f, 0.0f);
+        float altitude = Constants.GROUND_HEIGHT + Constants.TAKE_OFF_HEIGHT + 1.0f;
+        Vector3 startPosition = new Vector3(0.0f, altitude, 0.0f);
         bool isFlying = true;
         bool autoFlyingToRight = true;
         GameManager.Instance.SetLevelStart(controllable, invincibility, startPosition, isFlying, autoFlyingToRight);

@@ -130,7 +130,6 @@ public class UIManager : MonoBehaviour
         {
             _fadeTime = FADE_TIME;
             _nextLevelPrefab = levelPrefab;
-            _panelFadeInOut.SetActive(true);
         }
     }
 
@@ -141,10 +140,19 @@ public class UIManager : MonoBehaviour
             float prevFadeTime = _fadeTime;
             _fadeTime = Mathf.Max(0.0f, _fadeTime - Time.deltaTime);
             float fade = 1.0f - Mathf.Abs((_fadeTime / FADE_TIME) * 2.0f - 1.0f);
+            if(LevelManager.Instance.IsNullLevelPrefab())
+            {
+                fade = 1.0f;
+            }
             _panelFadeInOut.GetComponent<Image>().color = new Color(0.0f, 0.0f, 0.0f, fade);
-            if(_fadeTime <= 0.0f)
+
+            if(_panelFadeInOut.activeSelf && _fadeTime <= 0.0f)
             {
                 _panelFadeInOut.SetActive(false);
+            }
+            else if(false == _panelFadeInOut.activeSelf && 0.0f < _fadeTime)
+            {
+                _panelFadeInOut.SetActive(true);
             }
 
             // change level

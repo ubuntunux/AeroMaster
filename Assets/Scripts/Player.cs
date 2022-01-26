@@ -407,25 +407,16 @@ public class Player : MonoBehaviour
         if(0.0f != input.y)
         {
             // flying
-            _velocityY += Constants.ACCEL_Y * _absVelocityRatioX * input.y * Time.deltaTime;
-            if(Constants.VELOCITY_LIMIT_Y < _velocityY)
-            {
-                _velocityY = Constants.VELOCITY_LIMIT_Y;
-            }
+            _velocityY += Constants.ACCEL_Y * _absVelocityRatioX * _absVelocityRatioX * input.y * Time.deltaTime;
+            _velocityY = Mathf.Min(Constants.VELOCITY_LIMIT_Y, Mathf.Max(-Constants.VELOCITY_LIMIT_Y, _velocityY));
         }
         else if(0.0f != _velocityY && false == _isLanding)
         {
             // maintain altitude
             float sign = Mathf.Sign(_velocityY);
             float absVelocityY = Mathf.Abs(_velocityY);
-
-            absVelocityY -= Constants.DAMPING_Y * _absVelocityRatioX * Time.deltaTime;
-            if(absVelocityY < 0.0f)
-            {
-                absVelocityY = 0.0f;
-            }
-
-            _velocityY = (sign < 0.0f) ? -absVelocityY : absVelocityY;
+            absVelocityY = Mathf.Max(0.0f, absVelocityY - Constants.DAMPING_Y * _absVelocityRatioX * Time.deltaTime);
+            _velocityY = absVelocityY * sign;
         }
     }
 
@@ -433,7 +424,6 @@ public class Player : MonoBehaviour
     {
         if(state != _animationState)
         {
-            Debug.Log(state.ToString());            
             switch(state)
             {
                 case AnimationState.Flying:

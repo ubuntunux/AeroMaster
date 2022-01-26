@@ -92,6 +92,11 @@ public class LevelManager : MonoBehaviour
         }
     }
 
+    public bool IsNullLevelPrefab()
+    {
+        return null == _currentLevelPrefab;
+    }
+
     public bool IsLevelProfile()
     {
         return _levelProfilePrefab == _currentLevelPrefab;

@@ -5,6 +5,8 @@ using UnityEditor;
 
 abstract public class LevelBase: MonoBehaviour
 {
+    abstract public string GetMissionTitle();
+    abstract public string GetMissionDetails();
     abstract public void OnStartLevel();
     abstract public void OnExitLevel();
     abstract public bool IsEndLevel();
@@ -52,14 +54,14 @@ public class LevelManager : MonoBehaviour
         SetCurrentLevel(_levelLobbyPrefab);
     }
 
-    public void StartTutorial()
+    public GameObject GetLevelTutorialPrefab()
     {
-        SetCurrentLevel(_levelTutorialPrefab);
+        return _levelTutorialPrefab;
     }
 
-    public void StartMission()
+    public GameObject GetLevelMissionPrefab()
     {
-        SetCurrentLevel(_levelMissionPrefab);
+        return _levelMissionPrefab;
     }
 
     public void SetCurrentLevel(GameObject levelPrefab)

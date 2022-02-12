@@ -1,19 +1,57 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 public class LevelLobby : LevelBase
 {
+    public GameObject _textMissionTitle;
+    public GameObject _textMissionBody;
+
     bool _isFirstUpdate = true;
+    GameObject _levelPrefab = null;
+
+    override public string GetMissionTitle()
+    {
+        return "";
+    }
+
+    override public string GetMissionDetails()
+    {
+        return "";
+    }
 
     public void OnClickTutorial()
     {
-        LevelManager.Instance.StartTutorial();
+        OnClickLevel(LevelManager.Instance.GetLevelTutorialPrefab());
     }
 
     public void OnClickMission()
     {
-        LevelManager.Instance.StartMission();
+        OnClickLevel(LevelManager.Instance.GetLevelMissionPrefab());
+    }
+
+    public void OnClickLevel(GameObject levelPrefab)
+    {
+        if(null != levelPrefab)
+        {
+            _levelPrefab = levelPrefab;
+            LevelBase level = levelPrefab.GetComponent<LevelBase>();
+            _textMissionTitle.GetComponent<TextMeshProUGUI>().text = level.GetMissionTitle();
+            _textMissionBody.GetComponent<TextMeshProUGUI>().text = level.GetMissionDetails();
+        }
+    }
+
+    public void OnClickStartLevel()
+    {
+        if(null != _levelPrefab)
+        {
+            LevelManager.Instance.SetCurrentLevel(_levelPrefab);
+        }
+    }
+
+    public void OnClickCancleLevel()
+    {
     }
 
     override public void OnStartLevel()
@@ -26,7 +64,6 @@ public class LevelLobby : LevelBase
         // Set Camera
         MainCamera.Instance.SetTrackingPlayer(false);
         MainCamera.Instance.SetCameraPosition(new Vector3(-1.0f, 1.0f, -3.0f));
-        MainCamera.Instance.SetCameraHandMove(0.0f, 0.1f, 5.0f);
     }
 
     override public void OnExitLevel()

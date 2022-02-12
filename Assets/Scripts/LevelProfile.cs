@@ -6,6 +6,16 @@ public class LevelProfile : LevelBase
 {
     bool _isFirstUpdate = true;
 
+    override public string GetMissionTitle()
+    {
+        return "";
+    }
+
+    override public string GetMissionDetails()
+    {
+        return "";
+    }
+
     public void OnClickStart()
     {
         LevelManager.Instance.GoToLevelLobby();

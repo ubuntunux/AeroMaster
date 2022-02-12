@@ -16,10 +16,24 @@ public class LevelMission : LevelBase
 {
     public GameObject _start;
     public GameObject _goal;
+    [TextArea]
+    public string _textMissionTitle;
+    [TextArea]
+    public string _textMissionDetail;
 
     MissionPhase _phase = MissionPhase.None;
     float _exitTime = 0.0f;
     float _missionTime = 0.0f;
+
+    override public string GetMissionTitle()
+    {
+        return _textMissionTitle;
+    }
+
+    override public string GetMissionDetails()
+    {
+        return _textMissionDetail;
+    }
 
     override public void OnStartLevel()
     {

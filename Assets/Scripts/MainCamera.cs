@@ -6,10 +6,10 @@ public class MainCamera : MonoBehaviour
 {
     private static MainCamera _instance;
 
-    float _initialPosZ = 0.0f;
+    float _initialPosZ = -4.0f;
     bool _trackingPlayer = false;
-    ShakeObject _cameraShake = new ShakeObject();
-    ShakeObject _cameraHandMove = new ShakeObject();
+    BezierShakeObject _cameraShake = new BezierShakeObject();
+    BezierShakeObject _cameraHandMove = new BezierShakeObject();
     Vector3 _cameraPosition = Vector3.zero;
 
     // Singleton instantiation
@@ -42,7 +42,7 @@ public class MainCamera : MonoBehaviour
         _cameraShake.ResetShakeObject();
         _cameraHandMove.ResetShakeObject();
         
-        SetCameraHandMove();
+        SetCameraHandMove(0.0f, 0.5f, 5.0f);
     }
 
     public void SetCameraPosition(Vector3 cameraPosition)
@@ -55,7 +55,7 @@ public class MainCamera : MonoBehaviour
         _cameraHandMove.SetShakeEnable(enable);
     }
 
-    public void SetCameraHandMove(float shakeDuration = 0.0f, float shakeIntensity = 0.5f, float shakeRandomTerm = 3.0f)
+    public void SetCameraHandMove(float shakeDuration, float shakeIntensity, float shakeRandomTerm)
     {
         _cameraHandMove.SetShake(shakeDuration, shakeIntensity, shakeRandomTerm);
     }
@@ -85,7 +85,7 @@ public class MainCamera : MonoBehaviour
 
         cameraPosition.x += AbsVelocityRatioX * frontDirection * CAMERA_OFFSET_X;
         cameraPosition.y += 1.0f + AbsVelocityRatioX * groundRatio * CAMERA_OFFSET_Y;
-        cameraPosition.z = _initialPosZ - (4.0f + AbsVelocityRatioX * CAMERA_OFFSET_Z);
+        cameraPosition.z = _initialPosZ - AbsVelocityRatioX * CAMERA_OFFSET_Z;
 
         _cameraPosition = cameraPosition + cameraOffset;
     }
@@ -95,7 +95,9 @@ public class MainCamera : MonoBehaviour
     {   
         Vector3 cameraOffset = Vector3.zero;
         _cameraShake.UpdateShakeObject(ref cameraOffset);
-        _cameraHandMove.UpdateShakeObject(ref cameraOffset);
+
+        float handMoveIntensity = Player.Instance.GetAbsVelocityRatioX() * 0.8f + 0.2f;
+        _cameraHandMove.UpdateShakeObject(ref cameraOffset, handMoveIntensity);
 
         if(_trackingPlayer)
         {

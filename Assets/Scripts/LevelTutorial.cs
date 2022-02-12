@@ -24,6 +24,21 @@ public class LevelTutorial : LevelBase
     TutorialPhase _phase = TutorialPhase.None;
     float _exitTime = 0.0f;
 
+    [TextArea]
+    public string _textMissionTitle;
+    [TextArea]
+    public string _textMissionDetail;
+
+    override public string GetMissionTitle()
+    {
+        return _textMissionTitle;
+    }
+
+    override public string GetMissionDetails()
+    {
+        return _textMissionDetail;
+    }
+
     public Vector3 GetStartPoint()
     {
         float heightHalf = _start.GetComponent<MeshRenderer>().bounds.size.y * 0.5f;

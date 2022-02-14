@@ -18,6 +18,7 @@ public class UIManager : MonoBehaviour
     public GameObject _textScore;
     public GameObject _textTime;
     public GameObject _panelFadeInOut;
+    public GameObject _textWindow;
     
     // debug
     public GameObject _debugTextVelocityX;
@@ -117,6 +118,11 @@ public class UIManager : MonoBehaviour
 
     void Start()
     {
+    }
+
+    public void SetCharacterText(Characters character, string text)
+    {
+        _textWindow.GetComponent<TextManager>().SetCharacterText(character, text);
     }
 
     public bool CanFadeInOut()

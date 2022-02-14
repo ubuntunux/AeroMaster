@@ -20,6 +20,8 @@ public class LevelMission : LevelBase
     public string _textMissionTitle;
     [TextArea]
     public string _textMissionDetail;
+    [TextArea]
+    public string[] _textScripts;
 
     MissionPhase _phase = MissionPhase.None;
     float _exitTime = 0.0f;
@@ -93,6 +95,8 @@ public class LevelMission : LevelBase
     {
         if(MissionPhase.None == _phase)
         {
+            // first update
+            UIManager.Instance.SetCharacterText(Characters.Operator, _textScripts[0]);
             _phase = MissionPhase.MissionObjective;
         }
         else if(MissionPhase.MissionObjective == _phase)

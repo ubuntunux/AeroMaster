@@ -28,6 +28,8 @@ public class LevelTutorial : LevelBase
     public string _textMissionTitle;
     [TextArea]
     public string _textMissionDetail;
+    [TextArea]
+    public string[] _textScripts;
 
     override public string GetMissionTitle()
     {
@@ -148,6 +150,7 @@ public class LevelTutorial : LevelBase
         if(TutorialPhase.None == _phase)
         {
             // first update
+            UIManager.Instance.SetCharacterText(Characters.Operator, _textScripts[0]);
             SetPhaseAcceleration();
         }
         else if(TutorialPhase.Acceleration == _phase)

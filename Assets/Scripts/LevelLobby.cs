@@ -7,6 +7,7 @@ public class LevelLobby : LevelBase
 {
     public GameObject _textMissionTitle;
     public GameObject _textMissionBody;
+    public GameObject _layerMissionDetail;
 
     bool _isFirstUpdate = true;
     GameObject _levelPrefab = null;
@@ -35,6 +36,8 @@ public class LevelLobby : LevelBase
     {
         if(null != levelPrefab)
         {
+            _layerMissionDetail.SetActive(true);
+
             _levelPrefab = levelPrefab;
             LevelBase level = levelPrefab.GetComponent<LevelBase>();
             _textMissionTitle.GetComponent<TextMeshProUGUI>().text = level.GetMissionTitle();
@@ -52,10 +55,13 @@ public class LevelLobby : LevelBase
 
     public void OnClickCancleLevel()
     {
+        _layerMissionDetail.SetActive(false);
     }
 
     override public void OnStartLevel()
     {
+        _layerMissionDetail.SetActive(false);
+        
         bool controllable = false;
         bool invincibility = true;
         Vector3 startPosition = new Vector3(0.0f, 0.0f, 0.0f);

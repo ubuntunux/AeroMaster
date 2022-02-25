@@ -5,6 +5,15 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
+public enum FingerTarget
+{
+    None,
+    GoLeft,
+    Landing,
+    GoRight,
+    VerticalVelocity,
+};
+
 public class UIManager : MonoBehaviour
 {
     public GameObject _btnGoRight;
@@ -19,6 +28,12 @@ public class UIManager : MonoBehaviour
     public GameObject _textTime;
     public GameObject _panelFadeInOut;
     public GameObject _textWindow;
+    public GameObject _imageFinger;
+
+    // subject text
+    public GameObject _textSubject;
+    float _totalSubjectTextTime = 3.0f;
+    float _subjectTime = 0.0f;    
     
     // debug
     public GameObject _debugTextVelocityX;
@@ -31,6 +46,7 @@ public class UIManager : MonoBehaviour
     const float HALF_FADE_TIME = FADE_TIME / 2.0f;
     float _fadeTime = 0.0f;
     GameObject _nextLevelPrefab = null;
+    GameObject _fingerTarget = null;
 
     // Singleton instantiation
     public static UIManager Instance
@@ -43,6 +59,32 @@ public class UIManager : MonoBehaviour
             }
             return _instance;
         }
+    }
+
+    public void SetFingerTarget(FingerTarget target)
+    {
+        _imageFinger.SetActive(FingerTarget.None != target);
+
+        switch(target)
+        {
+            case FingerTarget.GoLeft:
+                _fingerTarget = _btnGoLeft;
+                break;
+            case FingerTarget.Landing:
+                _fingerTarget = _btnLanding;
+                break;
+            case FingerTarget.GoRight:
+                _fingerTarget = _btnGoRight;
+                break;
+            case FingerTarget.VerticalVelocity:
+                _fingerTarget = _slideVerticalVelocity;
+                break;
+            default:
+                _fingerTarget = null;
+                break;
+        }
+
+        UpdateFingerTarget();
     }
 
     public void SetInteractableGoRightButton(bool interactable)
@@ -120,11 +162,33 @@ public class UIManager : MonoBehaviour
     {
     }
 
+    // Text Window
+    public bool IsTextWindowActivated()
+    {
+        return _textWindow.GetComponent<TextManager>().IsActivated();
+    }
+
     public void SetCharacterText(Characters character, string text)
     {
         _textWindow.GetComponent<TextManager>().SetCharacterText(character, text);
     }
+    
+    public void ResetCharacterText()
+    {
+        _textWindow.GetComponent<TextManager>().ResetCharacterText();
+    }
 
+    public bool GetReadTextDone()
+    {
+        return _textWindow.GetComponent<TextManager>().GetReadTextDone();
+    }
+    
+    public void SetTextWindowDone()
+    {
+        _textWindow.GetComponent<TextManager>().SetDone();
+    }
+
+    // Fade Screen
     public bool CanFadeInOut()
     {
         return 0.0f == _fadeTime;
@@ -136,6 +200,33 @@ public class UIManager : MonoBehaviour
         {
             _fadeTime = FADE_TIME;
             _nextLevelPrefab = levelPrefab;
+        }
+    }
+
+    void UpdateFingerTarget()
+    {
+        if(null != _fingerTarget)
+        {
+            Vector3 position = _fingerTarget.transform.position;
+            float scale = 1.0f;
+            float opacity = 1.0f;
+
+            if(_slideVerticalVelocity == _fingerTarget)
+            {
+                float slide = (Time.time * 1.0f) % 1.0f;
+                position.y += Mathf.SmoothStep(0.0f, 100.0f, slide);
+                opacity = Mathf.SmoothStep(0.0f, 1.0f, 1.0f - slide);
+            }
+            else
+            {
+                float t = Mathf.Sin(Time.time * 5.0f) * 0.5f + 0.5f;
+                scale = Mathf.Lerp(1.0f, 1.5f, t);
+                opacity = 1.0f - t;
+            }
+
+            _imageFinger.transform.position = position;
+            _imageFinger.transform.localScale = new Vector3(scale, scale, scale);
+            _imageFinger.GetComponent<Image>().color = new Color(1.0f, 1.0f, 1.0f, opacity);
         }
     }
 
@@ -170,11 +261,40 @@ public class UIManager : MonoBehaviour
         }
     }
 
+    public bool CheckSubjectTextDone()
+    {
+        return _subjectTime <= 0.0f;
+    }
+
+    public void SetSubjectText(string subject)
+    {
+        bool isEmpty = 0 == subject.Length;
+        _textSubject.SetActive(!isEmpty);
+        _textSubject.GetComponent<TextMeshProUGUI>().text = "- " + subject + " -";
+        _subjectTime = isEmpty ? 0.0f : _totalSubjectTextTime;        
+    }
+
+    public void UpdateSubjectText()
+    {
+        if(0.0f < _subjectTime)
+        {
+            float opacity = (1.0f - Mathf.Min(1.0f, Mathf.Abs((_subjectTime / _totalSubjectTextTime) - 0.5f) * 2.0f)) * 2.0f;
+            _textSubject.GetComponent<TextMeshProUGUI>().color = new Color(1.0f, 1.0f, 1.0f, opacity);
+            _subjectTime -= Time.deltaTime;
+            if(CheckSubjectTextDone())
+            {
+                _textSubject.SetActive(false);
+            }
+        }
+    }
+
     public void ResetUIManager()
     {
-        _layeyExit.SetActive(false);        
+        _layeyExit.SetActive(false);
+        SetFingerTarget(FingerTarget.None);
         SetInteractableButtonAll(true);
         ShowMissionCompleteOrFailed(false, false);
+        SetSubjectText("");
     }
 
     void Update()
@@ -185,6 +305,8 @@ public class UIManager : MonoBehaviour
         }
 
         UpdateFadeInOut();
+        UpdateFingerTarget();
+        UpdateSubjectText();
 
         _textScore.GetComponent<TextMeshProUGUI>().text = "Score: " + SaveData.Instance._playerData._score.ToString();
         _textTime.GetComponent<TextMeshProUGUI>().text = "Time: " + LevelManager.Instance.GetMissionTime().ToString();

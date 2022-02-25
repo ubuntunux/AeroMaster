@@ -73,6 +73,8 @@ public class LevelManager : MonoBehaviour
     {
         if(levelPrefab != _currentLevelPrefab)
         {
+            UIManager.Instance.ResetCharacterText();
+
             if(null != _currentLevel)
             {
                 _currentLevel.GetComponent<LevelBase>().OnExitLevel();

@@ -45,6 +45,11 @@ public class GameManager : MonoBehaviour
     }
 #endif
 
+    public bool GetPaused()
+    {
+        return _paused;
+    }
+
     public void SetPause(bool pause)
     {
         if(pause == _paused)

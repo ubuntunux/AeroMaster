@@ -182,7 +182,7 @@ public class Player : MonoBehaviour
             _callbackOnClickGoRight();
         }
 
-        if(_controllable)
+        if(GetControllable())
         {
             SetAccleration(true);
         }
@@ -195,7 +195,7 @@ public class Player : MonoBehaviour
             _callbackOnClickGoLeft();
         }
 
-        if(_controllable)
+        if(GetControllable())
         {
             SetAccleration(false);
         }
@@ -208,7 +208,7 @@ public class Player : MonoBehaviour
             _callbackOnClickLanding();
         }
 
-        if(_controllable)
+        if(GetControllable())
         {
             SetLanding();
         }
@@ -325,6 +325,11 @@ public class Player : MonoBehaviour
         }
     }
 
+    public bool GetControllable()
+    {
+        return _controllable && false == UIManager.Instance.GetVisibleControllerUI();
+    }
+
     public void SetControllable(bool controllable)
     {
         _controllable = controllable;
@@ -350,19 +355,24 @@ public class Player : MonoBehaviour
         }
     }
 
-    void ControllShip()
+    public void GetInputDelta(ref Vector2 input)
     {
-        Vector2 input = Vector2.zero;
-        if(_controllable)
-        {
         #if UNITY_ANDROID
-            input = GameManager.Instance.GetAltitudeTouchDelta() * Constants.TOUCH_DELTA;
+            input = GameManager.Instance.GetAltitudeTouchDelta();
         #elif UNITY_IPHONE
             // todo
         #else
             input.x = Input.GetAxis("Horizontal");
             input.y = Input.GetAxis("Vertical");
         #endif
+    }
+
+    void ControllShip()
+    {
+        Vector2 input = Vector2.zero;
+        if(GetControllable())
+        {
+            GetInputDelta(ref input);
         }
 
         if(_autoTakeOff)

@@ -59,6 +59,6 @@ sysinfo.txt
 crashlytics-build.properties
 
 # Custom
-.Bin/**
-.Externals/**
+Externals/
+Bin/
 *.png~

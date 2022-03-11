@@ -327,7 +327,7 @@ public class Player : MonoBehaviour
 
     public bool GetControllable()
     {
-        return _controllable && false == UIManager.Instance.GetVisibleControllerUI();
+        return _controllable && UIManager.Instance.GetVisibleControllerUI();
     }
 
     public void SetControllable(bool controllable)

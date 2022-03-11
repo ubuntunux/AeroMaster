@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.30501333, g: 0.48562843, b: 0.6339863, a: 1}
+  m_IndirectSpecularColor: {r: 0.30625236, g: 0.48445678, b: 0.6305381, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -344,7 +344,7 @@ RectTransform:
   - {fileID: 1511630056}
   - {fileID: 1146103027}
   m_Father: {fileID: 1907106175}
-  m_RootOrder: 3
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -3177,6 +3177,11 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1315190246}
   m_CullTransparentMesh: 1
+--- !u!1 &1357947721 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2141925536877505960, guid: d5ed31b79860e5d78a13972c7e365443, type: 3}
+  m_PrefabInstance: {fileID: 2391385423615818747}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1426999754
 GameObject:
   m_ObjectHideFlags: 0
@@ -3832,7 +3837,7 @@ RectTransform:
   m_Children:
   - {fileID: 1315190247}
   m_Father: {fileID: 1907106175}
-  m_RootOrder: 2
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 1}
   m_AnchorMax: {x: 1, y: 1}
@@ -4546,9 +4551,9 @@ RectTransform:
   m_Children:
   - {fileID: 1780847178}
   - {fileID: 1746310802}
+  - {fileID: 946621490}
   - {fileID: 1737465343}
   - {fileID: 215543228}
-  - {fileID: 946621490}
   - {fileID: 488160981}
   - {fileID: 528317417}
   m_Father: {fileID: 183068029}
@@ -5159,7 +5164,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4850303150210409721, guid: e7a7eaa77d9c28b45a1b67d01cb019a5, type: 3}
       propertyPath: m_RootOrder
-      value: 4
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 4850303150210409721, guid: e7a7eaa77d9c28b45a1b67d01cb019a5, type: 3}
       propertyPath: m_AnchorMax.x
@@ -5259,10 +5264,6 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2391385423701635737, guid: d5ed31b79860e5d78a13972c7e365443, type: 3}
-      propertyPath: _destroyFX
-      value: 
-      objectReference: {fileID: 100006, guid: f9f368202392950c7b3ffbf2001be8b2, type: 3}
-    - target: {fileID: 2391385423701635737, guid: d5ed31b79860e5d78a13972c7e365443, type: 3}
       propertyPath: _jetEngineLoop
       value: 
       objectReference: {fileID: 8300000, guid: 5e245f0ab24bab8c5a1002a736bcde5f, type: 3}
@@ -5274,6 +5275,10 @@ PrefabInstance:
       propertyPath: _textVelocityY
       value: 
       objectReference: {fileID: 1253569246}
+    - target: {fileID: 2391385423701635737, guid: d5ed31b79860e5d78a13972c7e365443, type: 3}
+      propertyPath: _afterBurnerParticle
+      value: 
+      objectReference: {fileID: 1357947721}
     - target: {fileID: 2391385423701635737, guid: d5ed31b79860e5d78a13972c7e365443, type: 3}
       propertyPath: _sliderVerticalVelocity
       value: 

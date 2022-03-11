@@ -64,9 +64,9 @@ public class LevelManager : MonoBehaviour
         return _levelMissionPrefab;
     }
 
-    public void SetCurrentLevel(GameObject levelPrefab)
+    public void SetCurrentLevel(GameObject levelPrefab, float fadeInRatio = 1.0f)
     {
-        UIManager.Instance.SetFadeInOut(levelPrefab);
+        UIManager.Instance.SetFadeInOutAndLevelChange(levelPrefab, fadeInRatio);
     }
 
     public void SetCurrentLevelCallback(GameObject levelPrefab)
@@ -124,7 +124,9 @@ public class LevelManager : MonoBehaviour
     public void ResetLevelManager()
     {
         _firstUpdate = true;
-        SetCurrentLevel(null);
+        // black screen
+        float fadeInRatio = 0.51f;
+        SetCurrentLevel(null, fadeInRatio);
     }
 
     void Update()

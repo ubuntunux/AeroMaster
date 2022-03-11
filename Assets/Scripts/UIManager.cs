@@ -41,12 +41,16 @@ public class UIManager : MonoBehaviour
     public GameObject _debugTextAltitude;
     public GameObject _debugTextLanguage;    
 
-    private static UIManager _instance;    
+    private static UIManager _instance;
+    GameObject _fingerTarget = null;
     const float FADE_TIME = 0.5f;
     const float HALF_FADE_TIME = FADE_TIME / 2.0f;
+    
     float _fadeTime = 0.0f;
     GameObject _nextLevelPrefab = null;
-    GameObject _fingerTarget = null;
+
+    public delegate void Callback();
+    private Callback _callbackOnFadeOut = null;
 
     // Singleton instantiation
     public static UIManager Instance
@@ -116,6 +120,7 @@ public class UIManager : MonoBehaviour
 
     public void SetVisibleControllerUI(bool show)
     {
+        Debug.Log("SetVisibleControllerUI: " + show.ToString());
         _layerControllerUI.SetActive(show);
     }
 
@@ -168,6 +173,11 @@ public class UIManager : MonoBehaviour
         return _textWindow.GetComponent<TextManager>().IsActivated();
     }
 
+    public TextManager GetTextWindow()
+    {
+        return _textWindow.GetComponent<TextManager>();
+    }
+
     public void SetCharacterText(Characters character, string text)
     {
         _textWindow.GetComponent<TextManager>().SetCharacterText(character, text);
@@ -182,11 +192,6 @@ public class UIManager : MonoBehaviour
     {
         return _textWindow.GetComponent<TextManager>().GetReadTextDone();
     }
-    
-    public void SetTextWindowDone()
-    {
-        _textWindow.GetComponent<TextManager>().SetDone();
-    }
 
     // Fade Screen
     public bool CanFadeInOut()
@@ -194,13 +199,19 @@ public class UIManager : MonoBehaviour
         return 0.0f == _fadeTime;
     }
 
-    public void SetFadeInOut(GameObject levelPrefab)
+    public void SetFadeInOutAndLevelChange(GameObject levelPrefab, float fadeInRatio = 1.0f)
     {
         if(CanFadeInOut() && levelPrefab != _nextLevelPrefab)
         {
-            _fadeTime = FADE_TIME;
+            _fadeTime = FADE_TIME * fadeInRatio;
             _nextLevelPrefab = levelPrefab;
         }
+    }
+
+    public void SetFadeInOut(Callback callbackOnFadeOut = null)
+    {
+        _fadeTime = FADE_TIME;
+        _callbackOnFadeOut = callbackOnFadeOut;
     }
 
     void UpdateFingerTarget()
@@ -252,11 +263,20 @@ public class UIManager : MonoBehaviour
                 _panelFadeInOut.SetActive(true);
             }
 
-            // change level
+            // fade out event
             if(HALF_FADE_TIME < prevFadeTime && _fadeTime <= HALF_FADE_TIME)
             {
-                LevelManager.Instance.SetCurrentLevelCallback(_nextLevelPrefab);
-                _nextLevelPrefab = null;
+                if(null != _callbackOnFadeOut)
+                {
+                    _callbackOnFadeOut();
+                    _callbackOnFadeOut = null;
+                }
+                else
+                {
+                    // change level
+                    LevelManager.Instance.SetCurrentLevelCallback(_nextLevelPrefab);
+                    _nextLevelPrefab = null;
+                }
             }
         }
     }

@@ -81,33 +81,30 @@ public class ActorScriptsPages
 
     public bool CheckCurrentScriptReadDoneAndUpdateScript()
     {
-        bool isTextWindowActivated = UIManager.Instance.IsTextWindowActivated();
-        if(isTextWindowActivated)
+        TextManager textManager = UIManager.Instance.GetTextWindow();
+        if(textManager.GetReadTextAllDone())
         {
-            return false;
-        }
-
-        if(_pageIndex < _actorScriptsPages.Count)
-        {
-            if(_scriptIndex < _actorScriptsPages[_pageIndex].Count)
+            if(_pageIndex < _actorScriptsPages.Count)
             {
-                ActorScript actorScript = _actorScriptsPages[_pageIndex][_scriptIndex];
-                UIManager.Instance.SetCharacterText(actorScript._actor, actorScript._script);
-                ++_scriptIndex;
-                return false;
-            }
-            else
-            {
-                _scriptIndex = 0;
-                ++_pageIndex;
-
-                if(_actorScriptsPages.Count == _pageIndex)
+                if(_scriptIndex < _actorScriptsPages[_pageIndex].Count)
                 {
-                    UIManager.Instance.SetTextWindowDone();
+                    ActorScript actorScript = _actorScriptsPages[_pageIndex][_scriptIndex];
+                    UIManager.Instance.SetCharacterText(actorScript._actor, actorScript._script);
+                    ++_scriptIndex;
+                }
+                else
+                {
+                    _scriptIndex = 0;
+                    ++_pageIndex;
+
+                    if(_actorScriptsPages.Count == _pageIndex)
+                    {
+                        textManager.SetDone();
+                    }
                 }
             }
         }
-        return true;
+        return !textManager.IsActivated();
     }
 };
 
@@ -124,7 +121,8 @@ public class TextManager : MonoBehaviour
     List<string> _textList = new List<string>();
     float _textTime = 0.0f;
     int _pageIndex = 0;
-    bool _readTextDone = true;
+    bool _readTextDone = false;
+    bool _readTextAllDone = false;
 
     // constants
     float _textSpeed = 50.0f;
@@ -136,9 +134,19 @@ public class TextManager : MonoBehaviour
         return gameObject.activeSelf;
     }
 
+    public void SetActive(bool active)
+    {
+        gameObject.SetActive(active);
+    }
+
     public bool GetReadTextDone()
     {
         return _readTextDone;
+    }
+
+    public bool GetReadTextAllDone()
+    {
+        return _readTextAllDone;
     }
 
     public void SetCharacterText(Characters character, string text)
@@ -153,6 +161,8 @@ public class TextManager : MonoBehaviour
 
         // reset
         _readTextDone = isEmpty;
+        _readTextAllDone = isEmpty;
+
         _textTime = 0.0f;
         _pageIndex = 0;
         
@@ -193,12 +203,6 @@ public class TextManager : MonoBehaviour
 
         // play prompt sound
         _sndPrompt.Play();
-
-        if(false == isEmpty)
-        {
-            // hide controller
-            UIManager.Instance.SetVisibleControllerUI(false);
-        }
     }
 
     public void ResetCharacterText()
@@ -208,8 +212,7 @@ public class TextManager : MonoBehaviour
 
     public void SetDone()
     {
-        // show controller
-        UIManager.Instance.SetVisibleControllerUI(true);
+        gameObject.SetActive(false);
     }
 
     public void OnClickNext()
@@ -227,8 +230,7 @@ public class TextManager : MonoBehaviour
             }
             else            
             {
-                _readTextDone = true;
-                gameObject.SetActive(false);
+                _readTextAllDone = true;
             }
         }
         else

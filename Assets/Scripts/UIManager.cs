@@ -120,7 +120,6 @@ public class UIManager : MonoBehaviour
 
     public void SetVisibleControllerUI(bool show)
     {
-        Debug.Log("SetVisibleControllerUI: " + show.ToString());
         _layerControllerUI.SetActive(show);
     }
 

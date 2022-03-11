@@ -11,6 +11,7 @@ public class MainCamera : MonoBehaviour
     BezierShakeObject _cameraShake = new BezierShakeObject();
     BezierShakeObject _cameraHandMove = new BezierShakeObject();
     Vector3 _cameraPosition = Vector3.zero;
+    Quaternion _cameraRotation = Quaternion.identity;
 
     // Singleton instantiation
     public static MainCamera Instance
@@ -34,11 +35,11 @@ public class MainCamera : MonoBehaviour
     {
         SetCameraPosition(Vector3.zero);
         SetTrackingPlayer(true);
+
         if(_trackingPlayer)
         {
             TrakingPlayer(Vector3.zero);
         }
-
         _cameraShake.ResetShakeObject();
         _cameraHandMove.ResetShakeObject();
         
@@ -76,17 +77,28 @@ public class MainCamera : MonoBehaviour
     void TrakingPlayer(Vector3 cameraOffset)
     {
         Vector3 cameraPosition = Player.Instance.GetPosition();
-        const float CAMERA_OFFSET_X = 5.0f;
-        const float CAMERA_OFFSET_Y = 2.0f;
-        const float CAMERA_OFFSET_Z = 6.0f;
-        float frontDirection = Player.Instance.GetFrontDirection();
-        float AbsVelocityRatioX = Player.Instance.GetAbsVelocityRatioX();
-        float groundRatio = Mathf.Max(0.0f, Mathf.Min(1.0f, 1.0f - (Player.Instance.GetPosition().y - Constants.GROUND_HEIGHT) * 0.2f));
 
-        cameraPosition.x += AbsVelocityRatioX * frontDirection * CAMERA_OFFSET_X;
-        cameraPosition.y += 1.0f + AbsVelocityRatioX * groundRatio * CAMERA_OFFSET_Y;
-        cameraPosition.z = _initialPosZ - AbsVelocityRatioX * CAMERA_OFFSET_Z;
+        if(LevelManager.Instance.IsLevelLobby())
+        {
+            cameraPosition.x += 2.0f;
+            cameraPosition.y += 2.0f;
+            cameraPosition.z -= 2.0f;
+            _cameraRotation = Quaternion.Euler(25.0f, -45.0f, 0.0f);
+        }
+        else
+        {
+            const float CAMERA_OFFSET_X = 5.0f;
+            const float CAMERA_OFFSET_Y = 2.0f;
+            const float CAMERA_OFFSET_Z = 6.0f;
+            float frontDirection = Player.Instance.GetFrontDirection();
+            float AbsVelocityRatioX = Player.Instance.GetAbsVelocityRatioX();
+            float groundRatio = Mathf.Max(0.0f, Mathf.Min(1.0f, 1.0f - (Player.Instance.GetPosition().y - Constants.GROUND_HEIGHT) * 0.2f));
 
+            cameraPosition.x += AbsVelocityRatioX * frontDirection * CAMERA_OFFSET_X;
+            cameraPosition.y += 1.0f + AbsVelocityRatioX * groundRatio * CAMERA_OFFSET_Y;
+            cameraPosition.z = _initialPosZ - AbsVelocityRatioX * CAMERA_OFFSET_Z;
+            _cameraRotation = Quaternion.identity;
+        }
         _cameraPosition = cameraPosition + cameraOffset;
     }
 
@@ -105,5 +117,6 @@ public class MainCamera : MonoBehaviour
         }
 
         transform.position = _cameraPosition + cameraOffset;
+        transform.rotation = _cameraRotation;
     }
 }

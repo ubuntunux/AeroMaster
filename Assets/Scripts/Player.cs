@@ -15,7 +15,9 @@ enum AnimationState
 
 public class Player : MonoBehaviour
 {
-    public GameObject _meshObject;
+    public GameObject[] _meshObjects;
+    private int _playerModelIndex = 0;
+    private GameObject _meshObject;
     private Animator _animator;
     private AnimationState _animationState = AnimationState.None;
     private float _landingGearRatio = 0.0f;
@@ -25,7 +27,6 @@ public class Player : MonoBehaviour
     public AudioSource _flyingLoop;
     public AudioSource _radioLoop;
     public AudioSource _jetFlyby;
-    public GameObject _afterBurnerParticle;
     public GameObject _destroyFX;
     public GameObject _sliderVerticalVelocity;
 
@@ -250,9 +251,14 @@ public class Player : MonoBehaviour
         _meshObject.SetActive(show);
     }
 
+    bool GetAfterBurnerEmission()
+    {
+        return _meshObject.GetComponent<PlayerShip>().GetAfterBurnerEmission();
+    }
+
     void SetAfterBurnerEmission(bool emission)
     {
-        _afterBurnerParticle.GetComponent<ParticleScript>().SetEmission(emission);
+        _meshObject.GetComponent<PlayerShip>().SetAfterBurnerEmission(emission);
     }
 
     void StopAllSound()
@@ -262,6 +268,11 @@ public class Player : MonoBehaviour
         _flyingLoop.Stop();
         _radioLoop.Pause();
         _jetFlyby.Stop();
+    }
+
+    void Awake()
+    {
+        LoadPlayerShipModel();
     }
 
     public void ResetPlayer()
@@ -287,9 +298,30 @@ public class Player : MonoBehaviour
         _isAlive = true;
     }
     
-    void Start()
-    { 
-        _animator = _meshObject.GetComponent<Animator>();
+    public void SetPlayerShipModel(int index)
+    {
+        if(index < _meshObjects.Length && null != _meshObjects[index])
+        {
+            _playerModelIndex = index;
+
+            LoadPlayerShipModel();
+        }
+    }
+
+    public void LoadPlayerShipModel()
+    {
+        if(_playerModelIndex < _meshObjects.Length)
+        {
+            if(null != _meshObject)
+            {
+                Destroy(_meshObject);
+            }
+
+            _meshObject = Instantiate(_meshObjects[_playerModelIndex]);            
+            _meshObject.transform.parent = transform;
+            _meshObject.transform.localPosition = Vector3.zero;
+            _animator = _meshObject.GetComponent<Animator>();
+        }
     }
 
     void UpdateAudios(float absVelocityRatioX)
@@ -314,7 +346,7 @@ public class Player : MonoBehaviour
     void UpdateParticles(float absVelocityRatioX)
     {
         bool setActive = 0.0f != absVelocityRatioX && _isAlive;
-        bool actived = _afterBurnerParticle.GetComponent<ParticleScript>().isEmission();
+        bool actived = GetAfterBurnerEmission();
         if(setActive && false == actived)
         {
             SetAfterBurnerEmission(true);

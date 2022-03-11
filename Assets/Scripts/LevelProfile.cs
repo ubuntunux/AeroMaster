@@ -16,8 +16,17 @@ public class LevelProfile : LevelBase
         return "";
     }
 
-    public void OnClickStart()
+    public void OnClickProfile0()
     {
+        Player.Instance.SetPlayerShipModel(0);
+
+        LevelManager.Instance.GoToLevelLobby();
+    }
+
+    public void OnClickProfile1()
+    {
+        Player.Instance.SetPlayerShipModel(1);
+        
         LevelManager.Instance.GoToLevelLobby();
     }
 

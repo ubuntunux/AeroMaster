@@ -68,7 +68,7 @@ public class LevelLobby : LevelBase
         GameManager.Instance.SetLevelStart(controllable, invincibility, startPosition);
         
         // Set Camera
-        MainCamera.Instance.SetTrackingPlayer(false);
+        //MainCamera.Instance.SetTrackingPlayer(false);
         MainCamera.Instance.SetCameraPosition(new Vector3(-1.0f, 1.0f, -3.0f));
     }
 

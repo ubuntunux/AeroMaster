@@ -18,15 +18,18 @@ public class LevelProfile : LevelBase
 
     public void OnClickProfile0()
     {
-        Player.Instance.SetPlayerShipModel(0);
-
-        LevelManager.Instance.GoToLevelLobby();
+        OnClickProfile(0);
     }
 
     public void OnClickProfile1()
     {
-        Player.Instance.SetPlayerShipModel(1);
-        
+        OnClickProfile(1);
+    }
+
+    public void OnClickProfile(int profileIndex)
+    {
+        Player.Instance.SetPlayerShipModel(profileIndex);
+        SaveData.Instance.Save(Constants.DefaultDataName);
         LevelManager.Instance.GoToLevelLobby();
     }
 
@@ -34,7 +37,7 @@ public class LevelProfile : LevelBase
     {
         bool controllable = false;
         bool invincibility = true;
-        float altitude = Constants.GROUND_HEIGHT + Constants.TAKE_OFF_HEIGHT + 1.0f;
+        float altitude = Constants.CLOUD_ALTITUDE;//Constants.GROUND_HEIGHT + Constants.TAKE_OFF_HEIGHT + 1.0f;
         Vector3 startPosition = new Vector3(0.0f, altitude, 0.0f);
         bool isFlying = true;
         bool autoFlyingToRight = true;

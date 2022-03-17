@@ -270,9 +270,9 @@ public class Player : MonoBehaviour
         _jetFlyby.Stop();
     }
 
-    void Awake()
+    public void LoadPlayerData(PlayerData playerData)
     {
-        LoadPlayerShipModel();
+        SetPlayerShipModel(playerData._playerModelIndex);
     }
 
     public void ResetPlayer()
@@ -297,13 +297,18 @@ public class Player : MonoBehaviour
         _isGround = true;
         _isAlive = true;
     }
+
+    public int GetPlayerShipModel()
+    {
+        return _playerModelIndex;
+    }
     
     public void SetPlayerShipModel(int index)
     {
         if(index < _meshObjects.Length && null != _meshObjects[index])
         {
             _playerModelIndex = index;
-
+            SaveData.Instance._playerData._playerModelIndex = index;
             LoadPlayerShipModel();
         }
     }
@@ -573,12 +578,13 @@ public class Player : MonoBehaviour
                 }
                 else
                 {
+                    _velocityY = 0.0f;
                     // bounce
-                    _velocityY = -_velocityY * 0.5f;
-                    if(_velocityY < 1.0f)
-                    {
-                        _velocityY = 0.0f;
-                    }
+                    // _velocityY = -_velocityY * 0.5f;
+                    // if(_velocityY < 1.0f)
+                    // {
+                    //     _velocityY = 0.0f;
+                    // }
                 }
             }
         }

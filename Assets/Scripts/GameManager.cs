@@ -125,30 +125,33 @@ public class GameManager : MonoBehaviour
         _audioSource.PlayOneShot(isMissionSuccess ? _missionCompleteAudio : _gameOverAudio);                
         _levelEnded = true;
 
-        // save
-        SaveData.Instance._playerData._score += 1;
-        SaveData.Instance.Save("test");
+        // save data
+        SaveData.Instance.Save(Constants.DefaultDataName);
     }
 
     void Start()
     {
-        // load
-        SaveData.Instance.Load("test");        
-
         _audioMaster.GetFloat("MasterVolume", out _masterVolumeStore);
         _audioMaster.GetFloat("MusicVolume", out _musicVolumeStore);
-        ResetGameManager();
+
+        ResetGameManager();        
     }
 
     public void ResetGameManager()
     {
+        // load data
+        SaveData.Instance.Load(Constants.DefaultDataName);
+
         SetPause(false);
 
         UIManager.Instance.ResetUIManager();
         LevelManager.Instance.ResetLevelManager();
+
+        Player.Instance.LoadPlayerData(SaveData.Instance._playerData);
         Player.Instance.ResetPlayer();
         Player.Instance.SetControllable(false);
         Player.Instance.SetInvincibility(false);
+
         MainCamera.Instance.ResetMainCamera();
 
         _audioMaster.SetFloat("MasterVolume", _masterVolumeStore);

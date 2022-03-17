@@ -33,13 +33,18 @@ public class UIManager : MonoBehaviour
     // subject text
     public GameObject _textSubject;
     float _totalSubjectTextTime = 3.0f;
-    float _subjectTime = 0.0f;    
+    float _subjectTime = 0.0f;
     
     // debug
     public GameObject _debugTextVelocityX;
     public GameObject _debugTextVelocityY;
     public GameObject _debugTextAltitude;
-    public GameObject _debugTextLanguage;    
+    public GameObject _debugTextLanguage;
+    public GameObject _debugTextFps;
+
+    // fps
+    int _frameCount = 0;
+    float _frameTime = 0.0f;
 
     private static UIManager _instance;
     GameObject _fingerTarget = null;
@@ -334,6 +339,18 @@ public class UIManager : MonoBehaviour
         _debugTextLanguage.GetComponent<TextMeshProUGUI>().text = "Language: " + CultureInfo.CurrentCulture.Name;
         _debugTextVelocityX.GetComponent<TextMeshProUGUI>().text = string.Format("Horizontal Speed: {0:F1}", Player.Instance.GetAbsVelocityX());
         _debugTextVelocityY.GetComponent<TextMeshProUGUI>().text = string.Format("Vertical Speed: {0:F1}", Player.Instance.GetVelocityY());
-        _debugTextAltitude.GetComponent<TextMeshProUGUI>().text = string.Format("Altitude: {0:F1}", Player.Instance.GetAltitude());        
+        _debugTextAltitude.GetComponent<TextMeshProUGUI>().text = string.Format("Altitude: {0:F1}", Player.Instance.GetAltitude());
+
+        // fps
+        _frameCount += 1;
+        _frameTime += Time.deltaTime;
+        if(1.0f <= _frameTime)
+        {
+            float fps = (float)_frameCount / _frameTime;
+            float time = _frameTime / (float)_frameCount * 1000.0f;
+            _debugTextFps.GetComponent<TextMeshProUGUI>().text = string.Format("FPS: {0:F1}/{1:F1}ms", fps, time);
+            _frameCount = 0;
+            _frameTime = 0.0f;            
+        }
     }
 }

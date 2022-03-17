@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Constants : MonoBehaviour
 {
+    public const string DefaultDataName = "default";
     public const float TOUCH_DELTA = 0.1f;
     public const float TURN_SPEED = 1.5f;
     public const float ACCEL_X = 2.0f;
@@ -19,4 +20,5 @@ public class Constants : MonoBehaviour
     public const float GRAVITY = 9.8f;
     public const float SPEED_FOR_DESTROY = -4.0f;
     public const float LEVEL_EXIT_TIME = 5.0f;
+    public const float CLOUD_ALTITUDE = 30.0f;
 }

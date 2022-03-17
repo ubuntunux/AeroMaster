@@ -51,4 +51,5 @@ public class PlayerData
     public int _version = 0;
     public string _playerName = "";
     public int _score = 0;
+    public int _playerModelIndex = 0;    
 }

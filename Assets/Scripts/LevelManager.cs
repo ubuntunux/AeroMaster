@@ -18,6 +18,7 @@ public class LevelManager : MonoBehaviour
 {
     public GameObject _levelProfilePrefab;
     public GameObject _levelLobbyPrefab;
+    public GameObject _levelCutSceneTestPrefab;
     public GameObject _levelTutorialPrefab;
     public GameObject _levelMissionPrefab;
     
@@ -52,6 +53,11 @@ public class LevelManager : MonoBehaviour
     public void GoToLevelLobby()
     {
         SetCurrentLevel(_levelLobbyPrefab);
+    }
+
+    public GameObject GetLevelCutSceneTestPrefab()
+    {
+        return _levelCutSceneTestPrefab;
     }
 
     public GameObject GetLevelTutorialPrefab()

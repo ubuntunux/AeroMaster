@@ -22,6 +22,11 @@ public class LevelLobby : LevelBase
         return "";
     }
 
+    public void OnClickCutSceneTest()
+    {
+        OnClickLevel(LevelManager.Instance.GetLevelCutSceneTestPrefab());
+    }
+
     public void OnClickTutorial()
     {
         OnClickLevel(LevelManager.Instance.GetLevelTutorialPrefab());

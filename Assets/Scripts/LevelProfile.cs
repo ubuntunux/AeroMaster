@@ -5,6 +5,7 @@ using UnityEngine;
 public class LevelProfile : LevelBase
 {
     bool _isFirstUpdate = true;
+    int _profileIndex = 0;
 
     override public string GetMissionTitle()
     {
@@ -28,8 +29,7 @@ public class LevelProfile : LevelBase
 
     public void OnClickProfile(int profileIndex)
     {
-        Player.Instance.SetPlayerShipModel(profileIndex);
-        SaveData.Instance.Save(Constants.DefaultDataName);
+        _profileIndex = profileIndex;
         LevelManager.Instance.GoToLevelLobby();
     }
 
@@ -37,7 +37,7 @@ public class LevelProfile : LevelBase
     {
         bool controllable = false;
         bool invincibility = true;
-        float altitude = Constants.CLOUD_ALTITUDE;//Constants.GROUND_HEIGHT + Constants.TAKE_OFF_HEIGHT + 1.0f;
+        float altitude = Constants.CLOUD_ALTITUDE;
         Vector3 startPosition = new Vector3(0.0f, altitude, 0.0f);
         bool isFlying = true;
         bool autoFlyingToRight = true;
@@ -46,6 +46,8 @@ public class LevelProfile : LevelBase
 
     override public void OnExitLevel()
     {
+        Player.Instance.SetPlayerShipModel(_profileIndex);
+        SaveData.Instance.Save(Constants.DefaultDataName);
     }
 
     override public bool IsEndLevel()

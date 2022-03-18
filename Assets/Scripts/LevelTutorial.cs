@@ -21,9 +21,6 @@ public class LevelTutorial : LevelBase
     public GameObject _start;
     public GameObject _panelPause;
     public GameObject _textTutorial;
-    public GameObject _imageInside;
-    public GameObject _imageOutside;
-    BezierShakeObject _cameraHandMove = new BezierShakeObject();
 
     TutorialPhase _phase = TutorialPhase.None;
     float _exitTime = 0.0f;
@@ -91,8 +88,6 @@ public class LevelTutorial : LevelBase
 
     void CallbackPhaseAcceleration()
     {
-        _imageInside.SetActive(false);
-        _imageOutside.SetActive(false);
         Player.Instance.SetCallbackOnClickGoRight(CallbackOnClickGoRight);
         UIManager.Instance.SetVisibleControllerUI(true);
         UIManager.Instance.SetInteractableButtonAll(false);
@@ -148,11 +143,6 @@ public class LevelTutorial : LevelBase
         UIManager.Instance.SetVisibleControllerUI(false);
         _actorScriptsPages.GenerateActorScriptsPages(_textScripts);
 
-        _cameraHandMove.ResetShakeObject();
-        _cameraHandMove.SetShake(0.0f, 10.0f, 10.0f);
-        _imageInside.SetActive(true);
-        _imageOutside.SetActive(true);
-
         _exitTime = 0.0f;
         _panelPause.SetActive(false);
         _textTutorial.SetActive(false);
@@ -177,15 +167,6 @@ public class LevelTutorial : LevelBase
     
     override public void UpdateLevel()
     {
-        // Image layer move for cutScene
-        if(_imageInside.activeSelf)
-        {
-            Vector3 cameraOffset = Vector3.zero;
-            _cameraHandMove.UpdateShakeObject(ref cameraOffset);
-            _imageInside.GetComponent<RectTransform>().anchoredPosition = new Vector2(cameraOffset.x, cameraOffset.y);
-            _imageOutside.GetComponent<RectTransform>().anchoredPosition = new Vector2(cameraOffset.x * 2.0f, cameraOffset.y * 2.0f);
-        }
-
         if(TutorialPhase.None == _phase)
         {
             // first update

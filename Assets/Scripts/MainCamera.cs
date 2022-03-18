@@ -29,6 +29,13 @@ public class MainCamera : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        const float SCALE = 0.5f;
+        #if UNITY_ANDROID
+            GetComponent<DownscaleRT>().CreateRT(SCALE);
+        #elif UNITY_IPHONE
+            GetComponent<DownscaleRT>().CreateRT(SCALE);
+        #else
+        #endif        
     }
 
     public void ResetMainCamera()

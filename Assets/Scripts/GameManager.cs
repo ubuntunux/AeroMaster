@@ -14,6 +14,8 @@ public class GameManager : MonoBehaviour
     private float _musicVolumeStore = 0.0f;
     private bool _paused = false;
     private bool _levelEnded = false;
+    private float _lastTouchPositionY = 0.0f;
+    private bool _isTouched = false;
 
     private static GameManager _instance;
 
@@ -38,9 +40,20 @@ public class GameManager : MonoBehaviour
             Touch touch = Input.GetTouch(i);
             if(touch.position.x < (Screen.width / 2.0f))
             {
-                return touch.deltaPosition;
+                if(false == _isTouched)
+                {
+                    _lastTouchPositionY = touch.position.y;
+                    _isTouched = true;
+                }
+
+                const float touchHeightRatio = 0.2f;
+                Vector2 deltaPosition = touch.deltaPosition;
+                deltaPosition.y = (touch.position.y - _lastTouchPositionY) / (Screen.height * touchHeightRatio);
+                return deltaPosition;
             }
         }
+        _isTouched = false;
+        
         return Vector2.zero;
     }
 #endif
@@ -98,6 +111,9 @@ public class GameManager : MonoBehaviour
 
     public void SetLevelStart(bool controllable, bool invincibility, Vector3 startPoint, bool isFlying = false, bool autoFlyingToRight = true)
     {
+        _isTouched = false;
+        _lastTouchPositionY = 0.0f;
+
         MainCamera.Instance.ResetMainCamera();
         Player.Instance.ResetPlayer();        
         Player.Instance.SetControllable(controllable);

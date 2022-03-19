@@ -27,8 +27,6 @@ public class LevelMission : LevelBase
     float _exitTime = 0.0f;
     float _missionTime = 0.0f;
 
-    ActorScriptsPages _actorScriptsPages = new ActorScriptsPages();
-
     override public string GetMissionTitle()
     {
         return _textMissionTitle;
@@ -45,9 +43,8 @@ public class LevelMission : LevelBase
         bool invincibility = false;
         GameManager.Instance.SetLevelStart(controllable, invincibility, GetStartPoint());
 
-        UIManager.Instance.SetInteractableButtonAll(false);
-        UIManager.Instance.SetVisibleControllerUI(false);
-        _actorScriptsPages.GenerateActorScriptsPages(_textScripts);
+        UIManager.Instance.SetInteractableButtonAll(false);        
+        ActorScriptManager.Instance.GenerateActorScriptsPages(_textScripts);
 
         _exitTime = 0.0f;
         _phase = MissionPhase.None;
@@ -104,10 +101,9 @@ public class LevelMission : LevelBase
             // first update
             if(UIManager.Instance.CheckSubjectTextDone())
             {
-                if(_actorScriptsPages.CheckCurrentScriptReadDoneAndUpdateScript())
+                if(ActorScriptManager.Instance.SetPageAndCheckReadDone("Intro"))
                 {
                     UIManager.Instance.SetInteractableButtonAll(true);
-                    UIManager.Instance.SetVisibleControllerUI(true);
                     _phase = MissionPhase.MissionObjective;
                 }
             }

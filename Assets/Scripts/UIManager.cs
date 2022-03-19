@@ -30,6 +30,10 @@ public class UIManager : MonoBehaviour
     public GameObject _textWindow;
     public GameObject _imageFinger;
 
+    // 
+    bool _visibleLayerControllerUI = false;
+    bool _visibleLayerControllerUIByActorScript = false;
+
     // subject text
     public GameObject _textSubject;
     float _totalSubjectTextTime = 3.0f;
@@ -125,7 +129,14 @@ public class UIManager : MonoBehaviour
 
     public void SetVisibleControllerUI(bool show)
     {
-        _layerControllerUI.SetActive(show);
+        _visibleLayerControllerUI = show;
+        _layerControllerUI.SetActive(_visibleLayerControllerUI && _visibleLayerControllerUIByActorScript);
+    }
+
+    public void SetVisibleControllerUIByActorScript(bool show)
+    {
+        _visibleLayerControllerUIByActorScript = show;
+        _layerControllerUI.SetActive(_visibleLayerControllerUI && _visibleLayerControllerUIByActorScript);
     }
 
     public void ShowMissionCompleteOrFailed(bool show, bool isMissionSuccess)
@@ -169,6 +180,7 @@ public class UIManager : MonoBehaviour
 
     void Start()
     {
+        _visibleLayerControllerUI = GetVisibleControllerUI();        
     }
 
     // Text Window
@@ -293,6 +305,12 @@ public class UIManager : MonoBehaviour
     public void SetSubjectText(string subject)
     {
         bool isEmpty = 0 == subject.Length;
+
+        if(false == isEmpty)
+        {
+            UIManager.Instance.SetVisibleControllerUI(false);
+        }
+
         _textSubject.SetActive(!isEmpty);
         _textSubject.GetComponent<TextMeshProUGUI>().text = "- " + subject + " -";
         _subjectTime = isEmpty ? 0.0f : _totalSubjectTextTime;        
@@ -305,8 +323,10 @@ public class UIManager : MonoBehaviour
             float opacity = (1.0f - Mathf.Min(1.0f, Mathf.Abs((_subjectTime / _totalSubjectTextTime) - 0.5f) * 2.0f)) * 2.0f;
             _textSubject.GetComponent<TextMeshProUGUI>().color = new Color(1.0f, 1.0f, 1.0f, opacity);
             _subjectTime -= Time.deltaTime;
+
             if(CheckSubjectTextDone())
             {
+                UIManager.Instance.SetVisibleControllerUI(true);
                 _textSubject.SetActive(false);
             }
         }

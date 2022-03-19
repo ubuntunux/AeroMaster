@@ -127,6 +127,7 @@ public class GameManager : MonoBehaviour
         bool hideControllerUI = LevelManager.Instance.IsLevelProfile() || LevelManager.Instance.IsLevelLobby();
         UIManager.Instance.SetVisibleControllerUI(!hideControllerUI);
         UIManager.Instance.ShowMissionCompleteOrFailed(false, false);
+        UIManager.Instance.SetSubjectText("");
         _audioMaster.SetFloat("MusicVolume", _musicVolumeStore);        
         _levelEnded = false;
     }
@@ -136,6 +137,7 @@ public class GameManager : MonoBehaviour
         Player.Instance.SetControllable(!isMissionSuccess);
         MainCamera.Instance.SetTrackingPlayer(!isMissionSuccess);
         UIManager.Instance.ShowMissionCompleteOrFailed(true, isMissionSuccess);
+        UIManager.Instance.SetVisibleControllerUI(false);        
         _audioMaster.GetFloat("MusicVolume", out _musicVolumeStore);
         _audioMaster.SetFloat("MusicVolume", -80.0f);
         _audioSource.PlayOneShot(isMissionSuccess ? _missionCompleteAudio : _gameOverAudio);                

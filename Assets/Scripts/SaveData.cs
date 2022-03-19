@@ -5,6 +5,9 @@ using UnityEngine;
 [System.Serializable]
 public class SaveData
 {
+    public int _version = 0;
+    public PlayerData _playerData = null;
+    
     private static SaveData _instance;
     public static SaveData Instance
     {
@@ -22,9 +25,6 @@ public class SaveData
     {
         _playerData = new PlayerData();
     }
-
-    public int _version = 0;
-    public PlayerData _playerData = null;
 
     public void Load(string dataName)
     {
@@ -51,5 +51,6 @@ public class PlayerData
     public int _version = 0;
     public string _playerName = "";
     public int _score = 0;
-    public int _playerModelIndex = 0;    
+    public int _playerModelIndex = 0;
+    public bool _tutorialCompleted = false;
 }

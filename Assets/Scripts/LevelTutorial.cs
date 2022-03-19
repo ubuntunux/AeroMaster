@@ -6,7 +6,8 @@ using TMPro;
 public enum TutorialPhase
 {
     None,
-    Description,
+    Intro,
+    Briefing,
     Acceleration,
     TakeOff,
     Turn,
@@ -24,8 +25,6 @@ public class LevelTutorial : LevelBase
 
     TutorialPhase _phase = TutorialPhase.None;
     float _exitTime = 0.0f;
-
-    ActorScriptsPages _actorScriptsPages = new ActorScriptsPages();
 
     [TextArea]
     public string _textMissionTitle;
@@ -80,57 +79,12 @@ public class LevelTutorial : LevelBase
         _textTutorial.SetActive(false);
     }
 
-    void SetPhaseAcceleration()
-    {
-        UIManager.Instance.SetFadeInOut(CallbackPhaseAcceleration);
-        _phase = TutorialPhase.Acceleration;
-    }
-
-    void CallbackPhaseAcceleration()
-    {
-        Player.Instance.SetCallbackOnClickGoRight(CallbackOnClickGoRight);
-        UIManager.Instance.SetVisibleControllerUI(true);
-        UIManager.Instance.SetInteractableButtonAll(false);
-        UIManager.Instance.SetInteractableGoRightButton(true);
-        UIManager.Instance.SetFingerTarget(FingerTarget.GoRight);
-        // _textTutorial.SetActive(true);
-        // _textTutorial.GetComponent<TextMeshProUGUI>().text = "Acceleration";
-    }
-
-    void SetPhaseTakeOff()
-    {
-        UIManager.Instance.SetInteractableButtonAll(false);
-        UIManager.Instance.SetFingerTarget(FingerTarget.VerticalVelocity);
-        // _textTutorial.SetActive(true);
-        // _textTutorial.GetComponent<TextMeshProUGUI>().text = "Take Off";
-        _phase = TutorialPhase.TakeOff;
-    }
-
-    void SetPhaseTurn()
+    void CallbackSetPhaseTurn()
     {
         Player.Instance.SetCallbackOnClickGoLeft(CallbackOnClickGoLeft);
         UIManager.Instance.SetInteractableButtonAll(false);
         UIManager.Instance.SetInteractableGoLeftButton(true);
-        UIManager.Instance.SetFingerTarget(FingerTarget.GoLeft);
-        // _textTutorial.SetActive(true);
-        // _textTutorial.GetComponent<TextMeshProUGUI>().text = "Turn";
-        _phase = TutorialPhase.Turn;
-    }
-
-    void SetPhaseLanding()
-    {
-        Player.Instance.SetCallbackOnClickLanding(CallbackOnClickLanding);
-        UIManager.Instance.SetInteractableButtonAll(false);
-        UIManager.Instance.SetInteractableLandingButton(true);
-        UIManager.Instance.SetFingerTarget(FingerTarget.Landing);
-        // _textTutorial.SetActive(true);
-        // _textTutorial.GetComponent<TextMeshProUGUI>().text = "Landing";
-        _phase = TutorialPhase.Landing;
-    }
-
-    void SetPhaseComplete()
-    {
-        _phase = TutorialPhase.Complete;
+        UIManager.Instance.SetFingerTarget(FingerTarget.GoLeft);        
     }
 
     override public void OnStartLevel()
@@ -139,9 +93,8 @@ public class LevelTutorial : LevelBase
         bool invincibility = true;
         GameManager.Instance.SetLevelStart(controllable, invincibility, GetStartPoint());
         
-        UIManager.Instance.SetInteractableButtonAll(false);
-        UIManager.Instance.SetVisibleControllerUI(false);
-        _actorScriptsPages.GenerateActorScriptsPages(_textScripts);
+        UIManager.Instance.SetInteractableButtonAll(false);        
+        ActorScriptManager.Instance.GenerateActorScriptsPages(_textScripts);
 
         _exitTime = 0.0f;
         _panelPause.SetActive(false);
@@ -166,48 +119,66 @@ public class LevelTutorial : LevelBase
     }
     
     override public void UpdateLevel()
-    {
+    {   
         if(TutorialPhase.None == _phase)
         {
-            // first update
             UIManager.Instance.SetSubjectText(GetMissionTitle());
-            _phase = TutorialPhase.Description;
+            _phase = TutorialPhase.Intro;
         }
-        else if(TutorialPhase.Description == _phase)
+        else if(TutorialPhase.Intro == _phase)
         {
             if(UIManager.Instance.CheckSubjectTextDone())
             {
-                if(_actorScriptsPages.CheckCurrentScriptReadDoneAndUpdateScript())
-                {                    
-                    SetPhaseAcceleration();
-                }
+                ActorScriptManager.Instance.SetPage("Intro");
+                _phase = TutorialPhase.Briefing;
+            }
+        }
+        else if(TutorialPhase.Briefing == _phase)
+        {
+            if(ActorScriptManager.Instance.CheckPageReadDone("Intro"))
+            {
+                // TutorialPhase.Acceleration
+                UIManager.Instance.SetInteractableButtonAll(false);
+                UIManager.Instance.SetInteractableGoRightButton(true);
+                UIManager.Instance.SetFingerTarget(FingerTarget.GoRight);
+                Player.Instance.SetCallbackOnClickGoRight(CallbackOnClickGoRight);
+                _phase = TutorialPhase.Acceleration;
             }
         }
         else if(TutorialPhase.Acceleration == _phase)
         {
             if(1.0f == Player.Instance.GetAbsVelocityRatioX())
             {
-                SetPhaseTakeOff();
+                if(ActorScriptManager.Instance.SetPageAndCheckReadDone("TakeOff"))
+                {
+                    // TutorialPhase.TakeOff
+                    UIManager.Instance.SetInteractableButtonAll(false);
+                    UIManager.Instance.SetFingerTarget(FingerTarget.VerticalVelocity);
+                    _phase = TutorialPhase.TakeOff;
+                }
             }
         }
         else if(TutorialPhase.TakeOff == _phase)
         {
             if(Player.Instance.GetAutoTakeOff())
             {
+                // Check plane altitude
                 const float TAKE_OFF_ALTITUDE = 1.0f;
                 if(TAKE_OFF_ALTITUDE <= Player.Instance.GetAltitude())
                 {
                     Player.Instance.SetAutoTakeOff(false);
-                    SetPhaseTurn();
+                    ActorScriptManager.Instance.SetPage("Turn", CallbackSetPhaseTurn);
+                    _phase = TutorialPhase.Turn;
                 }
             }
             else
             {
                 Vector2 input = Vector2.zero;
                 Player.Instance.GetInputDelta(ref input);
-                if(0.0f < input.y)
+                if(0.3f < input.y)
                 {
-                    // TakeOff
+                    // Set auto take off
+                    UIManager.Instance.SetFingerTarget(FingerTarget.None);
                     Player.Instance.SetAutoTakeOff(true);
                 }
             }
@@ -216,29 +187,45 @@ public class LevelTutorial : LevelBase
         {
             if(Player.Instance.GetFrontDirection() <= -0.9f)
             {
-                SetPhaseLanding();
+                if(ActorScriptManager.Instance.SetPageAndCheckReadDone("Landing"))
+                {
+                    // TutorialPhase.Landing
+                    Player.Instance.SetCallbackOnClickLanding(CallbackOnClickLanding);
+                    UIManager.Instance.SetInteractableButtonAll(false);
+                    UIManager.Instance.SetInteractableLandingButton(true);
+                    UIManager.Instance.SetFingerTarget(FingerTarget.Landing);
+                    _phase = TutorialPhase.Landing;
+                }
             }
         }
         else if(TutorialPhase.Landing == _phase)
         {
             if(0.0f == Player.Instance.GetAbsVelocityRatioX() && Player.Instance.GetIsGround())
             {
-                SetPhaseComplete();
+                // TutorialPhase.Complete                
+                ActorScriptManager.Instance.SetPage("Done");
+                _phase = TutorialPhase.Complete;
             }
         }
         else if(TutorialPhase.Complete == _phase)
         {
-            // Mission Complete
-            GameManager.Instance.SetLevelEnd();
+            // Mission Complete            
+            GameManager.Instance.SetLevelEnd();            
             _phase = TutorialPhase.Exit;
         }
         else if(TutorialPhase.Exit == _phase)
         {
             if(Constants.LEVEL_EXIT_TIME <= _exitTime)
             {
-                _phase = TutorialPhase.End;
+                if(ActorScriptManager.Instance.CheckPageReadDone("Done"))
+                {
+                    _phase = TutorialPhase.End;
+                }
             }
-            _exitTime += Time.deltaTime;
+            else
+            {
+                _exitTime += Time.deltaTime;
+            }
         }
     }
 }

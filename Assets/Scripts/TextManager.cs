@@ -4,111 +4,6 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
-public enum Characters
-{
-    None,
-    Operator,
-    Bright,
-    Benedict,
-    Mark,
-    Count
-};
-
-public struct ActorScript
-{
-    public Characters _actor;
-    public string _script;
-};
-
-public class ActorScriptsPages
-{
-    int _pageIndex = 0;
-    int _scriptIndex = 0;
-    List<List<ActorScript>> _actorScriptsPages = new List<List<ActorScript>>();
-
-    public void GenerateActorScriptsPages(string textScripts)
-    {
-        _pageIndex = 0;
-        _scriptIndex = 0;
-        _actorScriptsPages.Clear();
-
-        int pageIndex = 0;
-        string[] pages = textScripts.Split('#');
-        foreach(string page in pages)
-        {
-            _actorScriptsPages.Add(new List<ActorScript>());
-            string[] scripts = page.Split('[');
-            for(int i = 0; i < scripts.Length; ++i)
-            {
-                string script = scripts[i].Trim();
-                if(0 < script.Length)
-                {
-                    string[] text = script.Split(']');
-                    ActorScript actorScript;
-                    actorScript._actor = Characters.None;
-                    actorScript._script = text[1].Trim();
-                    foreach(Characters character in System.Enum.GetValues(typeof(Characters)))
-                    {
-                        if(character.ToString() == text[0])
-                        {
-                            actorScript._actor = character;
-                            break;
-                        }
-                    }
-                    _actorScriptsPages[pageIndex].Add(actorScript);
-                }
-            }
-            ++pageIndex;
-        }
-    }
-
-    public bool CheckAllPageReadDone()
-    {
-        return false == UIManager.Instance.IsTextWindowActivated() && _pageIndex == _actorScriptsPages.Count;
-    }
-
-    public bool CheckCurrentPageReadDone()
-    {
-        if(false == UIManager.Instance.IsTextWindowActivated())
-        {
-            if(_pageIndex == _actorScriptsPages.Count || _scriptIndex == _actorScriptsPages[_pageIndex].Count)
-            {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public bool CheckCurrentScriptReadDoneAndUpdateScript()
-    {
-        TextManager textManager = UIManager.Instance.GetTextWindow();
-        if(textManager.GetReadTextAllDone())
-        {
-            if(_pageIndex < _actorScriptsPages.Count)
-            {
-                if(_scriptIndex < _actorScriptsPages[_pageIndex].Count)
-                {
-                    ActorScript actorScript = _actorScriptsPages[_pageIndex][_scriptIndex];
-                    UIManager.Instance.SetCharacterText(actorScript._actor, actorScript._script);
-                    ++_scriptIndex;
-                }
-                else
-                {
-                    _scriptIndex = 0;
-                    ++_pageIndex;
-
-                    if(_actorScriptsPages.Count == _pageIndex)
-                    {
-                        textManager.SetDone();
-                    }
-                }
-            }
-        }
-        return !textManager.IsActivated();
-    }
-};
-
-
 public class TextManager : MonoBehaviour
 {
     public GameObject _imagePortrait;
@@ -249,7 +144,7 @@ public class TextManager : MonoBehaviour
             return;
         }
 
-        if (Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(0) || Input.GetMouseButtonDown(1) || Input.GetMouseButtonDown(2))
+        if (Input.anyKeyDown)
         {
             if(IsActivated())
             {

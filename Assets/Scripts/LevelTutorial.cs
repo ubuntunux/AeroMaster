@@ -19,12 +19,15 @@ public enum TutorialPhase
 
 public class LevelTutorial : LevelBase
 {
-    public GameObject _start;
+    public GameObject _startMarker;
+    public GameObject[] _regionMarkers;
     public GameObject _panelPause;
     public GameObject _textTutorial;
 
     TutorialPhase _phase = TutorialPhase.None;
     float _exitTime = 0.0f;
+    Vector2 _region = Vector2.zero;
+    bool _missionFailed = false;
 
     [TextArea]
     public string _textMissionTitle;
@@ -45,11 +48,30 @@ public class LevelTutorial : LevelBase
 
     public Vector3 GetStartPoint()
     {
-        float heightHalf = _start.GetComponent<MeshRenderer>().bounds.size.y * 0.5f;
-        Vector3 position = _start.transform.position;
+        float heightHalf = _startMarker.GetComponent<MeshRenderer>().bounds.size.y * 0.5f;
+        Vector3 position = _startMarker.transform.position;
         position.x -= 2.0f;
         position.y -= heightHalf;
         return position;
+    }
+
+    void UpdateRegions()
+    {
+        _region.x = float.MaxValue;
+        _region.y = float.MinValue;
+
+        for(int i = 0; i < _regionMarkers.Length; ++i)
+        {
+            if(_regionMarkers[i].transform.position.x < _region.x)
+            {
+                _region.x = _regionMarkers[i].transform.position.x;
+            }
+
+            if(_region.y < _regionMarkers[i].transform.position.x)
+            {
+                _region.y = _regionMarkers[i].transform.position.x;
+            }
+        }
     }
 
     public void CallbackOnClickGoRight()
@@ -96,6 +118,9 @@ public class LevelTutorial : LevelBase
         UIManager.Instance.SetInteractableButtonAll(false);        
         ActorScriptManager.Instance.GenerateActorScriptsPages(_textScripts);
 
+        UpdateRegions();
+
+        _missionFailed = false;
         _exitTime = 0.0f;
         _panelPause.SetActive(false);
         _textTutorial.SetActive(false);
@@ -120,6 +145,14 @@ public class LevelTutorial : LevelBase
     
     override public void UpdateLevel()
     {   
+        Vector3 playerPosition = Player.Instance.GetPosition();
+        if(playerPosition.x <= _region.x || _region.y <= playerPosition.x)
+        {
+            GameManager.Instance.SetLevelEnd(false);
+            _missionFailed = true;
+            _phase = TutorialPhase.Exit;
+        }
+
         if(TutorialPhase.None == _phase)
         {
             UIManager.Instance.SetSubjectText(GetMissionTitle());

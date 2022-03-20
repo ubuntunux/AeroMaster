@@ -1,34 +1,14 @@
 fileFormatVersion: 2
-guid: 853d61c3b60699d9faa8fbe025e19751
+guid: e06c2545e504251fba5ec4f96652e4c5
 ModelImporter:
   serializedVersion: 20200
-  internalIDToNameTable:
-  - first:
-      74: -2755531118510053381
-    second: Armature|Flying
-  - first:
-      74: -8945691123924629249
-    second: Armature|Idle
-  - first:
-      74: 4106399916549189888
-    second: Armature|Idle.001
-  - first:
-      74: 9218157010744241517
-    second: Armature|Landing
-  - first:
-      74: 3026377613317129161
-    second: Armature|Takeoff
+  internalIDToNameTable: []
   externalObjects:
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
-      name: Material
-    second: {fileID: 2100000, guid: 11972a444997d2cc4802ca1998d615f1, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: TestShip_Low
-    second: {fileID: 2100000, guid: 11972a444997d2cc4802ca1998d615f1, type: 2}
+      name: traffic_sign
+    second: {fileID: 2100000, guid: b3cf7442c4a9e5058848c7c0fa72581b, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0

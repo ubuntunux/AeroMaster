@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using TMPro;
 
 public enum TutorialPhase
@@ -23,18 +24,17 @@ public class LevelTutorial : LevelBase
     public GameObject[] _regionMarkers;
     public GameObject _panelPause;
     public GameObject _textTutorial;
-
-    TutorialPhase _phase = TutorialPhase.None;
-    float _exitTime = 0.0f;
-    Vector2 _region = Vector2.zero;
-    bool _missionFailed = false;
-
     [TextArea]
     public string _textMissionTitle;
     [TextArea]
     public string _textMissionDetail;
     [TextArea]
     public string _textScripts;
+
+    TutorialPhase _phase = TutorialPhase.None;
+    float _exitTime = 0.0f;
+    Vector2 _region = Vector2.zero;
+    bool _missionFailed = false;    
 
     override public string GetMissionTitle()
     {
@@ -145,14 +145,41 @@ public class LevelTutorial : LevelBase
     
     override public void UpdateLevel()
     {   
-        Vector3 playerPosition = Player.Instance.GetPosition();
-        if(playerPosition.x <= _region.x || _region.y <= playerPosition.x)
+        // Check Mission Failed
+        if(false == _missionFailed)
         {
-            GameManager.Instance.SetLevelEnd(false);
-            _missionFailed = true;
-            _phase = TutorialPhase.Exit;
+            Vector3 playerPosition = Player.Instance.GetPosition();
+            float minToPlayer = playerPosition.x - _region.x;
+            float playerToMax = _region.y - playerPosition.x;
+
+            if(minToPlayer <= 0.0f || playerToMax <= 0.0f)
+            {
+                GameManager.Instance.SetLevelEnd(false);
+                _missionFailed = true;
+                _phase = TutorialPhase.Exit;
+            }
+
+            float warningDist = 30.0f;
+            if(minToPlayer <= warningDist || playerToMax <= warningDist)
+            {
+                UIManager.Instance.ShowWarningRegionOut(true);
+            }
+            else
+            {
+                UIManager.Instance.ShowWarningRegionOut(false);
+            }
+
+            if(Mathf.Abs(minToPlayer) < Mathf.Abs(playerToMax))
+            {
+                UIManager.Instance.SetIndicatorTargetPosition(_regionMarkers[1].transform.position);
+            }
+            else
+            {
+                UIManager.Instance.SetIndicatorTargetPosition(_regionMarkers[0].transform.position);
+            }
         }
 
+        // update mission states
         if(TutorialPhase.None == _phase)
         {
             UIManager.Instance.SetSubjectText(GetMissionTitle());

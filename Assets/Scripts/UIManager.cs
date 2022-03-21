@@ -16,6 +16,9 @@ public enum FingerTarget
 
 public class UIManager : MonoBehaviour
 {
+    public GameObject _canvas;
+    public GameObject _canvasNoRayCast;
+
     public GameObject _btnGoRight;
     public GameObject _btnGoLeft;
     public GameObject _btnLanding;
@@ -29,6 +32,11 @@ public class UIManager : MonoBehaviour
     public GameObject _panelFadeInOut;
     public GameObject _textWindow;
     public GameObject _imageFinger;
+
+    public GameObject _indicator;
+    public GameObject _targetDistance;
+    public GameObject _missionObjective;
+    public GameObject _warningRegionOut;
 
     // 
     bool _visibleLayerControllerUI = false;
@@ -50,7 +58,6 @@ public class UIManager : MonoBehaviour
     int _frameCount = 0;
     float _frameTime = 0.0f;
 
-    private static UIManager _instance;
     GameObject _fingerTarget = null;
     const float FADE_TIME = 0.5f;
     const float HALF_FADE_TIME = FADE_TIME / 2.0f;
@@ -61,7 +68,10 @@ public class UIManager : MonoBehaviour
     public delegate void Callback();
     private Callback _callbackOnFadeOut = null;
 
+    Vector3 _targetPosition = Vector3.zero;
+
     // Singleton instantiation
+    private static UIManager _instance;
     public static UIManager Instance
     {
         get
@@ -308,7 +318,7 @@ public class UIManager : MonoBehaviour
 
         if(false == isEmpty)
         {
-            UIManager.Instance.SetVisibleControllerUI(false);
+            SetVisibleControllerUI(false);
         }
 
         _textSubject.SetActive(!isEmpty);
@@ -326,10 +336,55 @@ public class UIManager : MonoBehaviour
 
             if(CheckSubjectTextDone())
             {
-                UIManager.Instance.SetVisibleControllerUI(true);
+                SetVisibleControllerUI(true);
                 _textSubject.SetActive(false);
             }
         }
+    }
+
+    public void SetIndicatorTargetPosition(Vector3 position)
+    {
+        _targetPosition = position;
+    }
+
+    public void UpdateIndicator()
+    {
+        LevelBase level = LevelManager.Instance.GetCurrentLevel();
+        if(null != level)
+        {
+            RectTransform CanvasRect = _canvas.GetComponent<RectTransform>();            
+            float halfScreenSizeX = CanvasRect.sizeDelta.x * 0.5f;
+            float halfScreenSizeY = CanvasRect.sizeDelta.y * 0.5f;
+            Vector2 ViewportPosition = MainCamera.Instance.GetComponent<Camera>().WorldToViewportPoint(_targetPosition);
+            Vector2 WorldObject_ScreenPosition = new Vector2(
+                ((ViewportPosition.x * CanvasRect.sizeDelta.x) - halfScreenSizeX),
+                ((ViewportPosition.y * CanvasRect.sizeDelta.y) - halfScreenSizeY)
+            );
+            float padding = 40.0f;
+            float lengthRatio = Mathf.Max(
+                Mathf.Abs(WorldObject_ScreenPosition.x / (halfScreenSizeX - padding)), 
+                Mathf.Abs(WorldObject_ScreenPosition.y / (halfScreenSizeY - padding))
+            );
+            float angle = Mathf.Atan2(WorldObject_ScreenPosition.y, WorldObject_ScreenPosition.x) * Mathf.Rad2Deg;
+
+            _indicator.GetComponent<RectTransform>().anchoredPosition = WorldObject_ScreenPosition / lengthRatio;
+            _indicator.GetComponent<RectTransform>().rotation = Quaternion.Euler(0.0f, 0.0f, angle - 90.0f);
+            _targetDistance.GetComponent<RectTransform>().anchoredPosition = WorldObject_ScreenPosition / lengthRatio;
+
+            Vector3 toTarget = _targetPosition - Player.Instance.GetPosition();
+            int dist = (int)Mathf.Sqrt(toTarget.x * toTarget.x + toTarget.y * toTarget.y);
+            _targetDistance.GetComponent<TextMeshProUGUI>().text = dist.ToString() + "m";
+        }
+    }
+
+    public void ShowWarningRegionOut(bool show)
+    {
+        _warningRegionOut.SetActive(show);
+    }
+
+    public void SetMissionObjective(string objective)
+    {
+        _missionObjective.GetComponent<TextMeshProUGUI>().text = objective;
     }
 
     public void ResetUIManager()
@@ -351,6 +406,7 @@ public class UIManager : MonoBehaviour
         UpdateFadeInOut();
         UpdateFingerTarget();
         UpdateSubjectText();
+        UpdateIndicator();
 
         _textScore.GetComponent<TextMeshProUGUI>().text = "Score: " + SaveData.Instance._playerData._score.ToString();
         _textTime.GetComponent<TextMeshProUGUI>().text = "Time: " + LevelManager.Instance.GetMissionTime().ToString();

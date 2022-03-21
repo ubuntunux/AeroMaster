@@ -64,6 +64,11 @@ public class LevelManager : MonoBehaviour
         return _levelMissionPrefab;
     }
 
+    public LevelBase GetCurrentLevel()
+    {
+        return null != _currentLevel ? _currentLevel.GetComponent<LevelBase>() : null;
+    }
+
     public void SetCurrentLevel(GameObject levelPrefab, float fadeInRatio = 1.0f)
     {
         UIManager.Instance.SetFadeInOutAndLevelChange(levelPrefab, fadeInRatio);

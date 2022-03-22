@@ -142,40 +142,21 @@ public class LevelTutorial : LevelBase
     {
         return 0; 
     }
+
+    override public Vector2 GetMissionRegion()
+    {
+        return _region; 
+    }
     
     override public void UpdateLevel()
-    {   
-        // Check Mission Failed
+    {
+        // check mission failed
         if(false == _missionFailed)
         {
-            Vector3 playerPosition = Player.Instance.GetPosition();
-            float minToPlayer = playerPosition.x - _region.x;
-            float playerToMax = _region.y - playerPosition.x;
-
-            if(minToPlayer <= 0.0f || playerToMax <= 0.0f)
+            _missionFailed = GameManager.Instance.CheckMissionRegion();
+            if(_missionFailed)
             {
-                GameManager.Instance.SetLevelEnd(false);
-                _missionFailed = true;
-                _phase = TutorialPhase.Exit;
-            }
-
-            float warningDist = 30.0f;
-            if(minToPlayer <= warningDist || playerToMax <= warningDist)
-            {
-                UIManager.Instance.ShowWarningRegionOut(true);
-            }
-            else
-            {
-                UIManager.Instance.ShowWarningRegionOut(false);
-            }
-
-            if(Mathf.Abs(minToPlayer) < Mathf.Abs(playerToMax))
-            {
-                UIManager.Instance.SetIndicatorTargetPosition(_regionMarkers[1].transform.position);
-            }
-            else
-            {
-                UIManager.Instance.SetIndicatorTargetPosition(_regionMarkers[0].transform.position);
+                _phase = TutorialPhase.Complete;
             }
         }
 
@@ -269,8 +250,8 @@ public class LevelTutorial : LevelBase
         }
         else if(TutorialPhase.Complete == _phase)
         {
-            // Mission Complete            
-            GameManager.Instance.SetLevelEnd();            
+            // Mission complete or faild
+            GameManager.Instance.SetLevelEnd(!_missionFailed);
             _phase = TutorialPhase.Exit;
         }
         else if(TutorialPhase.Exit == _phase)

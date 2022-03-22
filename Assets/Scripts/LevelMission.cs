@@ -64,6 +64,11 @@ public class LevelMission : LevelBase
         return (int)_missionTime; 
     }
 
+    override public Vector2 GetMissionRegion()
+    {
+        return Vector2.zero; 
+    }
+
     public Vector3 GetStartPoint()
     {
         float heightHalf = _start.GetComponent<MeshRenderer>().bounds.size.y * 0.5f;

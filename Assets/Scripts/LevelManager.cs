@@ -12,6 +12,7 @@ abstract public class LevelBase: MonoBehaviour
     abstract public bool IsEndLevel();
     abstract public void UpdateLevel();
     abstract public int GetMissionTime();
+    abstract public Vector2 GetMissionRegion();
 }
 
 public class LevelManager : MonoBehaviour
@@ -124,6 +125,11 @@ public class LevelManager : MonoBehaviour
     public int GetMissionTime()
     {
         return (null == _currentLevel) ? 0 : _currentLevel.GetComponent<LevelBase>().GetMissionTime();
+    }
+
+    public Vector2 GetMissionRegion()
+    {
+        return (null == _currentLevel) ? Vector2.zero : _currentLevel.GetComponent<LevelBase>().GetMissionRegion();
     }
 
     public void ResetLevelManager()

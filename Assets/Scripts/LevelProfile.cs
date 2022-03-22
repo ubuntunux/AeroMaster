@@ -60,6 +60,11 @@ public class LevelProfile : LevelBase
         return 0; 
     }
 
+    override public Vector2 GetMissionRegion()
+    {
+        return Vector2.zero; 
+    }
+
     override public void UpdateLevel()
     {
         if(_isFirstUpdate)

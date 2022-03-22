@@ -32,11 +32,7 @@ public class UIManager : MonoBehaviour
     public GameObject _panelFadeInOut;
     public GameObject _textWindow;
     public GameObject _imageFinger;
-
-    public GameObject _indicator;
-    public GameObject _targetDistance;
     public GameObject _missionObjective;
-    public GameObject _warningRegionOut;
 
     // 
     bool _visibleLayerControllerUI = false;
@@ -344,42 +340,12 @@ public class UIManager : MonoBehaviour
 
     public void SetIndicatorTargetPosition(Vector3 position)
     {
-        _targetPosition = position;
+        GetComponent<IndicatorUI>().SetIndicatorTargetPosition(position);
     }
 
-    public void UpdateIndicator()
+    public void ShowMissionRegionWarning(bool show, bool isWarningRegionRight)
     {
-        LevelBase level = LevelManager.Instance.GetCurrentLevel();
-        if(null != level)
-        {
-            RectTransform CanvasRect = _canvas.GetComponent<RectTransform>();            
-            float halfScreenSizeX = CanvasRect.sizeDelta.x * 0.5f;
-            float halfScreenSizeY = CanvasRect.sizeDelta.y * 0.5f;
-            Vector2 ViewportPosition = MainCamera.Instance.GetComponent<Camera>().WorldToViewportPoint(_targetPosition);
-            Vector2 WorldObject_ScreenPosition = new Vector2(
-                ((ViewportPosition.x * CanvasRect.sizeDelta.x) - halfScreenSizeX),
-                ((ViewportPosition.y * CanvasRect.sizeDelta.y) - halfScreenSizeY)
-            );
-            float padding = 40.0f;
-            float lengthRatio = Mathf.Max(
-                Mathf.Abs(WorldObject_ScreenPosition.x / (halfScreenSizeX - padding)), 
-                Mathf.Abs(WorldObject_ScreenPosition.y / (halfScreenSizeY - padding))
-            );
-            float angle = Mathf.Atan2(WorldObject_ScreenPosition.y, WorldObject_ScreenPosition.x) * Mathf.Rad2Deg;
-
-            _indicator.GetComponent<RectTransform>().anchoredPosition = WorldObject_ScreenPosition / lengthRatio;
-            _indicator.GetComponent<RectTransform>().rotation = Quaternion.Euler(0.0f, 0.0f, angle - 90.0f);
-            _targetDistance.GetComponent<RectTransform>().anchoredPosition = WorldObject_ScreenPosition / lengthRatio;
-
-            Vector3 toTarget = _targetPosition - Player.Instance.GetPosition();
-            int dist = (int)Mathf.Sqrt(toTarget.x * toTarget.x + toTarget.y * toTarget.y);
-            _targetDistance.GetComponent<TextMeshProUGUI>().text = dist.ToString() + "m";
-        }
-    }
-
-    public void ShowWarningRegionOut(bool show)
-    {
-        _warningRegionOut.SetActive(show);
+        GetComponent<MissionRegionWarning>().ShowMissionRegionWarning(show, isWarningRegionRight);
     }
 
     public void SetMissionObjective(string objective)
@@ -396,6 +362,21 @@ public class UIManager : MonoBehaviour
         SetSubjectText("");
     }
 
+    public void OnLevelStart()
+    {
+        bool hideControllerUI = LevelManager.Instance.IsLevelProfile() || LevelManager.Instance.IsLevelLobby();
+        SetVisibleControllerUI(!hideControllerUI);
+        ShowMissionCompleteOrFailed(false, false);
+        ShowMissionRegionWarning(false, false);
+        SetSubjectText("");        
+    }
+
+    public void OnLevelEnd(bool isMissionSuccess)
+    {
+        ShowMissionCompleteOrFailed(true, isMissionSuccess);
+        SetVisibleControllerUI(false);
+    }
+
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.Escape))
@@ -406,7 +387,6 @@ public class UIManager : MonoBehaviour
         UpdateFadeInOut();
         UpdateFingerTarget();
         UpdateSubjectText();
-        UpdateIndicator();
 
         _textScore.GetComponent<TextMeshProUGUI>().text = "Score: " + SaveData.Instance._playerData._score.ToString();
         _textTime.GetComponent<TextMeshProUGUI>().text = "Time: " + LevelManager.Instance.GetMissionTime().ToString();

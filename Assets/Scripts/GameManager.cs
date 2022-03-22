@@ -115,20 +115,19 @@ public class GameManager : MonoBehaviour
         _lastTouchPositionY = 0.0f;
 
         MainCamera.Instance.ResetMainCamera();
-        Player.Instance.ResetPlayer();        
+        Player.Instance.ResetPlayer();
         Player.Instance.SetControllable(controllable);
         Player.Instance.SetInvincibility(invincibility);
         Player.Instance.SetPosition(startPoint);
+
         if(isFlying)
         {
             Player.Instance.SetAutoFlying(autoFlyingToRight);
         }
 
-        bool hideControllerUI = LevelManager.Instance.IsLevelProfile() || LevelManager.Instance.IsLevelLobby();
-        UIManager.Instance.SetVisibleControllerUI(!hideControllerUI);
-        UIManager.Instance.ShowMissionCompleteOrFailed(false, false);
-        UIManager.Instance.SetSubjectText("");
-        _audioMaster.SetFloat("MusicVolume", _musicVolumeStore);        
+        UIManager.Instance.OnLevelStart();
+
+        _audioMaster.SetFloat("MusicVolume", _musicVolumeStore);
         _levelEnded = false;
     }
 
@@ -136,11 +135,12 @@ public class GameManager : MonoBehaviour
     {
         Player.Instance.SetControllable(!isMissionSuccess);
         MainCamera.Instance.SetTrackingPlayer(!isMissionSuccess);
-        UIManager.Instance.ShowMissionCompleteOrFailed(true, isMissionSuccess);
-        UIManager.Instance.SetVisibleControllerUI(false);        
+        
+        UIManager.Instance.OnLevelEnd(isMissionSuccess);
+        
         _audioMaster.GetFloat("MusicVolume", out _musicVolumeStore);
         _audioMaster.SetFloat("MusicVolume", -80.0f);
-        _audioSource.PlayOneShot(isMissionSuccess ? _missionCompleteAudio : _gameOverAudio);                
+        _audioSource.PlayOneShot(isMissionSuccess ? _missionCompleteAudio : _gameOverAudio);
         _levelEnded = true;
 
         // save data
@@ -174,6 +174,36 @@ public class GameManager : MonoBehaviour
 
         _audioMaster.SetFloat("MasterVolume", _masterVolumeStore);
         _audioMaster.SetFloat("MusicVolume", _musicVolumeStore);
+    }
+
+    public bool CheckMissionRegion()
+    {   
+        Vector2 region = LevelManager.Instance.GetMissionRegion();
+        //if(Vector2.zero != region)
+        {
+            Vector3 playerPosition = Player.Instance.GetPosition();        
+            float minToPlayer = playerPosition.x - region.x;
+            float playerToMax = region.y - playerPosition.x;
+
+            // mission region warning sign
+            if(minToPlayer <= Constants.WARNING_DISTANCE)
+            {
+                UIManager.Instance.ShowMissionRegionWarning(true, false);
+            }
+            else if(playerToMax <= Constants.WARNING_DISTANCE)
+            {
+                UIManager.Instance.ShowMissionRegionWarning(true, true);
+            }
+            else
+            {
+                UIManager.Instance.ShowMissionRegionWarning(false, false);
+            }
+
+            // check mission failed
+            return minToPlayer <= 0.0f || playerToMax <= 0.0f;
+        }
+
+        return false;
     }
 
     // Update is called once per frame

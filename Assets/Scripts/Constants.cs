@@ -21,4 +21,5 @@ public class Constants : MonoBehaviour
     public const float SPEED_FOR_DESTROY = -4.0f;
     public const float LEVEL_EXIT_TIME = 5.0f;
     public const float CLOUD_ALTITUDE = 30.0f;
+    public const float WARNING_DISTANCE = 30.0f;
 }

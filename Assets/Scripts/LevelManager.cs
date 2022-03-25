@@ -95,7 +95,7 @@ public class LevelManager : MonoBehaviour
             if(null != levelPrefab)
             {
                 _currentLevel = Instantiate(levelPrefab, Vector3.zero, Quaternion.identity);
-                _currentLevel.transform.parent = transform;
+                _currentLevel.transform.SetParent(transform, false);
                 _currentLevel.SetActive(true);
                 _currentLevel.GetComponent<LevelBase>().OnStartLevel();
             }

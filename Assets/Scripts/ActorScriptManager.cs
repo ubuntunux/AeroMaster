@@ -43,13 +43,20 @@ public class ActorScriptManager : MonoBehaviour
         }
     }
 
-    public void GenerateActorScriptsPages(string textScripts)
+    public void ClearActorScriptsPages()
     {
         _scriptIndex = 0;
         _pageKey = "";
         _callbackOnPageReadDone = null;
-
         _actorScriptsPages.Clear();
+
+        TextManager textManager = UIManager.Instance.GetTextWindow();
+        textManager.SetActive(false);
+    }
+
+    public void GenerateActorScriptsPages(string textScripts)
+    {
+        ClearActorScriptsPages();
 
         string[] pages = textScripts.Split(PAGE_SEPERATOR);
         for(int pageIndex = 1; pageIndex < pages.Length; pageIndex += 2)

@@ -37,9 +37,11 @@ public class Player : MonoBehaviour
     private Callback _callbackOnClickGoLeft = null;
     private Callback _callbackOnClickLanding = null;
 
-    private float _absVelocityX = 0.0f;
-    private float _absVelocityRatioX = 0.0f;
+    private float _absVelocityX = 0.0f;    
     private float _velocityY = 0.0f;
+    private float _absVelocityRatioX = 0.0f;
+    private float _absVelocityRatioY = 0.0f;
+    private float _inputY = 0.0f;
     private bool _isAcceleration = false;
     private bool _isLanding = true;
     private bool _goalFrontDirectionFlag = true; 
@@ -215,9 +217,24 @@ public class Player : MonoBehaviour
         }
     }
 
+    public float GetVelocityRatio()
+    {
+        return Mathf.Min(1.0f, (_absVelocityX * _absVelocityX + _velocityY * _velocityY) / (Constants.VELOCITY_LIMIT_X * Constants.VELOCITY_LIMIT_X + Constants.VELOCITY_LIMIT_Y * Constants.VELOCITY_LIMIT_Y));
+    }
+
+    public float GetMaxVelocityRatio()
+    {
+        return Mathf.Max(_absVelocityRatioX, _absVelocityRatioY);
+    }
+
     public float GetAbsVelocityRatioX()
     {
         return _absVelocityRatioX;
+    }
+
+    public float GetAbsVelocityRatioY()
+    {
+        return _absVelocityRatioY;
     }
 
     public float GetAbsVelocityX()
@@ -323,7 +340,7 @@ public class Player : MonoBehaviour
             }
 
             _meshObject = Instantiate(_meshObjects[_playerModelIndex]);            
-            _meshObject.transform.parent = transform;
+            _meshObject.transform.SetParent(transform, false);
             _meshObject.transform.localPosition = Vector3.zero;
             _animator = _meshObject.GetComponent<Animator>();
         }
@@ -407,24 +424,34 @@ public class Player : MonoBehaviour
     void ControllShip()
     {
         Vector2 input = Vector2.zero;
-        if(GetControllable())
-        {
-            GetInputDelta(ref input);
-        }
 
+        // input
         if(_autoTakeOff)
         {
             input.y = 1.0f;
         }
+        else if(GetControllable())
+        {
+            GetInputDelta(ref input);
+        }
+
+        // make input smooth
+        float inputYVelocity = (0.0f == input.y ? Constants.INPUT_Y_DAMPING : Constants.INPUT_Y_VELOCITY) * Time.deltaTime;
+        if(_inputY < input.y)
+        {
+            _inputY = Mathf.Min(input.y, _inputY + inputYVelocity);
+        }
+        else if(input.y < _inputY)
+        {
+            _inputY = Mathf.Max(input.y, _inputY - inputYVelocity);
+        }
     
         // clamp input
-        if(1.0f < input.x) input.x = 1.0f;
-        else if(input.x < -1.0f) input.x = -1.0f;        
-        if(1.0f < input.y) input.y = 1.0f;
-        else if(input.y < -1.0f) input.y = -1.0f;
+        if(1.0f < _inputY) _inputY = 1.0f;
+        else if(_inputY < -1.0f) _inputY = -1.0f;
 
         // apply to ui
-        _sliderVerticalVelocity.GetComponent<Slider>().value = input.y;
+        _sliderVerticalVelocity.GetComponent<Slider>().value = _inputY;
 
         // Acceleration
         if(_isAcceleration)
@@ -444,27 +471,21 @@ public class Player : MonoBehaviour
         _frontDirection += (_goalFrontDirectionFlag ? Time.deltaTime : -Time.deltaTime) * _absVelocityRatioX * Constants.TURN_SPEED;
         _frontDirection = Mathf.Min(1.0f, Mathf.Max(-1.0f, _frontDirection));
 
+        // control vertical velocity
+        if(0.0f != _inputY)
+        {
+            _velocityY += Constants.ACCEL_Y * _absVelocityRatioX * _absVelocityRatioX * _inputY * Time.deltaTime;
+            float limit = Mathf.Abs(_absVelocityRatioX * _inputY * Constants.VELOCITY_LIMIT_Y);
+            _velocityY = Mathf.Lerp(_velocityY, Mathf.Min(limit, Mathf.Max(-limit, _velocityY)), _absVelocityRatioX);
+        }
+
         // apply flying gravity
         if(_absVelocityRatioX < 1.0f && false == _isGround)
         {
             _velocityY -= Constants.GRAVITY * (1.0f - _absVelocityRatioX) * Time.deltaTime;
         }
 
-        // control vertical velocity
-        if(0.0f != input.y)
-        {
-            // flying
-            _velocityY += Constants.ACCEL_Y * _absVelocityRatioX * _absVelocityRatioX * input.y * Time.deltaTime;
-            _velocityY = Mathf.Min(Constants.VELOCITY_LIMIT_Y, Mathf.Max(-Constants.VELOCITY_LIMIT_Y, _velocityY));
-        }
-        else if(0.0f != _velocityY && false == _isLanding)
-        {
-            // maintain altitude
-            float sign = Mathf.Sign(_velocityY);
-            float absVelocityY = Mathf.Abs(_velocityY);
-            absVelocityY = Mathf.Max(0.0f, absVelocityY - Constants.DAMPING_Y * _absVelocityRatioX * Time.deltaTime);
-            _velocityY = absVelocityY * sign;
-        }
+        _absVelocityRatioY = Mathf.Min(1.0f, Mathf.Max(0.0f, Mathf.Abs(_velocityY / Constants.VELOCITY_LIMIT_Y)));
     }
 
     void SetAnimationState(AnimationState state)
@@ -602,7 +623,7 @@ public class Player : MonoBehaviour
 
         // update transform
         float invGroundRatio = Mathf.Max(0.0f, Mathf.Min(1.0f, (position.y - Constants.GROUND_HEIGHT) * 0.2f));
-        float velocityRatioY = Mathf.Max(-1.0f, Mathf.Min(1.0f, _velocityY / Constants.VELOCITY_LIMIT_Y));
+        float velocityRatioY = Mathf.Max(-1.0f, Mathf.Min(1.0f, _inputY));
         float pitch = _absVelocityRatioX * velocityRatioY * invGroundRatio * 25.0f;
         float yaw = (_frontDirection * 0.5f + 0.5f) * (_goalFrontDirectionFlag ? -180.0f : 180.0f) + 180.0f;
         float roll = Mathf.Cos(_frontDirection * Mathf.PI * 0.5f) * 90.0f * invGroundRatio;

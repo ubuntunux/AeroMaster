@@ -21,6 +21,14 @@ MonoBehaviour:
     m_Address: Assets/FX/Material_Cloud.mat
     m_ReadOnly: 0
     m_SerializedLabels: []
+  - m_GUID: be4c0685c339ee6c18ca137cec2a0837
+    m_Address: Assets/Fonts/FontOutline.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 2c58308e197efa68bba123c4ddb2a45c
+    m_Address: Assets/Fonts/NotoSansKR-Regular SDF.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: 7a08efb1adf23034396e2349e2d16a33, type: 2}
   m_SchemaSet:

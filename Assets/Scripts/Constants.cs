@@ -12,7 +12,9 @@ public class Constants : MonoBehaviour
     public const float VELOCITY_LIMIT_X = 10.0f;
     public const float VELOCITY_LIMIT_Y = 5.0f;
     public const float DAMPING_X = 2.0f;
-    public const float DAMPING_Y = 5.0f;
+    public const float INPUT_Y_DAMPING = 2.0f;
+    public const float INPUT_Y_VELOCITY = 5.0f;
+    public const float INPUT_Y_HEIGHT_RATIO = 0.1f;
     public const float TAKE_OFF_TIME = 2.0f;
     public const float TAKE_OFF_ACCEL_Y = 5.0f;
     public const float GROUND_HEIGHT = 0.0f;

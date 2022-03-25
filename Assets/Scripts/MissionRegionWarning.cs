@@ -30,6 +30,11 @@ public class MissionRegionWarning : MonoBehaviour
     {
         if(_missionRegionWarningText.activeSelf)
         {
+            if(false == AudioManager.Instance._audioBeepLoop.isPlaying)
+            {
+                AudioManager.Instance._audioBeepLoop.Play();
+            }
+
             Color textColor = new Color(1.0f, 0.0f, 0.0f, 1.0f);
             textColor.a = Mathf.Abs(Mathf.Sin(Time.time * Mathf.PI));            
             _missionRegionWarningText.GetComponent<TextMeshProUGUI>().color = textColor;
@@ -41,6 +46,13 @@ public class MissionRegionWarning : MonoBehaviour
             else
             {
                 _missionRegionWarningImageLeft.GetComponent<RawImage>().color = textColor;
+            }
+        }
+        else
+        {
+            if(AudioManager.Instance._audioBeepLoop.isPlaying)
+            {
+                AudioManager.Instance._audioBeepLoop.Stop();
             }
         }
     }

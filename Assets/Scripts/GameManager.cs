@@ -46,9 +46,8 @@ public class GameManager : MonoBehaviour
                     _isTouched = true;
                 }
 
-                const float touchHeightRatio = 0.2f;
                 Vector2 deltaPosition = touch.deltaPosition;
-                deltaPosition.y = (touch.position.y - _lastTouchPositionY) / (Screen.height * touchHeightRatio);
+                deltaPosition.y = (touch.position.y - _lastTouchPositionY) / (Screen.height * Constants.INPUT_Y_HEIGHT_RATIO);
                 return deltaPosition;
             }
         }
@@ -111,15 +110,12 @@ public class GameManager : MonoBehaviour
 
     public void SetLevelStart(bool controllable, bool invincibility, Vector3 startPoint, bool isFlying = false, bool autoFlyingToRight = true)
     {
-        _isTouched = false;
-        _lastTouchPositionY = 0.0f;
-
         MainCamera.Instance.ResetMainCamera();
+
         Player.Instance.ResetPlayer();
         Player.Instance.SetControllable(controllable);
         Player.Instance.SetInvincibility(invincibility);
         Player.Instance.SetPosition(startPoint);
-
         if(isFlying)
         {
             Player.Instance.SetAutoFlying(autoFlyingToRight);
@@ -128,15 +124,17 @@ public class GameManager : MonoBehaviour
         UIManager.Instance.OnLevelStart();
 
         _audioMaster.SetFloat("MusicVolume", _musicVolumeStore);
+        _lastTouchPositionY = 0.0f;
+        _isTouched = false;        
         _levelEnded = false;
     }
 
     public void SetLevelEnd(bool isMissionSuccess = true)
     {
         Player.Instance.SetControllable(!isMissionSuccess);
-        MainCamera.Instance.SetTrackingPlayer(!isMissionSuccess);
-        
+        MainCamera.Instance.SetTrackingPlayer(!isMissionSuccess);        
         UIManager.Instance.OnLevelEnd(isMissionSuccess);
+        ActorScriptManager.Instance.ClearActorScriptsPages();
         
         _audioMaster.GetFloat("MusicVolume", out _musicVolumeStore);
         _audioMaster.SetFloat("MusicVolume", -80.0f);

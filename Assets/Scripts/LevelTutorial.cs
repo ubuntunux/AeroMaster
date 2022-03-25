@@ -76,6 +76,7 @@ public class LevelTutorial : LevelBase
 
     public void CallbackOnClickGoRight()
     {
+        UIManager.Instance.SetMissionObjectiveState("Acceleration", MissionObjectiveState.Success);
         Player.Instance.SetAccleration(true);
         Player.Instance.SetCallbackOnClickGoRight(null);
         UIManager.Instance.SetInteractableGoRightButton(false);
@@ -85,6 +86,7 @@ public class LevelTutorial : LevelBase
 
     public void CallbackOnClickGoLeft()
     {
+        UIManager.Instance.SetMissionObjectiveState("Turn", MissionObjectiveState.Success);
         Player.Instance.SetAccleration(false);
         Player.Instance.SetCallbackOnClickGoLeft(null);
         UIManager.Instance.SetInteractableGoLeftButton(false);
@@ -94,6 +96,7 @@ public class LevelTutorial : LevelBase
 
     public void CallbackOnClickLanding()
     {
+        UIManager.Instance.SetMissionObjectiveState("Landing", MissionObjectiveState.Success);
         Player.Instance.SetCallbackOnClickLanding(null);
         Player.Instance.SetLanding();
         UIManager.Instance.SetInteractableLandingButton(false);
@@ -119,6 +122,12 @@ public class LevelTutorial : LevelBase
         ActorScriptManager.Instance.GenerateActorScriptsPages(_textScripts);
 
         UpdateRegions();
+
+        // Set Mission Objectives
+        UIManager.Instance.RegistMissionObjective("Acceleration", "기체를 출발 시키세요.");
+        UIManager.Instance.RegistMissionObjective("TakeOff", "기체를 이륙 시키세요.");
+        UIManager.Instance.RegistMissionObjective("Turn", "기체를 왼쪽으로 선회 시키세요.");
+        UIManager.Instance.RegistMissionObjective("Landing", "기체를 착륙 시키세요.");
 
         _missionFailed = false;
         _exitTime = 0.0f;
@@ -207,6 +216,7 @@ public class LevelTutorial : LevelBase
                 const float TAKE_OFF_ALTITUDE = 1.0f;
                 if(TAKE_OFF_ALTITUDE <= Player.Instance.GetAltitude())
                 {
+                    UIManager.Instance.SetMissionObjectiveState("TakeOff", MissionObjectiveState.Success);
                     Player.Instance.SetAutoTakeOff(false);
                     ActorScriptManager.Instance.SetPage("Turn", CallbackSetPhaseTurn);
                     _phase = TutorialPhase.Turn;
@@ -258,10 +268,11 @@ public class LevelTutorial : LevelBase
         {
             if(Constants.LEVEL_EXIT_TIME <= _exitTime)
             {
-                if(ActorScriptManager.Instance.CheckPageReadDone("Done"))
+                if(false == _missionFailed)
                 {
-                    _phase = TutorialPhase.End;
-                }
+                    ActorScriptManager.Instance.SetPage("Done");
+                }                
+                _phase = TutorialPhase.End;
             }
             else
             {

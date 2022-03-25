@@ -98,7 +98,7 @@ public class MainCamera : MonoBehaviour
             const float CAMERA_OFFSET_Y = 2.0f;
             const float CAMERA_OFFSET_Z = 6.0f;
             float frontDirection = Player.Instance.GetFrontDirection();
-            float AbsVelocityRatioX = Player.Instance.GetAbsVelocityRatioX();
+            float AbsVelocityRatioX = Player.Instance.GetMaxVelocityRatio();
             float groundRatio = Mathf.Max(0.0f, Mathf.Min(1.0f, 1.0f - (Player.Instance.GetPosition().y - Constants.GROUND_HEIGHT) * 0.2f));
 
             cameraPosition.x += AbsVelocityRatioX * frontDirection * CAMERA_OFFSET_X;
@@ -115,7 +115,7 @@ public class MainCamera : MonoBehaviour
         Vector3 cameraOffset = Vector3.zero;
         _cameraShake.UpdateShakeObject(ref cameraOffset);
 
-        float handMoveIntensity = Player.Instance.GetAbsVelocityRatioX() * 0.8f + 0.2f;
+        float handMoveIntensity = Player.Instance.GetMaxVelocityRatio() * 0.8f + 0.2f;
         _cameraHandMove.UpdateShakeObject(ref cameraOffset, handMoveIntensity);
 
         if(_trackingPlayer)

@@ -32,7 +32,6 @@ public class UIManager : MonoBehaviour
     public GameObject _panelFadeInOut;
     public GameObject _textWindow;
     public GameObject _imageFinger;
-    public GameObject _missionObjective;
 
     // 
     bool _visibleLayerControllerUI = false;
@@ -186,7 +185,7 @@ public class UIManager : MonoBehaviour
 
     void Start()
     {
-        _visibleLayerControllerUI = GetVisibleControllerUI();        
+        _visibleLayerControllerUI = GetVisibleControllerUI();
     }
 
     // Text Window
@@ -303,6 +302,7 @@ public class UIManager : MonoBehaviour
         }
     }
 
+    // Subject Text
     public bool CheckSubjectTextDone()
     {
         return _subjectTime <= 0.0f;
@@ -338,21 +338,51 @@ public class UIManager : MonoBehaviour
         }
     }
 
+    // Indicator
     public void SetIndicatorTargetPosition(Vector3 position)
     {
         GetComponent<IndicatorUI>().SetIndicatorTargetPosition(position);
     }
 
+    // Mission Region
     public void ShowMissionRegionWarning(bool show, bool isWarningRegionRight)
     {
         GetComponent<MissionRegionWarning>().ShowMissionRegionWarning(show, isWarningRegionRight);
     }
 
-    public void SetMissionObjective(string objective)
+    // Mission Objective
+    public void ClearMissionObjectives()
     {
-        _missionObjective.GetComponent<TextMeshProUGUI>().text = objective;
+        GetComponent<MissionObjectiveManager>().ClearMissionObjectives();
     }
 
+    public void RegistMissionObjective(string key, string missionText)
+    {
+        GetComponent<MissionObjectiveManager>().RegistMissionObjective(key, missionText);
+    }
+
+    public void UnregistMissionObjective(string key)
+    {
+        GetComponent<MissionObjectiveManager>().UnregistMissionObjective(key);
+    }
+
+    public void SetMissionObjectiveState(string key, MissionObjectiveState state)
+    {
+        switch(state)
+        {
+            case MissionObjectiveState.Success:
+                AudioManager.Instance._audioSuccess.Play();
+                break;
+            case MissionObjectiveState.Failed:
+                AudioManager.Instance._audioWarnning.Play();
+                break;
+            default:
+                break;
+        }
+        GetComponent<MissionObjectiveManager>().SetMissionObjectiveState(key, state);
+    }
+
+    // UIManager
     public void ResetUIManager()
     {
         _layeyExit.SetActive(false);
@@ -366,15 +396,19 @@ public class UIManager : MonoBehaviour
     {
         bool hideControllerUI = LevelManager.Instance.IsLevelProfile() || LevelManager.Instance.IsLevelLobby();
         SetVisibleControllerUI(!hideControllerUI);
+        SetFingerTarget(FingerTarget.None);
         ShowMissionCompleteOrFailed(false, false);
         ShowMissionRegionWarning(false, false);
+        ClearMissionObjectives();
         SetSubjectText("");        
     }
 
     public void OnLevelEnd(bool isMissionSuccess)
     {
         ShowMissionCompleteOrFailed(true, isMissionSuccess);
+        ShowMissionRegionWarning(false, false);
         SetVisibleControllerUI(false);
+        SetFingerTarget(FingerTarget.None);
     }
 
     void Update()

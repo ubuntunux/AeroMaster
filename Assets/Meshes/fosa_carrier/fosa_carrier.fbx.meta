@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: d54cf3935626834c999d69aebbbd4fbb
+guid: a2e0af953f1216d61b0175cbf64f7e16
 ModelImporter:
   serializedVersion: 20200
   internalIDToNameTable: []
@@ -7,8 +7,8 @@ ModelImporter:
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
-      name: cloud
-    second: {fileID: 2100000, guid: 1f9f34f2275c4e7e991356343f94b6aa, type: 2}
+      name: fosa_carrier
+    second: {fileID: 2100000, guid: 561485aaeaae0c8aeacae916f0cb3802, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0

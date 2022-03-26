@@ -27,16 +27,6 @@ public class IndicatorUI : MonoBehaviour
 
     void Update()
     {
-        // Test indicate region marker
-        {
-            Vector3 playerPosition = Player.Instance.GetPosition();
-            Vector2 region = LevelManager.Instance.GetMissionRegion();
-            float minToPlayer = playerPosition.x - region.x;
-            float playerToMax = region.y - playerPosition.x;
-            float posX = (Mathf.Abs(minToPlayer) < Mathf.Abs(playerToMax)) ? region.x : region.y;
-            SetIndicatorTargetPosition(new Vector3(posX, 0.0f, playerPosition.z));
-        }        
-
         if(_show)
         {
             LevelBase level = LevelManager.Instance.GetCurrentLevel();
@@ -68,7 +58,7 @@ public class IndicatorUI : MonoBehaviour
                 _targetDistance.GetComponent<RectTransform>().anchoredPosition = WorldObject_ScreenPosition / lengthRatio;
 
                 Vector3 toTarget = _targetPosition - Player.Instance.GetPosition();
-                int dist = (int)Mathf.Sqrt(toTarget.x * toTarget.x + toTarget.y * toTarget.y);
+                int dist = (int)Mathf.Sqrt(toTarget.x * toTarget.x + toTarget.y * toTarget.y) * 5;
                 _targetDistance.GetComponent<TextMeshProUGUI>().text = dist.ToString() + "m";
             }
             

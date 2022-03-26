@@ -12,7 +12,6 @@ abstract public class LevelBase: MonoBehaviour
     abstract public bool IsEndLevel();
     abstract public void UpdateLevel();
     abstract public int GetMissionTime();
-    abstract public Vector2 GetMissionRegion();
 }
 
 public class LevelManager : MonoBehaviour
@@ -22,13 +21,16 @@ public class LevelManager : MonoBehaviour
     public GameObject _levelTutorialPrefab;
     public GameObject _levelMissionPrefab;
     
-    private static LevelManager _instance;
     GameObject _previousLevelPrefab = null;
     GameObject _currentLevelPrefab = null;
     GameObject _currentLevel = null;
     bool _firstUpdate = true;
 
+    Vector2 _missionRegion;
+    List<RegionMarkerFX> _regionMarkerFXs = new List<RegionMarkerFX>();
+
     // Singleton instantiation
+    static LevelManager _instance;
     public static LevelManager Instance
     {
         get
@@ -94,6 +96,10 @@ public class LevelManager : MonoBehaviour
 
             if(null != levelPrefab)
             {
+                // Note: clear before create new level
+                ClearRegionMarkerFX();
+
+                // create & update the new level
                 _currentLevel = Instantiate(levelPrefab, Vector3.zero, Quaternion.identity);
                 _currentLevel.transform.SetParent(transform, false);
                 _currentLevel.SetActive(true);
@@ -127,14 +133,63 @@ public class LevelManager : MonoBehaviour
         return (null == _currentLevel) ? 0 : _currentLevel.GetComponent<LevelBase>().GetMissionTime();
     }
 
+    // update mission region info
     public Vector2 GetMissionRegion()
     {
-        return (null == _currentLevel) ? Vector2.zero : _currentLevel.GetComponent<LevelBase>().GetMissionRegion();
+        return _missionRegion;
+    }
+
+    public void RegistRegionMarkerFX(RegionMarkerFX regionMarkerFX)
+    {
+        _regionMarkerFXs.Add(regionMarkerFX);
+    }
+
+    public void ClearRegionMarkerFX()
+    {
+        _regionMarkerFXs.Clear();
+    }
+
+    public void UpdateRegionMarkerFXs()
+    {
+        if(0 < _regionMarkerFXs.Count)
+        {
+            _missionRegion.x = float.MaxValue;
+            _missionRegion.y = float.MinValue;
+
+            foreach(RegionMarkerFX regionMarkerFX in _regionMarkerFXs)
+            {
+                if(regionMarkerFX.transform.position.x < _missionRegion.x)
+                {
+                    _missionRegion.x = regionMarkerFX.transform.position.x;
+                }
+
+                if(_missionRegion.y < regionMarkerFX.transform.position.x)
+                {
+                    _missionRegion.y = regionMarkerFX.transform.position.x;
+                }
+            }
+        }
+        else
+        {
+            _missionRegion = Vector2.zero;
+        }
+    }
+
+    // Level event
+    public void OnLevelStart()
+    {
+        UpdateRegionMarkerFXs();
+    }
+
+    public void OnLevelEnd()
+    {
+        ClearRegionMarkerFX();
     }
 
     public void ResetLevelManager()
     {
         _firstUpdate = true;
+
         // black screen
         float fadeInRatio = 0.51f;
         SetCurrentLevel(null, fadeInRatio);
@@ -149,7 +204,7 @@ public class LevelManager : MonoBehaviour
         }
 
         if(null != _currentLevel)
-        {   
+        {
             LevelBase currentLevel = _currentLevel.GetComponent<LevelBase>();
             currentLevel.UpdateLevel();
             if(currentLevel.IsEndLevel())

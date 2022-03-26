@@ -68,7 +68,6 @@ public class LevelLobby : LevelBase
         GameManager.Instance.SetLevelStart(controllable, invincibility, startPosition);
         
         // Set Camera
-        //MainCamera.Instance.SetTrackingPlayer(false);
         MainCamera.Instance.SetCameraPosition(new Vector3(-1.0f, 1.0f, -3.0f));
     }
 
@@ -84,11 +83,6 @@ public class LevelLobby : LevelBase
     override public int GetMissionTime()
     {
         return 0; 
-    }
-
-    override public Vector2 GetMissionRegion()
-    {
-        return Vector2.zero;
     }
 
     override public void UpdateLevel()

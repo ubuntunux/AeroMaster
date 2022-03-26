@@ -110,8 +110,8 @@ public class GameManager : MonoBehaviour
 
     public void SetLevelStart(bool controllable, bool invincibility, Vector3 startPoint, bool isFlying = false, bool autoFlyingToRight = true)
     {
+        LevelManager.Instance.OnLevelStart();
         MainCamera.Instance.ResetMainCamera();
-
         Player.Instance.ResetPlayer();
         Player.Instance.SetControllable(controllable);
         Player.Instance.SetInvincibility(invincibility);
@@ -131,8 +131,9 @@ public class GameManager : MonoBehaviour
 
     public void SetLevelEnd(bool isMissionSuccess = true)
     {
-        Player.Instance.SetControllable(!isMissionSuccess);
-        MainCamera.Instance.SetTrackingPlayer(!isMissionSuccess);        
+        LevelManager.Instance.OnLevelEnd();
+        Player.Instance.SetControllable(false);
+        MainCamera.Instance.SetTrackingPlayer(false);
         UIManager.Instance.OnLevelEnd(isMissionSuccess);
         ActorScriptManager.Instance.ClearActorScriptsPages();
         
@@ -177,18 +178,20 @@ public class GameManager : MonoBehaviour
     public bool CheckMissionRegion()
     {   
         Vector2 region = LevelManager.Instance.GetMissionRegion();
-        //if(Vector2.zero != region)
-        {
-            Vector3 playerPosition = Player.Instance.GetPosition();        
+        
+        if(Vector2.zero != region)
+        {   
+            Vector3 playerPosition = Player.Instance.GetPosition();
+            bool isRightDirection = 1.0f == Player.Instance.GetFrontDirection();
             float minToPlayer = playerPosition.x - region.x;
             float playerToMax = region.y - playerPosition.x;
 
             // mission region warning sign
-            if(minToPlayer <= Constants.WARNING_DISTANCE)
-            {
+            if(false == isRightDirection && minToPlayer <= Constants.WARNING_DISTANCE)
+            {   
                 UIManager.Instance.ShowMissionRegionWarning(true, false);
             }
-            else if(playerToMax <= Constants.WARNING_DISTANCE)
+            else if(isRightDirection && playerToMax <= Constants.WARNING_DISTANCE)
             {
                 UIManager.Instance.ShowMissionRegionWarning(true, true);
             }

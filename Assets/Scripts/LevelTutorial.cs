@@ -21,7 +21,6 @@ public enum TutorialPhase
 public class LevelTutorial : LevelBase
 {
     public GameObject _startMarker;
-    public GameObject[] _regionMarkers;
     public GameObject _panelPause;
     public GameObject _textTutorial;
     [TextArea]
@@ -33,7 +32,6 @@ public class LevelTutorial : LevelBase
 
     TutorialPhase _phase = TutorialPhase.None;
     float _exitTime = 0.0f;
-    Vector2 _region = Vector2.zero;
     bool _missionFailed = false;    
 
     override public string GetMissionTitle()
@@ -53,25 +51,6 @@ public class LevelTutorial : LevelBase
         position.x -= 2.0f;
         position.y -= heightHalf;
         return position;
-    }
-
-    void UpdateRegions()
-    {
-        _region.x = float.MaxValue;
-        _region.y = float.MinValue;
-
-        for(int i = 0; i < _regionMarkers.Length; ++i)
-        {
-            if(_regionMarkers[i].transform.position.x < _region.x)
-            {
-                _region.x = _regionMarkers[i].transform.position.x;
-            }
-
-            if(_region.y < _regionMarkers[i].transform.position.x)
-            {
-                _region.y = _regionMarkers[i].transform.position.x;
-            }
-        }
     }
 
     public void CallbackOnClickGoRight()
@@ -121,8 +100,6 @@ public class LevelTutorial : LevelBase
         UIManager.Instance.SetInteractableButtonAll(false);        
         ActorScriptManager.Instance.GenerateActorScriptsPages(_textScripts);
 
-        UpdateRegions();
-
         // Set Mission Objectives
         UIManager.Instance.RegistMissionObjective("Acceleration", "기체를 출발 시키세요.");
         UIManager.Instance.RegistMissionObjective("TakeOff", "기체를 이륙 시키세요.");
@@ -150,11 +127,6 @@ public class LevelTutorial : LevelBase
     override public int GetMissionTime()
     {
         return 0; 
-    }
-
-    override public Vector2 GetMissionRegion()
-    {
-        return _region; 
     }
     
     override public void UpdateLevel()

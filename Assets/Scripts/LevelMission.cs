@@ -27,6 +27,8 @@ public class LevelMission : LevelBase
     float _exitTime = 0.0f;
     float _missionTime = 0.0f;
 
+    bool _missionFailed = false;
+
     override public string GetMissionTitle()
     {
         return _textMissionTitle;
@@ -64,11 +66,6 @@ public class LevelMission : LevelBase
         return (int)_missionTime; 
     }
 
-    override public Vector2 GetMissionRegion()
-    {
-        return Vector2.zero; 
-    }
-
     public Vector3 GetStartPoint()
     {
         float heightHalf = _start.GetComponent<MeshRenderer>().bounds.size.y * 0.5f;
@@ -101,6 +98,20 @@ public class LevelMission : LevelBase
 
     override public void UpdateLevel()
     {
+        // Test indicate region marker
+        Vector3 goalPoint = GetGoalPoint();
+        UIManager.Instance.SetIndicatorTargetPosition(goalPoint);
+
+        // check mission failed
+        if(false == _missionFailed)
+        {
+            _missionFailed = GameManager.Instance.CheckMissionRegion();
+            if(_missionFailed)
+            {
+                SetGameOver();
+            }
+        }
+
         if(MissionPhase.None == _phase)
         {
             // first update

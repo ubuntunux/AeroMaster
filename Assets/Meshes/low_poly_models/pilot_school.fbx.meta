@@ -3,7 +3,12 @@ guid: d7dcba933e3eb37d9807e8df98903f78
 ModelImporter:
   serializedVersion: 20200
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: PilotSchool
+    second: {fileID: 2100000, guid: 2466227f72ba107edad6154f2b313ada, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0

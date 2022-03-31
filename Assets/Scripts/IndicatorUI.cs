@@ -6,23 +6,28 @@ using TMPro;
 
 public class IndicatorUI : MonoBehaviour
 {
-    public GameObject _canvas;
     public GameObject _indicator;
     public GameObject _targetDistance;
+    public Color _color;
     
     Vector3 _targetPosition = Vector3.zero;
-    bool _show = false;
+    bool _show = true;
 
     public void SetIndicatorTargetPosition(Vector3 position)
     {
+        _targetPosition = position;        
+         if(false == gameObject.activeSelf)
+        {
+            gameObject.SetActive(true);
+        }
         _show = true;
-        _targetPosition = position;
     }
 
     void Start()
     {
-        _indicator.SetActive(false);
-        _targetDistance.SetActive(false);
+        gameObject.SetActive(false);
+        _indicator.GetComponent<RawImage>().color = _color;
+        _targetDistance.GetComponent<TextMeshProUGUI>().color = _color;
     }
 
     void Update()
@@ -32,13 +37,7 @@ public class IndicatorUI : MonoBehaviour
             LevelBase level = LevelManager.Instance.GetCurrentLevel();
             if(null != level)
             {
-                if(false == _indicator.activeSelf)
-                {
-                    _indicator.SetActive(true);
-                    _targetDistance.SetActive(true);
-                }
-
-                RectTransform CanvasRect = _canvas.GetComponent<RectTransform>();
+                RectTransform CanvasRect = UIManager.Instance._canvasNoRayCast.GetComponent<RectTransform>();
                 float halfScreenSizeX = CanvasRect.sizeDelta.x * 0.5f;
                 float halfScreenSizeY = CanvasRect.sizeDelta.y * 0.5f;
                 Vector2 ViewportPosition = MainCamera.Instance.GetComponent<Camera>().WorldToViewportPoint(_targetPosition);
@@ -51,11 +50,19 @@ public class IndicatorUI : MonoBehaviour
                     Mathf.Abs(WorldObject_ScreenPosition.x / (halfScreenSizeX - padding)), 
                     Mathf.Abs(WorldObject_ScreenPosition.y / (halfScreenSizeY - padding))
                 );
-                float angle = Mathf.Atan2(WorldObject_ScreenPosition.y, WorldObject_ScreenPosition.x) * Mathf.Rad2Deg;
 
-                _indicator.GetComponent<RectTransform>().anchoredPosition = WorldObject_ScreenPosition / lengthRatio;
+                if(1.0f < lengthRatio)
+                {
+                    gameObject.GetComponent<RectTransform>().anchoredPosition = WorldObject_ScreenPosition / lengthRatio;
+                }
+                else
+                {
+                    gameObject.GetComponent<RectTransform>().anchoredPosition = WorldObject_ScreenPosition;
+                }                
+
+                // rotate arrow
+                float angle = Mathf.Atan2(WorldObject_ScreenPosition.y, WorldObject_ScreenPosition.x) * Mathf.Rad2Deg;
                 _indicator.GetComponent<RectTransform>().rotation = Quaternion.Euler(0.0f, 0.0f, angle - 90.0f);
-                _targetDistance.GetComponent<RectTransform>().anchoredPosition = WorldObject_ScreenPosition / lengthRatio;
 
                 Vector3 toTarget = _targetPosition - Player.Instance.GetPosition();
                 int dist = (int)Mathf.Sqrt(toTarget.x * toTarget.x + toTarget.y * toTarget.y) * 5;
@@ -64,10 +71,9 @@ public class IndicatorUI : MonoBehaviour
             
             _show = false;
         }
-        else if(_indicator.activeSelf)
+        else if(gameObject.activeSelf)
         {
-            _indicator.SetActive(false);
-            _targetDistance.SetActive(false);
+            gameObject.SetActive(false);
         }
     }
 }

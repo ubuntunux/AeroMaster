@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 8037dc2890c3b8e608b067334b1a6c0a
+guid: 705fd025362c8e9e997a35a03809f769
 ModelImporter:
   serializedVersion: 20200
   internalIDToNameTable: []
@@ -7,13 +7,8 @@ ModelImporter:
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
-      name: asphalt
-    second: {fileID: 2100000, guid: e9dd07508ac73f485a6122b81dfc2152, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: defaultMat
-    second: {fileID: 2100000, guid: e9dd07508ac73f485a6122b81dfc2152, type: 2}
+      name: snow_mountain
+    second: {fileID: 2100000, guid: 556276ab8cdca9f07b7376d44974e615, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0

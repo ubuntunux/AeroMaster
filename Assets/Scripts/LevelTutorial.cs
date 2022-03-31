@@ -44,15 +44,6 @@ public class LevelTutorial : LevelBase
         return _textMissionDetail;
     }
 
-    public Vector3 GetStartPoint()
-    {
-        float heightHalf = _startMarker.GetComponent<MeshRenderer>().bounds.size.y * 0.5f;
-        Vector3 position = _startMarker.transform.position;
-        position.x -= 2.0f;
-        position.y -= heightHalf;
-        return position;
-    }
-
     public void CallbackOnClickGoRight()
     {
         UIManager.Instance.SetMissionObjectiveState("Acceleration", MissionObjectiveState.Success);
@@ -95,7 +86,7 @@ public class LevelTutorial : LevelBase
     {
         bool controllable = false;
         bool invincibility = true;
-        GameManager.Instance.SetLevelStart(controllable, invincibility, GetStartPoint());
+        GameManager.Instance.SetLevelStart(controllable, invincibility);
         
         UIManager.Instance.SetInteractableButtonAll(false);        
         ActorScriptManager.Instance.GenerateActorScriptsPages(_textScripts);

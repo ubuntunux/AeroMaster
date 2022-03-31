@@ -16,15 +16,23 @@ public class PlayerShip : MonoBehaviour
         _afterBurnerParticle.GetComponent<ParticleScript>().SetEmission(emission);
     }
 
-    // Start is called before the first frame update
-    void Start()
+    void OnTriggerEnter(Collider other)
     {
-        
+        Player.Instance.OnTriggerEnter(other);
     }
 
-    // Update is called once per frame
-    void Update()
+    void OnTriggerStay(Collider other)
     {
-        
+        Player.Instance.OnTriggerStay(other);
+    }
+
+    void OnTriggerExit(Collider other)
+    {
+        Player.Instance.OnTriggerExit(other);
+    }
+
+    void OnCollisionEnter(Collision collision)
+    {
+        Debug.Log("OnCollisionEnter");
     }
 }

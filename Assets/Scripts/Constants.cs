@@ -18,7 +18,7 @@ public class Constants : MonoBehaviour
     public const float TAKE_OFF_TIME = 2.0f;
     public const float TAKE_OFF_ACCEL_Y = 5.0f;
     public const float GROUND_HEIGHT = 0.0f;
-    public const float TAKE_OFF_HEIGHT = 3.0f;
+    public const float TAKE_OFF_FLYING_TIME = 1.0f;
     public const float GRAVITY = 9.8f;
     public const float SPEED_FOR_DESTROY = -4.0f;
     public const float LEVEL_EXIT_TIME = 5.0f;

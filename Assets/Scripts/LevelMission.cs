@@ -26,7 +26,6 @@ public class LevelMission : LevelBase
     MissionPhase _phase = MissionPhase.None;
     float _exitTime = 0.0f;
     float _missionTime = 0.0f;
-
     bool _missionFailed = false;
 
     override public string GetMissionTitle()
@@ -43,7 +42,7 @@ public class LevelMission : LevelBase
     {
         bool controllable = true;
         bool invincibility = false;
-        GameManager.Instance.SetLevelStart(controllable, invincibility, GetStartPoint());
+        GameManager.Instance.SetLevelStart(controllable, invincibility);
 
         UIManager.Instance.SetInteractableButtonAll(false);        
         ActorScriptManager.Instance.GenerateActorScriptsPages(_textScripts);
@@ -65,24 +64,6 @@ public class LevelMission : LevelBase
     {
         return (int)_missionTime; 
     }
-
-    public Vector3 GetStartPoint()
-    {
-        float heightHalf = _start.GetComponent<MeshRenderer>().bounds.size.y * 0.5f;
-        Vector3 position = _start.transform.position;
-        position.x -= 2.0f;
-        position.y -= heightHalf;
-        return position;
-    }
-
-    public Vector3 GetGoalPoint()
-    {
-        float heightHalf = _goal.GetComponent<MeshRenderer>().bounds.size.y * 0.5f;
-        Vector3 position = _goal.transform.position;
-        position.x -= 2.0f;
-        position.y -= heightHalf;
-        return position;
-    }
     
     void SetPhaseComplete()
     {
@@ -98,10 +79,6 @@ public class LevelMission : LevelBase
 
     override public void UpdateLevel()
     {
-        // Test indicate region marker
-        Vector3 goalPoint = GetGoalPoint();
-        UIManager.Instance.SetIndicatorTargetPosition(goalPoint);
-
         // check mission failed
         if(false == _missionFailed)
         {
@@ -128,9 +105,8 @@ public class LevelMission : LevelBase
         {
             if(Player.Instance.isAlive())
             {
-                //if(0.0f == Player.Instance.GetAbsVelocityRatioX() && Player.Instance.GetIsGround())
                 Vector3 playerPosition = Player.Instance.GetPosition();
-                if(GetGoalPoint().x <= playerPosition.x)
+                if(LevelManager.Instance.GetGoalPosition().x <= playerPosition.x)
                 {
                     SetPhaseComplete();
                 }

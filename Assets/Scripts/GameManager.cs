@@ -108,20 +108,27 @@ public class GameManager : MonoBehaviour
         _audioMaster.SetFloat("MusicVolume", _musicVolumeStore);
     }
 
-    public void SetLevelStart(bool controllable, bool invincibility, Vector3 startPoint, bool isFlying = false, bool autoFlyingToRight = true)
+    public void SetLevelStart(bool controllable, bool invincibility, bool isFlying = false, bool autoFlyingToRight = true)
     {
-        LevelManager.Instance.OnLevelStart();
+        UIManager.Instance.OnStartLevel();
+        LevelManager.Instance.OnStartLevel();
         MainCamera.Instance.ResetMainCamera();
+
         Player.Instance.ResetPlayer();
         Player.Instance.SetControllable(controllable);
         Player.Instance.SetInvincibility(invincibility);
+
+        Vector3 startPoint = LevelManager.Instance.GetStartPosition();
         Player.Instance.SetPosition(startPoint);
         if(isFlying)
         {
             Player.Instance.SetAutoFlying(autoFlyingToRight);
+            Player.Instance.SetAnimationState(AnimationState.Flying);
         }
-
-        UIManager.Instance.OnLevelStart();
+        else
+        {
+            Player.Instance.SetAnimationState(AnimationState.Idle);
+        }
 
         _audioMaster.SetFloat("MusicVolume", _musicVolumeStore);
         _lastTouchPositionY = 0.0f;
@@ -131,11 +138,11 @@ public class GameManager : MonoBehaviour
 
     public void SetLevelEnd(bool isMissionSuccess = true)
     {
-        LevelManager.Instance.OnLevelEnd();
         Player.Instance.SetControllable(false);
         MainCamera.Instance.SetTrackingPlayer(false);
-        UIManager.Instance.OnLevelEnd(isMissionSuccess);
         ActorScriptManager.Instance.ClearActorScriptsPages();
+        LevelManager.Instance.OnEndLevel();
+        UIManager.Instance.OnEndLevel(isMissionSuccess);
         
         _audioMaster.GetFloat("MusicVolume", out _musicVolumeStore);
         _audioMaster.SetFloat("MusicVolume", -80.0f);
@@ -189,11 +196,16 @@ public class GameManager : MonoBehaviour
             // mission region warning sign
             if(false == isRightDirection && minToPlayer <= Constants.WARNING_DISTANCE)
             {   
+                // min region
                 UIManager.Instance.ShowMissionRegionWarning(true, false);
+                UIManager.Instance.SetMissionRegionIndicator(new Vector3(region.x, playerPosition.y, playerPosition.z));
+                
             }
             else if(isRightDirection && playerToMax <= Constants.WARNING_DISTANCE)
             {
+                // max region
                 UIManager.Instance.ShowMissionRegionWarning(true, true);
+                UIManager.Instance.SetMissionRegionIndicator(new Vector3(region.y, playerPosition.y, playerPosition.z));
             }
             else
             {

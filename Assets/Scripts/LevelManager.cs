@@ -26,7 +26,12 @@ public class LevelManager : MonoBehaviour
     GameObject _currentLevel = null;
     bool _firstUpdate = true;
 
-    Vector2 _missionRegion;
+    Vector3 _startPosition = Vector3.zero;
+
+    IndicatorUI _goalIndicator = null;    
+    Vector3 _goalPosition = Vector3.zero;
+
+    Vector2 _missionRegion = Vector2.zero;
     List<RegionMarkerFX> _regionMarkerFXs = new List<RegionMarkerFX>();
 
     // Singleton instantiation
@@ -96,13 +101,14 @@ public class LevelManager : MonoBehaviour
 
             if(null != levelPrefab)
             {
-                // Note: clear before create new level
-                ClearRegionMarkerFX();
+                // Note: before create a new level
+                BeforeCreateNewLevel();
 
                 // create & update the new level
                 _currentLevel = Instantiate(levelPrefab, Vector3.zero, Quaternion.identity);
                 _currentLevel.transform.SetParent(transform, false);
                 _currentLevel.SetActive(true);
+                // will call - GameManager.Instance.SetLevelStart
                 _currentLevel.GetComponent<LevelBase>().OnStartLevel();
             }
         }
@@ -133,7 +139,38 @@ public class LevelManager : MonoBehaviour
         return (null == _currentLevel) ? 0 : _currentLevel.GetComponent<LevelBase>().GetMissionTime();
     }
 
-    // update mission region info
+    // Start Point
+    public Vector3 GetStartPosition()
+    {
+        return _startPosition;
+    }
+
+    public void RegistStartPosition(Vector3 startPosition)
+    {
+        _startPosition = startPosition;
+    }
+
+    // Goal Point
+    public Vector3 GetGoalPosition()
+    {
+        return _goalPosition;
+    }
+
+    public void RegistGoalPosition(Vector3 goalPosition)
+    {
+        if(null != _goalIndicator)
+        {
+            _goalIndicator = UIManager.Instance.CreateIndicatorUI(goalPosition);
+        }        
+        _goalPosition = goalPosition;
+    }
+
+    public void DestroyGoalIndicator()
+    {
+        UIManager.Instance.DestroyIndicatorUI(ref _goalIndicator);
+    }
+
+    // Mission Regions
     public Vector2 GetMissionRegion()
     {
         return _missionRegion;
@@ -176,14 +213,28 @@ public class LevelManager : MonoBehaviour
     }
 
     // Level event
-    public void OnLevelStart()
+    public void BeforeCreateNewLevel()
+    {
+        ClearRegionMarkerFX();
+
+        _missionRegion = Vector2.zero;
+        _startPosition = Vector3.zero;
+        _goalPosition = Vector3.zero;
+    }
+
+    public void OnStartLevel()
     {
         UpdateRegionMarkerFXs();
     }
 
-    public void OnLevelEnd()
+    public void OnEndLevel()
     {
+        DestroyGoalIndicator();
         ClearRegionMarkerFX();
+
+        _missionRegion = Vector2.zero;
+        _startPosition = Vector3.zero;
+        _goalPosition = Vector3.zero;
     }
 
     public void ResetLevelManager()
@@ -205,12 +256,16 @@ public class LevelManager : MonoBehaviour
 
         if(null != _currentLevel)
         {
+            // Test indicate region marker
+            if(null != _goalIndicator)
+            {
+                _goalIndicator.SetIndicatorTargetPosition(GetGoalPosition());
+            }
+
             LevelBase currentLevel = _currentLevel.GetComponent<LevelBase>();
             currentLevel.UpdateLevel();
             if(currentLevel.IsEndLevel())
             {
-                // TODO: failed to tutorial
-
                 SetCurrentLevel(_levelLobbyPrefab);
             }
         }

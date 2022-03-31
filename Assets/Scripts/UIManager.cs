@@ -33,6 +33,10 @@ public class UIManager : MonoBehaviour
     public GameObject _textWindow;
     public GameObject _imageFinger;
 
+    // indicator
+    public GameObject _indicatorPrefab;
+    public GameObject _missionRegionIndicator;
+
     // 
     bool _visibleLayerControllerUI = false;
     bool _visibleLayerControllerUIByActorScript = false;
@@ -289,12 +293,13 @@ public class UIManager : MonoBehaviour
             {
                 if(null != _callbackOnFadeOut)
                 {
+                    // fade in out callback event
                     _callbackOnFadeOut();
                     _callbackOnFadeOut = null;
                 }
                 else
                 {
-                    // change level
+                    // fade in out and change level
                     LevelManager.Instance.SetCurrentLevelCallback(_nextLevelPrefab);
                     _nextLevelPrefab = null;
                 }
@@ -339,9 +344,31 @@ public class UIManager : MonoBehaviour
     }
 
     // Indicator
-    public void SetIndicatorTargetPosition(Vector3 position)
+    public IndicatorUI CreateIndicatorUI(Vector3 position)
     {
-        GetComponent<IndicatorUI>().SetIndicatorTargetPosition(position);
+        IndicatorUI indicator = Instantiate(_indicatorPrefab).GetComponent<IndicatorUI>();
+        indicator.transform.parent = _canvasNoRayCast.transform;
+        indicator.transform.position = Vector3.zero;
+        indicator.transform.rotation = Quaternion.identity;
+        indicator.transform.localScale = new Vector3(1.0f, 1.0f, 1.0f);
+        indicator.GetComponent<RectTransform>().anchoredPosition = Vector2.zero;
+        indicator.GetComponent<RectTransform>().rotation = Quaternion.identity;
+        indicator.SetIndicatorTargetPosition(position);
+        return indicator;
+    }
+
+    public void DestroyIndicatorUI(ref IndicatorUI indicator)
+    {
+        if(null != indicator)
+        {
+            Destroy(indicator.gameObject);
+            indicator = null;
+        }
+    }
+
+    public void SetMissionRegionIndicator(Vector3 position)
+    {
+        _missionRegionIndicator.GetComponent<IndicatorUI>().SetIndicatorTargetPosition(position);
     }
 
     // Mission Region
@@ -392,7 +419,7 @@ public class UIManager : MonoBehaviour
         SetSubjectText("");
     }
 
-    public void OnLevelStart()
+    public void OnStartLevel()
     {
         bool hideControllerUI = LevelManager.Instance.IsLevelProfile() || LevelManager.Instance.IsLevelLobby();
         SetVisibleControllerUI(!hideControllerUI);
@@ -403,7 +430,7 @@ public class UIManager : MonoBehaviour
         SetSubjectText("");        
     }
 
-    public void OnLevelEnd(bool isMissionSuccess)
+    public void OnEndLevel(bool isMissionSuccess)
     {
         ShowMissionCompleteOrFailed(true, isMissionSuccess);
         ShowMissionRegionWarning(false, false);
@@ -422,7 +449,7 @@ public class UIManager : MonoBehaviour
         UpdateFingerTarget();
         UpdateSubjectText();
 
-        _textScore.GetComponent<TextMeshProUGUI>().text = "Score: " + SaveData.Instance._playerData._score.ToString();
+        _textScore.GetComponent<TextMeshProUGUI>().text = SaveData.Instance._playerData._score.ToString();
         _textTime.GetComponent<TextMeshProUGUI>().text = "Time: " + LevelManager.Instance.GetMissionTime().ToString();
 
         // debug

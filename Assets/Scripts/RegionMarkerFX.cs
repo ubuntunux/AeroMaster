@@ -12,11 +12,8 @@ public class RegionMarkerFX : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        float heightHalf = GetComponent<MeshRenderer>().bounds.size.y * 0.5f;
-        Vector3 position = Player.Instance.GetPosition();
-        position.x = transform.position.x;
-        position.y -= heightHalf;
-        position.z = transform.position.z;
+        Vector3 position = transform.position;
+        position.y = Player.Instance.GetPosition().y;
         transform.position = position;
     }
 }

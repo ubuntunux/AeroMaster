@@ -4,12 +4,12 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
-enum AnimationState
+public enum AnimationState
 {
     None,
     Idle,
     Flying,
-    Takeoff,
+    TakeOff,
     Landing
 };
 
@@ -46,6 +46,7 @@ public class Player : MonoBehaviour
     private bool _isLanding = true;
     private bool _goalFrontDirectionFlag = true; 
     private float _frontDirection = 1.0f;
+    private float _flyingTime = 0.0f;
     private bool _isAlive = false;
     private bool _isGround = false;
     private bool _controllable = false;
@@ -303,6 +304,8 @@ public class Player : MonoBehaviour
         SetAnimationState(AnimationState.None);
         StopAllSound();
 
+        _animationState = AnimationState.None;
+        _landingGearRatio = 0.0f;        
         _autoTakeOff = false;
         _absVelocityX = 0.0f;
         _absVelocityRatioX = 0.0f;
@@ -315,6 +318,49 @@ public class Player : MonoBehaviour
         _isAlive = true;
     }
 
+    // physics collide
+    public void OnTriggerEnter(Collider other)
+    {
+        if("StarOrder" == other.gameObject.tag)
+        {
+            Player.Instance.AddScore(1);
+            other.gameObject.GetComponent<StarOrder>().GetStarOrder();
+        }
+    }
+
+    public void OnTriggerStay(Collider other)
+    {
+        if("Ground" == other.gameObject.tag)
+        {
+            if(_velocityY < 0.0f)
+            {
+                if(_velocityY < Constants.SPEED_FOR_DESTROY || _landingGearRatio < 0.5f)
+                {
+                    SetDestroy();
+                }
+                _velocityY = 0.0f;
+            }
+
+            _flyingTime = 0.0f;
+            _isGround = true;            
+        }
+    }
+
+    public void OnTriggerExit(Collider other)
+    {
+        if("Ground" == other.gameObject.tag)
+        {
+            _isGround = false;
+        }
+    }
+
+    //
+    public void AddScore(int score)
+    {
+        SaveData.Instance._playerData._score += score;
+    }
+
+    //
     public int GetPlayerShipModel()
     {
         return _playerModelIndex;
@@ -466,29 +512,35 @@ public class Player : MonoBehaviour
             _absVelocityX = Mathf.Max(0.0f, _absVelocityX - damping * Time.deltaTime);
         }
         _absVelocityRatioX = _absVelocityX / Constants.VELOCITY_LIMIT_X;
-
+        float double_absVelocityRatioX = _absVelocityRatioX * _absVelocityRatioX;
+        
         // Front direction
         _frontDirection += (_goalFrontDirectionFlag ? Time.deltaTime : -Time.deltaTime) * _absVelocityRatioX * Constants.TURN_SPEED;
         _frontDirection = Mathf.Min(1.0f, Mathf.Max(-1.0f, _frontDirection));
 
         // control vertical velocity
-        if(0.0f != _inputY)
+        if(0.0f != _inputY || (1.0f == _absVelocityRatioX && 0.0f != _velocityY))
         {
-            _velocityY += Constants.ACCEL_Y * _absVelocityRatioX * _absVelocityRatioX * _inputY * Time.deltaTime;
-            float limit = Mathf.Abs(_absVelocityRatioX * _inputY * Constants.VELOCITY_LIMIT_Y);
-            _velocityY = Mathf.Lerp(_velocityY, Mathf.Min(limit, Mathf.Max(-limit, _velocityY)), _absVelocityRatioX);
+            float goalVelocity = Constants.VELOCITY_LIMIT_Y * double_absVelocityRatioX * _inputY;
+            float velocityDiff = goalVelocity - _velocityY;
+            if(0.0f != velocityDiff)
+            {
+                float velocityAccel = Mathf.Abs(Constants.ACCEL_Y * double_absVelocityRatioX * Time.deltaTime);
+                velocityAccel = Mathf.Min(Mathf.Abs(velocityDiff), velocityAccel);
+                _velocityY += (0.0f < velocityDiff) ? velocityAccel : -velocityAccel;
+            }
         }
 
         // apply flying gravity
         if(_absVelocityRatioX < 1.0f && false == _isGround)
         {
-            _velocityY -= Constants.GRAVITY * (1.0f - _absVelocityRatioX) * Time.deltaTime;
+            _velocityY -= Constants.GRAVITY * (1.0f - double_absVelocityRatioX) * Time.deltaTime;
         }
 
         _absVelocityRatioY = Mathf.Min(1.0f, Mathf.Max(0.0f, Mathf.Abs(_velocityY / Constants.VELOCITY_LIMIT_Y)));
     }
 
-    void SetAnimationState(AnimationState state)
+    public void SetAnimationState(AnimationState state)
     {
         if(state != _animationState)
         {
@@ -498,9 +550,9 @@ public class Player : MonoBehaviour
                 {
                     _animator.SetTrigger("Flying");
                 } break;
-                case AnimationState.Takeoff:
+                case AnimationState.TakeOff:
                 {
-                    _animator.SetTrigger("Takeoff");
+                    _animator.SetTrigger("TakeOff");
                 } break;
                 case AnimationState.Landing:
                 {
@@ -520,45 +572,44 @@ public class Player : MonoBehaviour
         if(0 < _animator.layerCount)
         {
             AnimatorStateInfo stateInfo = _animator.GetCurrentAnimatorStateInfo(0);
-            if(AnimationState.None == _animationState)
-            {
-                SetAnimationState(isGround ? AnimationState.Idle : AnimationState.Flying);
-            }
-            else if(AnimationState.Flying == _animationState || AnimationState.Takeoff == _animationState)
-            {
-                if(_isLanding)
-                {
-                    SetAnimationState(AnimationState.Landing);
-                }
-                else if(AnimationState.Takeoff == _animationState && _landingGearRatio == 0.0f)
-                {
-                    SetAnimationState(AnimationState.Flying);
-                }
-            }
-            else if(AnimationState.None == _animationState || AnimationState.Idle == _animationState || AnimationState.Landing == _animationState)
-            {
-                if(false == _isLanding)
-                {
-                    float takeOffAltitude = Constants.GROUND_HEIGHT + Constants.TAKE_OFF_HEIGHT;
-                    if(takeOffAltitude <= position.y)
-                    {
-                        SetAnimationState(AnimationState.Takeoff);
-                    }
-                }
-            }
+            //AnimatorClipInfo[] clipInfo = _animator.GetCurrentAnimatorClipInfo(0);
 
-            // landing gear ratio
+            // update landing gear ratio
             if(AnimationState.Landing == _animationState)
             {
                 _landingGearRatio = Mathf.Min(1.0f, (float)stateInfo.normalizedTime / (float)stateInfo.length);
             }
-            else if(AnimationState.Takeoff == _animationState)
+            else if(AnimationState.TakeOff == _animationState)
             {
                 _landingGearRatio = 1.0f - Mathf.Min(1.0f, (float)stateInfo.normalizedTime / (float)stateInfo.length);
             }
             else
             {
                 _landingGearRatio = (AnimationState.Flying == _animationState) ? 0.0f : 1.0f;
+            }
+
+            // update animation state
+            if(AnimationState.None == _animationState)
+            {
+                SetAnimationState(isGround ? AnimationState.Idle : AnimationState.Flying);
+            }
+            else if(AnimationState.Flying == _animationState || AnimationState.TakeOff == _animationState)
+            {
+                if(_isLanding)
+                {
+                    SetAnimationState(AnimationState.Landing);
+                }
+                else if(AnimationState.TakeOff == _animationState && _landingGearRatio == 0.0f)
+                {
+                    SetAnimationState(AnimationState.Flying);
+                }
+            }
+            else if(AnimationState.None == _animationState || AnimationState.Idle == _animationState || AnimationState.Landing == _animationState)
+            {
+                if(false == _isLanding && Constants.TAKE_OFF_FLYING_TIME <= _flyingTime)
+                {
+                    SetAnimationState(AnimationState.TakeOff);
+                }
             }
         }
     }
@@ -573,7 +624,23 @@ public class Player : MonoBehaviour
         {
             _absVelocityX = Mathf.Max(0.0f, _absVelocityX - Constants.ACCEL_X * Time.deltaTime);
             _absVelocityRatioX = _absVelocityX / Constants.VELOCITY_LIMIT_X;
-            _velocityY -= Constants.GRAVITY * Time.deltaTime;
+            if(false == _isGround)
+            {
+                _velocityY -= Constants.GRAVITY * Time.deltaTime;
+            }
+        }
+
+        // check ground
+        if(_isGround)
+        {
+            if(_velocityY <= 0.0f)
+            {
+                _velocityY = 0.0f;
+            }            
+        }
+        else
+        {
+            _flyingTime += Time.deltaTime;
         }
 
         // apply velocity
@@ -581,45 +648,9 @@ public class Player : MonoBehaviour
         position.x += _absVelocityX * _frontDirection * Time.deltaTime;
         position.y += _velocityY * Time.deltaTime;
 
-        // check ground
-        if(position.y <= Constants.GROUND_HEIGHT)
-        {
-            position.y = Constants.GROUND_HEIGHT;
-
-            if(_velocityY < 0.0f)
-            {
-                if(_velocityY < Constants.SPEED_FOR_DESTROY)
-                {
-                    SetDestroy();
-                }
-
-                if(_isAlive)
-                {
-                    _velocityY = 0.0f;
-                }
-                else
-                {
-                    _velocityY = 0.0f;
-                    // bounce
-                    // _velocityY = -_velocityY * 0.5f;
-                    // if(_velocityY < 1.0f)
-                    // {
-                    //     _velocityY = 0.0f;
-                    // }
-                }
-            }
-        }
-        _isGround = Constants.GROUND_HEIGHT == position.y && 0.0f == _velocityY;
-
         UpdateAudios(_absVelocityRatioX);
         UpdateParticles(_absVelocityRatioX);
         UpdateAnimationController(transform.position, position, _isGround);
-
-        // landing destory
-        if(_isGround && _landingGearRatio < 0.5f)
-        {
-            SetDestroy();
-        }
 
         // update transform
         float invGroundRatio = Mathf.Max(0.0f, Mathf.Min(1.0f, (position.y - Constants.GROUND_HEIGHT) * 0.2f));

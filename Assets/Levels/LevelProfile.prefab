@@ -342,6 +342,8 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 5517161708656845798}
+  - {fileID: 292816357973127823}
+  - {fileID: 2936196192803351657}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -569,3 +571,47 @@ MonoBehaviour:
     m_VerticalOverflow: 0
     m_LineSpacing: 1
   m_Text: Start
+--- !u!1001 &1514852375663567766
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 5517161709339939456}
+    m_Modifications:
+    - target: {fileID: 4448044418073661439, guid: 97382ea516d1986599a3c3f4a389286a, type: 3}
+      propertyPath: m_RootOrder
+      value: 2
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 97382ea516d1986599a3c3f4a389286a, type: 3}
+--- !u!4 &2936196192803351657 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4448044418073661439, guid: 97382ea516d1986599a3c3f4a389286a, type: 3}
+  m_PrefabInstance: {fileID: 1514852375663567766}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1001 &9013709868724174560
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 5517161709339939456}
+    m_Modifications:
+    - target: {fileID: 8721057621728414831, guid: fa0d63e738a55dd6eb2fdb02e4c1ef81, type: 3}
+      propertyPath: m_RootOrder
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8721057621728414831, guid: fa0d63e738a55dd6eb2fdb02e4c1ef81, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8721057621728414831, guid: fa0d63e738a55dd6eb2fdb02e4c1ef81, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 30
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: fa0d63e738a55dd6eb2fdb02e4c1ef81, type: 3}
+--- !u!4 &292816357973127823 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 8721057621728414831, guid: fa0d63e738a55dd6eb2fdb02e4c1ef81, type: 3}
+  m_PrefabInstance: {fileID: 9013709868724174560}
+  m_PrefabAsset: {fileID: 0}

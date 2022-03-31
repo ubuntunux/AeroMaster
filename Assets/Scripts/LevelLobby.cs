@@ -64,8 +64,7 @@ public class LevelLobby : LevelBase
         
         bool controllable = false;
         bool invincibility = true;
-        Vector3 startPosition = new Vector3(0.0f, 0.0f, 0.0f);
-        GameManager.Instance.SetLevelStart(controllable, invincibility, startPosition);
+        GameManager.Instance.SetLevelStart(controllable, invincibility);
         
         // Set Camera
         MainCamera.Instance.SetCameraPosition(new Vector3(-1.0f, 1.0f, -3.0f));

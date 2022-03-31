@@ -36,12 +36,10 @@ public class LevelProfile : LevelBase
     override public void OnStartLevel()
     {
         bool controllable = false;
-        bool invincibility = true;
-        float altitude = Constants.CLOUD_ALTITUDE;
-        Vector3 startPosition = new Vector3(0.0f, altitude, 0.0f);
+        bool invincibility = true;        
         bool isFlying = true;
         bool autoFlyingToRight = true;
-        GameManager.Instance.SetLevelStart(controllable, invincibility, startPosition, isFlying, autoFlyingToRight);
+        GameManager.Instance.SetLevelStart(controllable, invincibility, isFlying, autoFlyingToRight);
     }
 
     override public void OnExitLevel()

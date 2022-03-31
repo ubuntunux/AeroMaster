@@ -8,6 +8,7 @@ public class AudioManager : MonoBehaviour
     public AudioSource _audioSuccess;
     public AudioSource _audioWarnning;
     public AudioSource _audioBeepLoop;
+    public AudioSource _audioStarOrder;
 
     // Singleton instantiation
     private static AudioManager _instance;

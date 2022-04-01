@@ -6,6 +6,6 @@ public class GoalPoint : MonoBehaviour
 {
     void Awake()
     {
-        LevelManager.Instance.RegistGoalPosition(transform.position);
+        LevelManager.Instance.RegistGoalPoint(transform.position);
     }
 }

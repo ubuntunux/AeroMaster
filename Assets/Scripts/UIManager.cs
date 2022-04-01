@@ -430,9 +430,9 @@ public class UIManager : MonoBehaviour
         SetSubjectText("");        
     }
 
-    public void OnEndLevel(bool isMissionSuccess)
+    public void OnEndLevel(LevelEndTypes type)
     {
-        ShowMissionCompleteOrFailed(true, isMissionSuccess);
+        ShowMissionCompleteOrFailed(LevelEndTypes.Silent != type, LevelEndTypes.MissionSucess == type);
         ShowMissionRegionWarning(false, false);
         SetVisibleControllerUI(false);
         SetFingerTarget(FingerTarget.None);

@@ -3,13 +3,19 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 
+public enum LevelEndTypes
+{
+    MissionSucess,
+    MissionFailed,
+    Silent
+};
+
 abstract public class LevelBase: MonoBehaviour
 {
     abstract public string GetMissionTitle();
     abstract public string GetMissionDetails();
     abstract public void OnStartLevel();
     abstract public void OnExitLevel();
-    abstract public bool IsEndLevel();
     abstract public void UpdateLevel();
     abstract public int GetMissionTime();
 }
@@ -25,11 +31,13 @@ public class LevelManager : MonoBehaviour
     GameObject _currentLevelPrefab = null;
     GameObject _currentLevel = null;
     bool _firstUpdate = true;
+    bool _levelEnded = false;
+    float _levelExitTime = 0.0f;
 
-    Vector3 _startPosition = Vector3.zero;
+    Vector3 _startPoint = Vector3.zero;
 
     IndicatorUI _goalIndicator = null;    
-    Vector3 _goalPosition = Vector3.zero;
+    Vector3 _goalPoint = Vector3.zero;
 
     Vector2 _missionRegion = Vector2.zero;
     List<RegionMarkerFX> _regionMarkerFXs = new List<RegionMarkerFX>();
@@ -54,11 +62,13 @@ public class LevelManager : MonoBehaviour
 
     public void GoToLevelProfile()
     {
+        GameManager.Instance.SetLevelEnd(LevelEndTypes.Silent);
         SetCurrentLevel(_levelProfilePrefab);
     }
 
     public void GoToLevelLobby()
     {
+        GameManager.Instance.SetLevelEnd(LevelEndTypes.Silent);
         SetCurrentLevel(_levelLobbyPrefab);
     }
 
@@ -129,44 +139,41 @@ public class LevelManager : MonoBehaviour
         return _levelLobbyPrefab == _currentLevelPrefab;
     }
 
-    public bool IsEndCurrentLevel()
-    {
-        return (null != _currentLevelPrefab) ? _currentLevelPrefab.GetComponent<LevelBase>().IsEndLevel() : true;
-    }
-
     public int GetMissionTime()
     {
         return (null == _currentLevel) ? 0 : _currentLevel.GetComponent<LevelBase>().GetMissionTime();
     }
 
     // Start Point
-    public Vector3 GetStartPosition()
+    public Vector3 GetStartPoint()
     {
-        return _startPosition;
+        return _startPoint;
     }
 
-    public void RegistStartPosition(Vector3 startPosition)
+    public void RegistStartPoint(Vector3 startPoint)
     {
-        _startPosition = startPosition;
+        _startPoint = startPoint;
     }
 
     // Goal Point
-    public Vector3 GetGoalPosition()
+    public Vector3 GetGoalPoint()
     {
-        return _goalPosition;
+        return _goalPoint;
     }
 
-    public void RegistGoalPosition(Vector3 goalPosition)
+    public void RegistGoalPoint(Vector3 goalPoint)
     {
-        if(null != _goalIndicator)
+        if(null == _goalIndicator)
         {
-            _goalIndicator = UIManager.Instance.CreateIndicatorUI(goalPosition);
+            _goalIndicator = UIManager.Instance.CreateIndicatorUI(goalPoint);
         }        
-        _goalPosition = goalPosition;
+        _goalPoint = goalPoint;
     }
 
     public void DestroyGoalIndicator()
     {
+        Debug.Log("DestroyGoalIndicator: " + ((null == _goalIndicator) ? "null" : "something"));
+
         UIManager.Instance.DestroyIndicatorUI(ref _goalIndicator);
     }
 
@@ -218,23 +225,29 @@ public class LevelManager : MonoBehaviour
         ClearRegionMarkerFX();
 
         _missionRegion = Vector2.zero;
-        _startPosition = Vector3.zero;
-        _goalPosition = Vector3.zero;
+        _startPoint = Vector3.zero;
+        _goalPoint = Vector3.zero;
     }
 
     public void OnStartLevel()
     {
         UpdateRegionMarkerFXs();
+
+        _levelEnded = false;
+        _levelExitTime = 0.0f;
     }
 
-    public void OnEndLevel()
+    public void OnEndLevel(LevelEndTypes type)
     {
         DestroyGoalIndicator();
         ClearRegionMarkerFX();
 
         _missionRegion = Vector2.zero;
-        _startPosition = Vector3.zero;
-        _goalPosition = Vector3.zero;
+        _startPoint = Vector3.zero;
+        _goalPoint = Vector3.zero;
+
+        _levelEnded = true;
+        _levelExitTime = (LevelEndTypes.Silent == type) ? 0.0f : Constants.LEVEL_EXIT_TIME;
     }
 
     public void ResetLevelManager()
@@ -256,17 +269,23 @@ public class LevelManager : MonoBehaviour
 
         if(null != _currentLevel)
         {
-            // Test indicate region marker
+            // update indicate region marker
             if(null != _goalIndicator)
             {
-                _goalIndicator.SetIndicatorTargetPosition(GetGoalPosition());
+                _goalIndicator.SetIndicatorTargetPosition(GetGoalPoint());
             }
 
             LevelBase currentLevel = _currentLevel.GetComponent<LevelBase>();
             currentLevel.UpdateLevel();
-            if(currentLevel.IsEndLevel())
+
+            if(_levelEnded)
             {
-                SetCurrentLevel(_levelLobbyPrefab);
+                _levelExitTime -= Time.deltaTime;
+                if(_levelExitTime <= 0.0f)
+                {
+                    SetCurrentLevel(_levelLobbyPrefab);
+                    _levelEnded = false;
+                }
             }
         }
     }

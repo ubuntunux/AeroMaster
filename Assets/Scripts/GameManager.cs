@@ -10,16 +10,14 @@ public class GameManager : MonoBehaviour
     public AudioMixer _audioMaster;
     public AudioClip _missionCompleteAudio;
     public AudioClip _gameOverAudio;
-    private float _masterVolumeStore = 0.0f;
-    private float _musicVolumeStore = 0.0f;
-    private bool _paused = false;
-    private bool _levelEnded = false;
-    private float _lastTouchPositionY = 0.0f;
-    private bool _isTouched = false;
-
-    private static GameManager _instance;
+    float _masterVolumeStore = 0.0f;
+    float _musicVolumeStore = 0.0f;
+    bool _paused = false;    
+    float _lastTouchPositionY = 0.0f;
+    bool _isTouched = false;
 
     // Singleton instantiation
+    static GameManager _instance;
     public static GameManager Instance
     {
         get
@@ -110,15 +108,15 @@ public class GameManager : MonoBehaviour
 
     public void SetLevelStart(bool controllable, bool invincibility, bool isFlying = false, bool autoFlyingToRight = true)
     {
-        UIManager.Instance.OnStartLevel();
         LevelManager.Instance.OnStartLevel();
+        UIManager.Instance.OnStartLevel();        
         MainCamera.Instance.ResetMainCamera();
 
         Player.Instance.ResetPlayer();
         Player.Instance.SetControllable(controllable);
         Player.Instance.SetInvincibility(invincibility);
 
-        Vector3 startPoint = LevelManager.Instance.GetStartPosition();
+        Vector3 startPoint = LevelManager.Instance.GetStartPoint();
         Player.Instance.SetPosition(startPoint);
         if(isFlying)
         {
@@ -133,21 +131,22 @@ public class GameManager : MonoBehaviour
         _audioMaster.SetFloat("MusicVolume", _musicVolumeStore);
         _lastTouchPositionY = 0.0f;
         _isTouched = false;        
-        _levelEnded = false;
     }
 
-    public void SetLevelEnd(bool isMissionSuccess = true)
+    public void SetLevelEnd(LevelEndTypes type)
     {
         Player.Instance.SetControllable(false);
         MainCamera.Instance.SetTrackingPlayer(false);
-        ActorScriptManager.Instance.ClearActorScriptsPages();
-        LevelManager.Instance.OnEndLevel();
-        UIManager.Instance.OnEndLevel(isMissionSuccess);
-        
+        ActorScriptManager.Instance.ClearActorScriptsPages();        
+        UIManager.Instance.OnEndLevel(type);
+        LevelManager.Instance.OnEndLevel(type);
+
         _audioMaster.GetFloat("MusicVolume", out _musicVolumeStore);
         _audioMaster.SetFloat("MusicVolume", -80.0f);
-        _audioSource.PlayOneShot(isMissionSuccess ? _missionCompleteAudio : _gameOverAudio);
-        _levelEnded = true;
+        if(LevelEndTypes.Silent != type)
+        {
+            _audioSource.PlayOneShot(LevelEndTypes.MissionSucess == type ? _missionCompleteAudio : _gameOverAudio);
+        }
 
         // save data
         SaveData.Instance.Save(Constants.DefaultDataName);
@@ -212,11 +211,11 @@ public class GameManager : MonoBehaviour
                 UIManager.Instance.ShowMissionRegionWarning(false, false);
             }
 
-            // check mission failed
-            return minToPlayer <= 0.0f || playerToMax <= 0.0f;
+            // is there in mission region?
+            return 0.0f < minToPlayer && 0.0f < playerToMax;
         }
 
-        return false;
+        return true;
     }
 
     // Update is called once per frame

@@ -14,7 +14,7 @@ public enum TutorialPhase
     Turn,
     Landing,
     Complete,
-    Exit,
+    Failed,
     End
 };
 
@@ -31,9 +31,7 @@ public class LevelTutorial : LevelBase
     public string _textScripts;
 
     TutorialPhase _phase = TutorialPhase.None;
-    float _exitTime = 0.0f;
-    bool _missionFailed = false;    
-
+    
     override public string GetMissionTitle()
     {
         return _textMissionTitle;
@@ -82,6 +80,18 @@ public class LevelTutorial : LevelBase
         UIManager.Instance.SetFingerTarget(FingerTarget.GoLeft);        
     }
 
+    void SetMissionComplete()
+    {
+        GameManager.Instance.SetLevelEnd(LevelEndTypes.MissionSucess);
+        _phase = TutorialPhase.Complete;        
+    }
+
+    void SetMissionFailed()
+    {
+        GameManager.Instance.SetLevelEnd(LevelEndTypes.MissionFailed);
+        _phase = TutorialPhase.Failed;
+    }
+
     override public void OnStartLevel()
     {
         bool controllable = false;
@@ -97,8 +107,6 @@ public class LevelTutorial : LevelBase
         UIManager.Instance.RegistMissionObjective("Turn", "기체를 왼쪽으로 선회 시키세요.");
         UIManager.Instance.RegistMissionObjective("Landing", "기체를 착륙 시키세요.");
 
-        _missionFailed = false;
-        _exitTime = 0.0f;
         _panelPause.SetActive(false);
         _textTutorial.SetActive(false);
         _phase = TutorialPhase.None;
@@ -110,28 +118,14 @@ public class LevelTutorial : LevelBase
         UIManager.Instance.SetFingerTarget(FingerTarget.None);
     }
 
-    override public bool IsEndLevel()
-    {
-        return TutorialPhase.End == _phase;
-    }
-
     override public int GetMissionTime()
     {
         return 0; 
     }
     
+    
     override public void UpdateLevel()
     {
-        // check mission failed
-        if(false == _missionFailed)
-        {
-            _missionFailed = GameManager.Instance.CheckMissionRegion();
-            if(_missionFailed)
-            {
-                _phase = TutorialPhase.Complete;
-            }
-        }
-
         // update mission states
         if(TutorialPhase.None == _phase)
         {
@@ -216,30 +210,19 @@ public class LevelTutorial : LevelBase
         {
             if(0.0f == Player.Instance.GetAbsVelocityRatioX() && Player.Instance.GetIsGround())
             {
-                // TutorialPhase.Complete                
-                ActorScriptManager.Instance.SetPage("Done");
-                _phase = TutorialPhase.Complete;
-            }
-        }
-        else if(TutorialPhase.Complete == _phase)
-        {
-            // Mission complete or faild
-            GameManager.Instance.SetLevelEnd(!_missionFailed);
-            _phase = TutorialPhase.Exit;
-        }
-        else if(TutorialPhase.Exit == _phase)
-        {
-            if(Constants.LEVEL_EXIT_TIME <= _exitTime)
-            {
-                if(false == _missionFailed)
+                if(ActorScriptManager.Instance.SetPageAndCheckReadDone("Done"))
                 {
-                    ActorScriptManager.Instance.SetPage("Done");
-                }                
-                _phase = TutorialPhase.End;
+                    SetMissionComplete();
+                }
             }
-            else
+        }
+
+        // check mission failed
+        if(TutorialPhase.Failed != _phase)
+        {
+            if(false == GameManager.Instance.CheckMissionRegion())
             {
-                _exitTime += Time.deltaTime;
+                SetMissionFailed();
             }
         }
     }

@@ -8,8 +8,7 @@ public enum MissionPhase
     None,
     MissionObjective,
     Complete,
-    Exit,
-    End
+    Failed,
 };
 
 public class LevelMission : LevelBase
@@ -24,9 +23,7 @@ public class LevelMission : LevelBase
     public string _textScripts;
 
     MissionPhase _phase = MissionPhase.None;
-    float _exitTime = 0.0f;
     float _missionTime = 0.0f;
-    bool _missionFailed = false;
 
     override public string GetMissionTitle()
     {
@@ -47,7 +44,6 @@ public class LevelMission : LevelBase
         UIManager.Instance.SetInteractableButtonAll(false);        
         ActorScriptManager.Instance.GenerateActorScriptsPages(_textScripts);
 
-        _exitTime = 0.0f;
         _phase = MissionPhase.None;
     }
 
@@ -55,40 +51,25 @@ public class LevelMission : LevelBase
     {
     }
 
-    override public bool IsEndLevel()
-    {
-        return MissionPhase.End == _phase;
-    }
-
     override public int GetMissionTime()
     {
         return (int)_missionTime; 
     }
     
-    void SetPhaseComplete()
+    void SetMissionComplete()
     {
-        GameManager.Instance.SetLevelEnd();
+        GameManager.Instance.SetLevelEnd(LevelEndTypes.MissionSucess);
         _phase = MissionPhase.Complete;
     }
 
-    void SetGameOver()
+    void SetMissionFailed()
     {
-        GameManager.Instance.SetLevelEnd(false);
-        _phase = MissionPhase.Exit;
+        GameManager.Instance.SetLevelEnd(LevelEndTypes.MissionFailed);
+        _phase = MissionPhase.Failed;
     }
 
     override public void UpdateLevel()
     {
-        // check mission failed
-        if(false == _missionFailed)
-        {
-            _missionFailed = GameManager.Instance.CheckMissionRegion();
-            if(_missionFailed)
-            {
-                SetGameOver();
-            }
-        }
-
         if(MissionPhase.None == _phase)
         {
             // first update
@@ -106,27 +87,24 @@ public class LevelMission : LevelBase
             if(Player.Instance.isAlive())
             {
                 Vector3 playerPosition = Player.Instance.GetPosition();
-                if(LevelManager.Instance.GetGoalPosition().x <= playerPosition.x)
+                if(LevelManager.Instance.GetGoalPoint().x <= playerPosition.x)
                 {
-                    SetPhaseComplete();
+                    SetMissionComplete();
                 }
             }
             else
             {
-                SetGameOver();
+                SetMissionFailed();
             }
         }
-        else if(MissionPhase.Complete == _phase)
+
+        // check mission failed
+        if(MissionPhase.Failed != _phase)
         {
-            _phase = MissionPhase.Exit;
-        }
-        else if(MissionPhase.Exit == _phase)
-        {
-            if(Constants.LEVEL_EXIT_TIME <= _exitTime)
+            if(false == GameManager.Instance.CheckMissionRegion())
             {
-                _phase = MissionPhase.End;
+                SetMissionFailed();
             }
-            _exitTime += Time.deltaTime;
         }
         
         _missionTime += Time.deltaTime;

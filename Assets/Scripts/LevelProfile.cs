@@ -48,11 +48,6 @@ public class LevelProfile : LevelBase
         SaveData.Instance.Save(Constants.DefaultDataName);
     }
 
-    override public bool IsEndLevel()
-    {
-        return false;
-    }
-
     override public int GetMissionTime()
     {
         return 0; 

@@ -4,9 +4,10 @@ using UnityEngine;
 
 public class StarOrder : MonoBehaviour
 {
-    public float _initialScale = 1.0f;
-    public bool _disappear = false;
-    public float _disappearTimer = 0.0f;
+    public bool _enableRotate = false;
+    float _initialScale = 1.0f;
+    bool _disappear = false;
+    float _disappearTimer = 0.0f;
     const float DISAPPEAR_TIME = 1.0f;
 
     public void GetStarOrder()
@@ -23,7 +24,10 @@ public class StarOrder : MonoBehaviour
 
     void Update()
     {
-        transform.rotation = Quaternion.Euler(0.0f, (Time.time % 1.0f) * 360.0f, 0.0f);
+        if(_enableRotate)
+        {
+            transform.rotation = Quaternion.Euler(0.0f, (Time.time % 1.0f) * 360.0f, 0.0f);
+        }
 
         if(_disappear)
         {

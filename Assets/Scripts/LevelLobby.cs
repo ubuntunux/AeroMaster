@@ -74,11 +74,6 @@ public class LevelLobby : LevelBase
     {
     }
 
-    override public bool IsEndLevel()
-    {
-        return false;
-    }
-
     override public int GetMissionTime()
     {
         return 0; 

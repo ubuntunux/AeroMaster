@@ -6,7 +6,7 @@ public class StartPoint : MonoBehaviour
 {
     void Awake()
     {
-        LevelManager.Instance.RegistStartPosition(transform.position);
+        LevelManager.Instance.RegistStartPoint(transform.position);
     }
 
     void Start()

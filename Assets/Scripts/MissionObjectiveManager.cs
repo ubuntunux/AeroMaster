@@ -17,6 +17,16 @@ public class MissionObjectiveManager : MonoBehaviour
         return _missionObjectivePrefab.GetComponent<RectTransform>().rect.height;
     }
 
+    public bool IsMissionObjectiveTimeUp(string key)
+    {
+        MissionObjective missionObjective = null;
+        if(_missionObjectiveMaps.TryGetValue(key, out missionObjective))
+        {
+            return missionObjective.IsMissionObjectiveTimeUp();
+        }
+        return false;
+    }
+
     public void ClearMissionObjectives()
     {
         foreach(MissionObjective missionObjective in _missionObjectives)
@@ -29,11 +39,11 @@ public class MissionObjectiveManager : MonoBehaviour
         ResizeMissionObjectiveLayer();
     }
 
-    public void RegistMissionObjective(string key, string missionText)
+    public void RegistMissionObjective(string key, string missionText, float timer)
     {
         float height = GetMissionObjectiveHeight() * (float)_missionObjectives.Count + PADDING;
         MissionObjective missionObjective = Instantiate(_missionObjectivePrefab).GetComponent<MissionObjective>();
-        missionObjective.SetMissionObjective(_missionObjectiveLayer, -15.0f, -height, missionText);
+        missionObjective.SetMissionObjective(_missionObjectiveLayer, -15.0f, -height, missionText, timer);
         
         // regist
         _missionObjectives.Add(missionObjective);

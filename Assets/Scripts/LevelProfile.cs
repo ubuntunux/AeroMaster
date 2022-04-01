@@ -35,11 +35,14 @@ public class LevelProfile : LevelBase
 
     override public void OnStartLevel()
     {
-        bool controllable = false;
-        bool invincibility = true;        
-        bool isFlying = true;
-        bool autoFlyingToRight = true;
-        GameManager.Instance.SetLevelStart(controllable, invincibility, isFlying, autoFlyingToRight);
+        GameManager.Instance.SetLevelStart();
+
+        UIManager.Instance.SetVisibleControllerUI(false);
+
+        Player.Instance.SetControllable(false);
+        Player.Instance.SetInvincibility(true);
+        Player.Instance.SetAutoFlyingDirection(true);
+        Player.Instance.SetAnimationState(AnimationState.Flying);
     }
 
     override public void OnExitLevel()

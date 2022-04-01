@@ -37,11 +37,14 @@ public class LevelMission : LevelBase
 
     override public void OnStartLevel()
     {
-        bool controllable = true;
-        bool invincibility = false;
-        GameManager.Instance.SetLevelStart(controllable, invincibility);
+        GameManager.Instance.SetLevelStart();
 
-        UIManager.Instance.SetInteractableButtonAll(false);        
+        UIManager.Instance.SetVisibleControllerUI(false);
+
+        // set mission objectives
+        UIManager.Instance.RegistMissionObjective("Landing", "F.O.S.A의 해상 본부에 착륙", 60.0f);
+
+        // set scripts
         ActorScriptManager.Instance.GenerateActorScriptsPages(_textScripts);
 
         _phase = MissionPhase.None;
@@ -77,18 +80,23 @@ public class LevelMission : LevelBase
             {
                 if(ActorScriptManager.Instance.SetPageAndCheckReadDone("Intro"))
                 {
-                    UIManager.Instance.SetInteractableButtonAll(true);
+                    UIManager.Instance.SetVisibleControllerUI(true);
                     _phase = MissionPhase.MissionObjective;
                 }
             }
         }
         else if(MissionPhase.MissionObjective == _phase)
         {
-            if(Player.Instance.isAlive())
+            bool isTimeUp = UIManager.Instance.IsMissionObjectiveTimeUp("Landing");
+
+            if(Player.Instance.isAlive() && false == isTimeUp)
             {
-                Vector3 playerPosition = Player.Instance.GetPosition();
-                if(LevelManager.Instance.GetGoalPoint().x <= playerPosition.x)
+                Vector3 goalPoint = LevelManager.Instance.GetGoalPoint();                
+                if(Player.Instance.IsLanded() && 
+                   Player.Instance.CheckIsInTargetRange(goalPoint, Constants.GOAL_IN_DISTANCE))
                 {
+                    UIManager.Instance.SetMissionObjectiveState("Landing", MissionObjectiveState.Success);
+
                     SetMissionComplete();
                 }
             }

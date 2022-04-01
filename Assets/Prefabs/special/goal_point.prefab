@@ -91,8 +91,6 @@ GameObject:
   m_Component:
   - component: {fileID: 7461359249262483795}
   - component: {fileID: -564255378871950686}
-  - component: {fileID: 1664257993081528098}
-  - component: {fileID: 2940149255023193023}
   m_Layer: 0
   m_Name: goal_point
   m_TagString: GoalPoint
@@ -128,35 +126,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 124f189babb08ad21ae4674946b536be, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!65 &1664257993081528098
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2421638021432856962}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 2.0000005, y: 2, z: 2.0000005}
-  m_Center: {x: 0, y: 0, z: 0}
---- !u!54 &2940149255023193023
-Rigidbody:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2421638021432856962}
-  serializedVersion: 2
-  m_Mass: 1
-  m_Drag: 0
-  m_AngularDrag: 0
-  m_UseGravity: 0
-  m_IsKinematic: 1
-  m_Interpolate: 0
-  m_Constraints: 0
-  m_CollisionDetection: 0
 --- !u!1 &8316438541302446005
 GameObject:
   m_ObjectHideFlags: 0

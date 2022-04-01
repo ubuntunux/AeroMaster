@@ -106,27 +106,14 @@ public class GameManager : MonoBehaviour
         _audioMaster.SetFloat("MusicVolume", _musicVolumeStore);
     }
 
-    public void SetLevelStart(bool controllable, bool invincibility, bool isFlying = false, bool autoFlyingToRight = true)
+    public void SetLevelStart()
     {
         LevelManager.Instance.OnStartLevel();
         UIManager.Instance.OnStartLevel();        
         MainCamera.Instance.ResetMainCamera();
 
-        Player.Instance.ResetPlayer();
-        Player.Instance.SetControllable(controllable);
-        Player.Instance.SetInvincibility(invincibility);
-
         Vector3 startPoint = LevelManager.Instance.GetStartPoint();
-        Player.Instance.SetPosition(startPoint);
-        if(isFlying)
-        {
-            Player.Instance.SetAutoFlying(autoFlyingToRight);
-            Player.Instance.SetAnimationState(AnimationState.Flying);
-        }
-        else
-        {
-            Player.Instance.SetAnimationState(AnimationState.Idle);
-        }
+        Player.Instance.ResetPlayer(startPoint);
 
         _audioMaster.SetFloat("MusicVolume", _musicVolumeStore);
         _lastTouchPositionY = 0.0f;
@@ -171,7 +158,7 @@ public class GameManager : MonoBehaviour
         LevelManager.Instance.ResetLevelManager();
 
         Player.Instance.LoadPlayerData(SaveData.Instance._playerData);
-        Player.Instance.ResetPlayer();
+        Player.Instance.ResetPlayer(Vector3.zero);
         Player.Instance.SetControllable(false);
         Player.Instance.SetInvincibility(false);
 

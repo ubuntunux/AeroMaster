@@ -16,11 +16,11 @@ public enum AnimationState
 public class Player : MonoBehaviour
 {
     public GameObject[] _meshObjects;
-    private int _playerModelIndex = 0;
-    private GameObject _meshObject;
-    private Animator _animator;
-    private AnimationState _animationState = AnimationState.None;
-    private float _landingGearRatio = 0.0f;
+    int _playerModelIndex = 0;
+    GameObject _meshObject;
+    Animator _animator;
+    AnimationState _animationState = AnimationState.None;
+    float _landingGearRatio = 0.0f;
 
     public AudioSource _jetEngineStart;
     public AudioSource _jetEngineEnd;
@@ -30,30 +30,29 @@ public class Player : MonoBehaviour
     public GameObject _destroyFX;
     public GameObject _sliderVerticalVelocity;
 
-    private static Player _instance;
-
     public delegate void Callback();
-    private Callback _callbackOnClickGoRight = null;
-    private Callback _callbackOnClickGoLeft = null;
-    private Callback _callbackOnClickLanding = null;
+    Callback _callbackOnClickGoRight = null;
+    Callback _callbackOnClickGoLeft = null;
+    Callback _callbackOnClickLanding = null;
 
-    private float _absVelocityX = 0.0f;    
-    private float _velocityY = 0.0f;
-    private float _absVelocityRatioX = 0.0f;
-    private float _absVelocityRatioY = 0.0f;
-    private float _inputY = 0.0f;
-    private bool _isAcceleration = false;
-    private bool _isLanding = true;
-    private bool _goalFrontDirectionFlag = true; 
-    private float _frontDirection = 1.0f;
-    private float _flyingTime = 0.0f;
-    private bool _isAlive = false;
-    private bool _isGround = false;
-    private bool _controllable = false;
-    private bool _autoTakeOff = false;
-    private bool _invincibility = false;
+    float _absVelocityX = 0.0f;    
+    float _velocityY = 0.0f;
+    float _absVelocityRatioX = 0.0f;
+    float _absVelocityRatioY = 0.0f;
+    float _inputY = 0.0f;
+    bool _isAcceleration = false;
+    bool _isLanding = true;
+    bool _goalFrontDirectionFlag = true; 
+    float _frontDirection = 1.0f;
+    float _flyingTime = 0.0f;
+    bool _isAlive = false;
+    bool _isGround = false;
+    bool _controllable = false;
+    bool _autoTakeOff = false;
+    bool _invincibility = false;
 
     // Singleton instantiation
+    static Player _instance;
     public static Player Instance
     {
         get
@@ -111,7 +110,7 @@ public class Player : MonoBehaviour
         _invincibility = invincibility;
     }
 
-    public void SetAutoFlying(bool isRightDirection)
+    public void SetAutoFlyingDirection(bool isRightDirection)
     {
         if(false == _isAlive)
         {
@@ -162,6 +161,16 @@ public class Player : MonoBehaviour
             _jetEngineStart.Stop();
             _jetEngineEnd.Play();
         }
+    }
+
+    public bool CheckIsInTargetRange(Vector3 targetPostion, float targetRadius)
+    {
+        return (targetPostion - GetPosition()).magnitude <= targetRadius;
+    }
+
+    public bool IsLanded()
+    {
+        return _isLanding && _isGround && 0.0f == _absVelocityX;
     }
 
     public void SetCallbackOnClickGoRight(Callback callback)
@@ -293,18 +302,18 @@ public class Player : MonoBehaviour
         SetPlayerShipModel(playerData._playerModelIndex);
     }
 
-    public void ResetPlayer()
+    public void ResetPlayer(Vector3 startPoint)
     {
         transform.localRotation = Quaternion.Euler(0.0f, 0.0f, 0.0f);
+        SetPosition(startPoint);
 
         SetControllable(true);
         SetInvincibility(false);
         SetVisible(true);
         SetAfterBurnerEmission(false);
-        SetAnimationState(AnimationState.None);
-        StopAllSound();
+        SetAnimationState(AnimationState.Idle);
+        StopAllSound();        
 
-        _animationState = AnimationState.None;
         _landingGearRatio = 0.0f;        
         _autoTakeOff = false;
         _absVelocityX = 0.0f;

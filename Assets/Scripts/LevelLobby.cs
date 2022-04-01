@@ -59,15 +59,17 @@ public class LevelLobby : LevelBase
     }
 
     override public void OnStartLevel()
-    {
-        _layerMissionDetail.SetActive(false);
-        
-        bool controllable = false;
-        bool invincibility = true;
-        GameManager.Instance.SetLevelStart(controllable, invincibility);
-        
-        // Set Camera
+    {        
+        GameManager.Instance.SetLevelStart();
+
+        UIManager.Instance.SetVisibleControllerUI(false);
+
+        Player.Instance.SetControllable(false);
+        Player.Instance.SetInvincibility(true);
+
         MainCamera.Instance.SetCameraPosition(new Vector3(-1.0f, 1.0f, -3.0f));
+
+        _layerMissionDetail.SetActive(false);
     }
 
     override public void OnExitLevel()

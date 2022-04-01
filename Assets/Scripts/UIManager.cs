@@ -378,14 +378,19 @@ public class UIManager : MonoBehaviour
     }
 
     // Mission Objective
+    public bool IsMissionObjectiveTimeUp(string key)
+    {
+        return GetComponent<MissionObjectiveManager>().IsMissionObjectiveTimeUp(key);
+    }
+
     public void ClearMissionObjectives()
     {
         GetComponent<MissionObjectiveManager>().ClearMissionObjectives();
     }
 
-    public void RegistMissionObjective(string key, string missionText)
+    public void RegistMissionObjective(string key, string missionText, float timer = 0.0f)
     {
-        GetComponent<MissionObjectiveManager>().RegistMissionObjective(key, missionText);
+        GetComponent<MissionObjectiveManager>().RegistMissionObjective(key, missionText, timer);
     }
 
     public void UnregistMissionObjective(string key)
@@ -421,8 +426,8 @@ public class UIManager : MonoBehaviour
 
     public void OnStartLevel()
     {
-        bool hideControllerUI = LevelManager.Instance.IsLevelProfile() || LevelManager.Instance.IsLevelLobby();
-        SetVisibleControllerUI(!hideControllerUI);
+        SetInteractableButtonAll(true);
+        SetVisibleControllerUI(true);
         SetFingerTarget(FingerTarget.None);
         ShowMissionCompleteOrFailed(false, false);
         ShowMissionRegionWarning(false, false);
@@ -435,6 +440,7 @@ public class UIManager : MonoBehaviour
         ShowMissionCompleteOrFailed(LevelEndTypes.Silent != type, LevelEndTypes.MissionSucess == type);
         ShowMissionRegionWarning(false, false);
         SetVisibleControllerUI(false);
+        SetInteractableButtonAll(false);
         SetFingerTarget(FingerTarget.None);
     }
 
@@ -450,9 +456,9 @@ public class UIManager : MonoBehaviour
         UpdateSubjectText();
 
         _textScore.GetComponent<TextMeshProUGUI>().text = SaveData.Instance._playerData._score.ToString();
-        _textTime.GetComponent<TextMeshProUGUI>().text = "Time: " + LevelManager.Instance.GetMissionTime().ToString();
 
         // debug
+        _textTime.GetComponent<TextMeshProUGUI>().text = "Mission Time: " + LevelManager.Instance.GetMissionTime().ToString();
         _debugTextLanguage.GetComponent<TextMeshProUGUI>().text = "Language: " + CultureInfo.CurrentCulture.Name;
         _debugTextVelocityX.GetComponent<TextMeshProUGUI>().text = string.Format("Horizontal Speed: {0:F1}", Player.Instance.GetAbsVelocityX());
         _debugTextVelocityY.GetComponent<TextMeshProUGUI>().text = string.Format("Vertical Speed: {0:F1}", Player.Instance.GetVelocityY());

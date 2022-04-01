@@ -94,18 +94,21 @@ public class LevelTutorial : LevelBase
 
     override public void OnStartLevel()
     {
-        bool controllable = false;
-        bool invincibility = true;
-        GameManager.Instance.SetLevelStart(controllable, invincibility);
+        GameManager.Instance.SetLevelStart();
+
+        Player.Instance.SetControllable(false);
+        Player.Instance.SetInvincibility(true);
         
-        UIManager.Instance.SetInteractableButtonAll(false);        
-        ActorScriptManager.Instance.GenerateActorScriptsPages(_textScripts);
+        UIManager.Instance.SetVisibleControllerUI(false);
 
         // Set Mission Objectives
         UIManager.Instance.RegistMissionObjective("Acceleration", "기체를 출발 시키세요.");
         UIManager.Instance.RegistMissionObjective("TakeOff", "기체를 이륙 시키세요.");
         UIManager.Instance.RegistMissionObjective("Turn", "기체를 왼쪽으로 선회 시키세요.");
         UIManager.Instance.RegistMissionObjective("Landing", "기체를 착륙 시키세요.");
+
+        // set scripts
+        ActorScriptManager.Instance.GenerateActorScriptsPages(_textScripts);
 
         _panelPause.SetActive(false);
         _textTutorial.SetActive(false);
@@ -114,8 +117,6 @@ public class LevelTutorial : LevelBase
 
     override public void OnExitLevel()
     {
-        UIManager.Instance.SetInteractableButtonAll(true);
-        UIManager.Instance.SetFingerTarget(FingerTarget.None);
     }
 
     override public int GetMissionTime()
@@ -145,6 +146,7 @@ public class LevelTutorial : LevelBase
             if(ActorScriptManager.Instance.CheckPageReadDone("Intro"))
             {
                 // TutorialPhase.Acceleration
+                UIManager.Instance.SetVisibleControllerUI(true);
                 UIManager.Instance.SetInteractableButtonAll(false);
                 UIManager.Instance.SetInteractableGoRightButton(true);
                 UIManager.Instance.SetFingerTarget(FingerTarget.GoRight);

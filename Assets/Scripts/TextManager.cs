@@ -15,6 +15,8 @@ public class TextManager : MonoBehaviour
     // script
     List<string> _textList = new List<string>();
     float _textTime = 0.0f;
+    float _textReadDoneTime = 0.0f;
+    float _textReadDoneTimer = 0.0f;
     int _pageIndex = 0;
     bool _readTextDone = false;
     bool _readTextAllDone = false;
@@ -44,7 +46,7 @@ public class TextManager : MonoBehaviour
         return _readTextAllDone;
     }
 
-    public void SetCharacterText(Characters character, string text)
+    public void SetCharacterText(Characters character, string text, float readDoneTime)
     {
         bool isEmpty = 0 == text.Length;// || Characters.None == character;
 
@@ -58,6 +60,8 @@ public class TextManager : MonoBehaviour
         _readTextDone = isEmpty;
         _readTextAllDone = isEmpty;
 
+        _textReadDoneTime = readDoneTime;
+        _textReadDoneTimer = 0.0f;
         _textTime = 0.0f;
         _pageIndex = 0;
         
@@ -102,7 +106,7 @@ public class TextManager : MonoBehaviour
 
     public void ResetCharacterText()
     {
-        SetCharacterText(Characters.None, "");
+        SetCharacterText(Characters.None, "", 0.0f);
     }
 
     public void SetDone()
@@ -130,6 +134,7 @@ public class TextManager : MonoBehaviour
         }
         else
         {
+            // force read done
             if(_pageIndex < _textList.Count)
             {
                 _textTime = (float)_textList[_pageIndex].Length;
@@ -152,20 +157,41 @@ public class TextManager : MonoBehaviour
             }
         }
 
-        if(false == _readTextDone && _pageIndex < _textList.Count)
+        if(_pageIndex < _textList.Count)
         {
-            string text = _textList[_pageIndex];
-            int numText = Mathf.Min(text.Length, (int)_textTime + 1);
-            _textText.GetComponent<TextMeshProUGUI>().text = text.Substring(0, numText);
-            if(text.Length == numText)
+            if(_readTextDone)
             {
-                _readTextDone = true;
-                _sndPrompt.Stop();
+                if(0.0f != _textReadDoneTime)
+                {
+                    if(_textReadDoneTime <= _textReadDoneTimer)
+                    {
+                        OnClickNext();
+                    }
+                    _textReadDoneTimer += Time.deltaTime;
+                }
             }
             else
             {
-                _textTime += Time.deltaTime * _textSpeed;
+                // set text
+                string text = _textList[_pageIndex];
+                int timeToTextLength = (int)_textTime + 1;
+                int numText = Mathf.Min(text.Length, timeToTextLength);
+                _textText.GetComponent<TextMeshProUGUI>().text = text.Substring(0, numText);
+
+                if(text.Length == numText)
+                {
+                    // read done
+                    _textReadDoneTimer = 0.0f;
+                    _readTextDone = true;
+                    _sndPrompt.Stop();
+                }
+                else if(timeToTextLength < text.Length)
+                {
+                    // reading
+                    _textTime += Time.deltaTime * _textSpeed;
+                }
             }
+
         }
     }
 }

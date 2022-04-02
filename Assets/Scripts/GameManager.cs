@@ -122,16 +122,17 @@ public class GameManager : MonoBehaviour
 
     public void SetLevelEnd(LevelEndTypes type)
     {
-        Player.Instance.SetControllable(false);
+        bool isMissionSucessOrFailed = LevelEndTypes.MissionSucess == type || LevelEndTypes.MissionFailed == type;
+        Player.Instance.SetControllable(false);        
         MainCamera.Instance.SetTrackingPlayer(false);
         ActorScriptManager.Instance.ClearActorScriptsPages();        
         UIManager.Instance.OnEndLevel(type);
         LevelManager.Instance.OnEndLevel(type);
 
-        _audioMaster.GetFloat("MusicVolume", out _musicVolumeStore);
-        _audioMaster.SetFloat("MusicVolume", -80.0f);
-        if(LevelEndTypes.Silent != type)
+        if(isMissionSucessOrFailed)
         {
+            _audioMaster.GetFloat("MusicVolume", out _musicVolumeStore);
+            _audioMaster.SetFloat("MusicVolume", -80.0f);
             _audioSource.PlayOneShot(LevelEndTypes.MissionSucess == type ? _missionCompleteAudio : _gameOverAudio);
         }
 

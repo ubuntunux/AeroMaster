@@ -4,6 +4,12 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
+public enum DestroyType
+{
+    Explosion,
+    ImpactWater
+}
+
 public enum AnimationState
 {
     None,
@@ -28,6 +34,7 @@ public class Player : MonoBehaviour
     public AudioSource _radioLoop;
     public AudioSource _jetFlyby;
     public GameObject _destroyFX;
+    public GameObject _impactWaterFX;
     public GameObject _sliderVerticalVelocity;
 
     public delegate void Callback();
@@ -314,11 +321,14 @@ public class Player : MonoBehaviour
         SetAnimationState(AnimationState.Idle);
         StopAllSound();        
 
+        _inputY = 0.0f;
+        _flyingTime = 0.0f;
         _landingGearRatio = 0.0f;        
         _autoTakeOff = false;
         _absVelocityX = 0.0f;
         _absVelocityRatioX = 0.0f;
         _velocityY = 0.0f;
+        _absVelocityRatioY = 0.0f;
         _isAcceleration = false;
         _isLanding = true;
         _goalFrontDirectionFlag = true;
@@ -335,6 +345,14 @@ public class Player : MonoBehaviour
             Player.Instance.AddScore(1);
             other.gameObject.GetComponent<StarOrder>().GetStarOrder();
         }
+        else if("Wall" == other.gameObject.tag)
+        {
+            SetDestroy(DestroyType.Explosion);
+        }
+        else if("Water" == other.gameObject.tag)
+        {
+            SetDestroy(DestroyType.ImpactWater);
+        }
     }
 
     public void OnTriggerStay(Collider other)
@@ -345,7 +363,7 @@ public class Player : MonoBehaviour
             {
                 if(_velocityY < Constants.SPEED_FOR_DESTROY || _landingGearRatio < 0.5f)
                 {
-                    SetDestroy();
+                    SetDestroy(DestroyType.Explosion);
                 }
                 _velocityY = 0.0f;
             }
@@ -447,16 +465,31 @@ public class Player : MonoBehaviour
     public void SetForceDestroy()
     {
         _invincibility = false;
-        SetDestroy();
+        SetDestroy(DestroyType.Explosion);
     }
 
-    public void SetDestroy()
+    public void SetDestroy(DestroyType destroyType)
     {
         if(false == _invincibility && _isAlive)
         {
             MainCamera.Instance.SetCameraShakeByDestroy();
-            GameObject destroyFX = (GameObject)GameObject.Instantiate(_destroyFX);
-            destroyFX.transform.SetParent(transform, false);
+            
+            GameObject destroyFX_Prefab = null;
+            if(DestroyType.Explosion == destroyType)
+            {
+                destroyFX_Prefab = _destroyFX;
+            }
+            else if(DestroyType.ImpactWater == destroyType)
+            {
+                destroyFX_Prefab = _impactWaterFX;
+            }
+
+            if(null != destroyFX_Prefab)
+            {
+                GameObject destroyFX = (GameObject)GameObject.Instantiate(destroyFX_Prefab);
+                destroyFX.transform.SetParent(transform, false);
+            }
+            
             SetVisible(false);
             SetControllable(false);
             StopAllSound();
@@ -662,7 +695,7 @@ public class Player : MonoBehaviour
         UpdateAnimationController(transform.position, position, _isGround);
 
         // update transform
-        float invGroundRatio = Mathf.Max(0.0f, Mathf.Min(1.0f, (position.y - Constants.GROUND_HEIGHT) * 0.2f));
+        float invGroundRatio = _isLanding ? Mathf.Max(0.0f, Mathf.Min(1.0f, (position.y - Constants.GROUND_HEIGHT) * 0.2f)) : 1.0f;
         float velocityRatioY = Mathf.Max(-1.0f, Mathf.Min(1.0f, _inputY));
         float pitch = _absVelocityRatioX * velocityRatioY * invGroundRatio * 25.0f;
         float yaw = (_frontDirection * 0.5f + 0.5f) * (_goalFrontDirectionFlag ? -180.0f : 180.0f) + 180.0f;

@@ -8,6 +8,8 @@ TagManager:
   - Ground
   - StartPoint
   - GoalPoint
+  - Wall
+  - Water
   layers:
   - Default
   - TransparentFX

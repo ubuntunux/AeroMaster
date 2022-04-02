@@ -21,8 +21,6 @@ public enum TutorialPhase
 public class LevelTutorial : LevelBase
 {
     public GameObject _startMarker;
-    public GameObject _panelPause;
-    public GameObject _textTutorial;
     [TextArea]
     public string _textMissionTitle;
     [TextArea]
@@ -49,7 +47,6 @@ public class LevelTutorial : LevelBase
         Player.Instance.SetCallbackOnClickGoRight(null);
         UIManager.Instance.SetInteractableGoRightButton(false);
         UIManager.Instance.SetFingerTarget(FingerTarget.None);
-        _textTutorial.SetActive(false);
     }
 
     public void CallbackOnClickGoLeft()
@@ -59,7 +56,6 @@ public class LevelTutorial : LevelBase
         Player.Instance.SetCallbackOnClickGoLeft(null);
         UIManager.Instance.SetInteractableGoLeftButton(false);
         UIManager.Instance.SetFingerTarget(FingerTarget.None);
-        _textTutorial.SetActive(false);
     }
 
     public void CallbackOnClickLanding()
@@ -69,7 +65,6 @@ public class LevelTutorial : LevelBase
         Player.Instance.SetLanding();
         UIManager.Instance.SetInteractableLandingButton(false);
         UIManager.Instance.SetFingerTarget(FingerTarget.None);
-        _textTutorial.SetActive(false);
     }
 
     void CallbackSetPhaseTurn()
@@ -110,8 +105,6 @@ public class LevelTutorial : LevelBase
         // set scripts
         ActorScriptManager.Instance.GenerateActorScriptsPages(_textScripts);
 
-        _panelPause.SetActive(false);
-        _textTutorial.SetActive(false);
         _phase = TutorialPhase.None;
     }
 

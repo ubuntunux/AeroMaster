@@ -68,7 +68,7 @@ public class MissionObjective : MonoBehaviour
 
     void Update()
     {
-        if(_hasTimer)
+        if(_hasTimer && false == LevelManager.Instance.IsLevelEnded())
         {
             int prevTime = (int)_timer;
             _timer = Mathf.Max(0.0f, _timer - Time.deltaTime);

@@ -250,6 +250,11 @@ public class LevelManager : MonoBehaviour
         _levelExitTime = (LevelEndTypes.Silent == type) ? 0.0f : Constants.LEVEL_EXIT_TIME;
     }
 
+    public bool IsLevelEnded()
+    {
+        return _levelEnded;
+    }
+
     public void ResetLevelManager()
     {
         _firstUpdate = true;

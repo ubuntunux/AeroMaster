@@ -13,8 +13,6 @@ public enum MissionPhase
 
 public class LevelMission : LevelBase
 {
-    public GameObject _start;
-    public GameObject _goal;
     [TextArea]
     public string _textMissionTitle;
     [TextArea]

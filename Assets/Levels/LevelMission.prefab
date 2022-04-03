@@ -1158,7 +1158,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6815683417584822652, guid: fc978f49d2fd90248be0bb8277afe1e9, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 251.64
+      value: 248.4
       objectReference: {fileID: 0}
     - target: {fileID: 6815683417584822652, guid: fc978f49d2fd90248be0bb8277afe1e9, type: 3}
       propertyPath: m_LocalPosition.y
@@ -3606,6 +3606,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 5735174376745172049}
     m_Modifications:
+    - target: {fileID: -564255378871950686, guid: 0439a45b19aa7056e97721b3a0db9c92, type: 3}
+      propertyPath: _goalPointName
+      value: "F.O.S.A \uD574\uC0C1\uBCF8\uBD80"
+      objectReference: {fileID: 0}
     - target: {fileID: 7461359249262483795, guid: 0439a45b19aa7056e97721b3a0db9c92, type: 3}
       propertyPath: m_RootOrder
       value: 1

@@ -17,6 +17,7 @@ public class Constants : MonoBehaviour
     public const float INPUT_Y_HEIGHT_RATIO = 0.1f;
     public const float TAKE_OFF_TIME = 2.0f;
     public const float TAKE_OFF_ACCEL_Y = 5.0f;
+    public const float LIMITED_ALTITUDE = 25.0f;
     public const float GROUND_HEIGHT = 0.0f;
     public const float TAKE_OFF_FLYING_TIME = 1.0f;
     public const float GRAVITY = 9.8f;

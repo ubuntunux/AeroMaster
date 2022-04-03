@@ -9,13 +9,27 @@ public class IndicatorUI : MonoBehaviour
     public GameObject _indicator;
     public GameObject _targetDistance;
     public Color _color;
+    public string _targetName;
     
-    Vector3 _targetPosition = Vector3.zero;
+    Vector3 _targetPosition = Vector3.zero;    
     bool _show = true;
+
+    public void SetIndicatorColor(Color color)
+    {
+        _indicator.GetComponent<RawImage>().color = color;
+        _targetDistance.GetComponent<TextMeshProUGUI>().color = color;
+        _color = color;        
+    }
+
+    public void SetIndicatorTargetName(string name)
+    {
+        _targetName = name;
+    }
 
     public void SetIndicatorTargetPosition(Vector3 position)
     {
-        _targetPosition = position;        
+        _targetPosition = position;
+
          if(false == gameObject.activeSelf)
         {
             gameObject.SetActive(true);
@@ -26,8 +40,7 @@ public class IndicatorUI : MonoBehaviour
     void Start()
     {
         gameObject.SetActive(false);
-        _indicator.GetComponent<RawImage>().color = _color;
-        _targetDistance.GetComponent<TextMeshProUGUI>().color = _color;
+        SetIndicatorColor(_color);
     }
 
     void Update()
@@ -45,7 +58,7 @@ public class IndicatorUI : MonoBehaviour
                     ((ViewportPosition.x * CanvasRect.sizeDelta.x) - halfScreenSizeX),
                     ((ViewportPosition.y * CanvasRect.sizeDelta.y) - halfScreenSizeY)
                 );
-                float padding = 40.0f;
+                float padding = 80.0f;
                 float lengthRatio = Mathf.Max(
                     Mathf.Abs(WorldObject_ScreenPosition.x / (halfScreenSizeX - padding)), 
                     Mathf.Abs(WorldObject_ScreenPosition.y / (halfScreenSizeY - padding))
@@ -66,7 +79,14 @@ public class IndicatorUI : MonoBehaviour
 
                 Vector3 toTarget = _targetPosition - Player.Instance.GetPosition();
                 int dist = (int)Mathf.Sqrt(toTarget.x * toTarget.x + toTarget.y * toTarget.y) * 5;
-                _targetDistance.GetComponent<TextMeshProUGUI>().text = dist.ToString() + "m";
+                if(0 < _targetName.Length)
+                {
+                    _targetDistance.GetComponent<TextMeshProUGUI>().text = _targetName + "\n" + dist.ToString() + "m";
+                }
+                else
+                {
+                    _targetDistance.GetComponent<TextMeshProUGUI>().text = dist.ToString() + "m";
+                }
             }
             
             _show = false;

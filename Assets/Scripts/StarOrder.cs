@@ -5,6 +5,7 @@ using UnityEngine;
 public class StarOrder : MonoBehaviour
 {
     public bool _enableRotate = false;
+
     float _initialScale = 1.0f;
     bool _disappear = false;
     float _disappearTimer = 0.0f;

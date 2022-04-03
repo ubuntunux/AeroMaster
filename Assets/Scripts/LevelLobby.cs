@@ -63,6 +63,7 @@ public class LevelLobby : LevelBase
         GameManager.Instance.SetLevelStart();
 
         UIManager.Instance.SetVisibleControllerUI(false);
+        UIManager.Instance.ShowMiniMap(false);
 
         Player.Instance.SetControllable(false);
         Player.Instance.SetInvincibility(true);

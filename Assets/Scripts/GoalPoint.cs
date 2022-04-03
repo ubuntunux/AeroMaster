@@ -8,6 +8,6 @@ public class GoalPoint : MonoBehaviour
 
     void Awake()
     {
-        LevelManager.Instance.RegistGoalPoint(transform, _goalPointName);
+        LevelManager.Instance.RegistGoalPoint(this);
     }
 }

@@ -36,8 +36,8 @@ public class LevelManager : MonoBehaviour
 
     Vector3 _startPoint = Vector3.zero;
 
-    IndicatorUI _goalIndicator = null;    
-    Transform _goalPoint;
+    IndicatorUI _goalIndicator = null;
+    GoalPoint _goalPoint = null;
 
     Vector2 _missionRegion = Vector2.zero;
     List<RegionMarkerFX> _regionMarkerFXs = new List<RegionMarkerFX>();
@@ -158,21 +158,31 @@ public class LevelManager : MonoBehaviour
     // Goal Point
     public Vector3 GetGoalPoint()
     {
-        return _goalPoint.position;
+        return (null != _goalPoint) ? _goalPoint.transform.position : Vector3.zero;
     }
 
-    public void RegistGoalPoint(Transform goalPoint)
+    public string GetGoalPointName()
+    {
+        return (null != _goalPoint) ? _goalPoint._goalPointName : "";
+    }
+
+    public void RegistGoalPoint(GoalPoint goalPoint)
     {
         if(null == _goalIndicator)
         {
-            _goalIndicator = UIManager.Instance.CreateIndicatorUI(goalPoint);
+            _goalIndicator = UIManager.Instance.CreateIndicatorUI(
+                goalPoint.transform.position,
+                goalPoint._goalPointName,
+                new Color(0.5f, 0.5f, 1.0f)
+            );
         }        
         _goalPoint = goalPoint;
     }
 
-    public void DestroyGoalIndicator()
+    public void DestroyGoalPoint()
     {
         UIManager.Instance.DestroyIndicatorUI(ref _goalIndicator);
+        _goalPoint = null;
     }
 
     // Mission Regions
@@ -220,11 +230,11 @@ public class LevelManager : MonoBehaviour
     // Level event
     public void BeforeCreateNewLevel()
     {
+        DestroyGoalPoint();
         ClearRegionMarkerFX();
 
         _missionRegion = Vector2.zero;
         _startPoint = Vector3.zero;
-        _goalPoint = Vector3.zero;
     }
 
     public void OnStartLevel()
@@ -237,12 +247,11 @@ public class LevelManager : MonoBehaviour
 
     public void OnEndLevel(LevelEndTypes type)
     {
-        DestroyGoalIndicator();
+        DestroyGoalPoint();
         ClearRegionMarkerFX();
 
         _missionRegion = Vector2.zero;
         _startPoint = Vector3.zero;
-        _goalPoint = Vector3.zero;
 
         _levelEnded = true;
         _levelExitTime = (LevelEndTypes.Silent == type) ? 0.0f : Constants.LEVEL_EXIT_TIME;

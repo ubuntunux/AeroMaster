@@ -35,7 +35,7 @@ public class Player : MonoBehaviour
     public AudioSource _jetFlyby;
     public GameObject _destroyFX;
     public GameObject _impactWaterFX;
-    public GameObject _sliderVerticalVelocity;
+    public GameObject _sliderVerticalVelocity;    
 
     public delegate void Callback();
     Callback _callbackOnClickGoRight = null;
@@ -311,15 +311,15 @@ public class Player : MonoBehaviour
 
     public void ResetPlayer(Vector3 startPoint)
     {
-        transform.localRotation = Quaternion.Euler(0.0f, 0.0f, 0.0f);
+        transform.localRotation = Quaternion.Euler(0.0f, 0.0f, 0.0f);        
         SetPosition(startPoint);
-
+        
         SetControllable(true);
         SetInvincibility(false);
         SetVisible(true);
         SetAfterBurnerEmission(false);
         SetAnimationState(AnimationState.Idle);
-        StopAllSound();        
+        StopAllSound();
 
         _inputY = 0.0f;
         _flyingTime = 0.0f;
@@ -522,6 +522,12 @@ public class Player : MonoBehaviour
         {
             GetInputDelta(ref input);
         }
+
+        // limited altitude control
+        // if(Constants.LIMITED_ALTITUDE <= GetPosition().y && 0.0f < input.y)
+        // {
+        //     input.y = 0.0f;
+        // }
 
         // make input smooth
         float inputYVelocity = (0.0f == input.y ? Constants.INPUT_Y_DAMPING : Constants.INPUT_Y_VELOCITY) * Time.deltaTime;

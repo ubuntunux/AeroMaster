@@ -67,8 +67,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: New Text
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2100000, guid: 79459efec17a4d00a321bdcc27bbc385, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 017bd413f35be5b04abd4146bbae0329, type: 2}
+  m_sharedMaterial: {fileID: 2100000, guid: 683b507436c9c80c3bc743fc75750f8f, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -92,13 +92,13 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 30
-  m_fontSizeBase: 30
+  m_fontSize: 16
+  m_fontSizeBase: 16
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
-  m_fontStyle: 0
+  m_fontStyle: 1
   m_HorizontalAlignment: 2
   m_VerticalAlignment: 512
   m_textAlignment: 65535
@@ -187,6 +187,7 @@ MonoBehaviour:
   _indicator: {fileID: 1125636414595506557}
   _targetDistance: {fileID: 1125636414072508085}
   _color: {r: 1, g: 1, b: 1, a: 1}
+  _targetName: 
 --- !u!1 &1125636414595506557
 GameObject:
   m_ObjectHideFlags: 0

@@ -32,6 +32,7 @@ public class UIManager : MonoBehaviour
     public GameObject _panelFadeInOut;
     public GameObject _textWindow;
     public GameObject _imageFinger;
+    public GameObject _miniMap;
 
     // indicator
     public GameObject _indicatorPrefab;
@@ -192,6 +193,12 @@ public class UIManager : MonoBehaviour
         _visibleLayerControllerUI = GetVisibleControllerUI();
     }
 
+    // MiniMap
+    public void ShowMiniMap(bool show)
+    {
+        _miniMap.SetActive(show);
+    }
+
     // Text Window
     public bool IsTextWindowActivated()
     {
@@ -344,7 +351,7 @@ public class UIManager : MonoBehaviour
     }
 
     // Indicator
-    public IndicatorUI CreateIndicatorUI(Vector3 position)
+    public IndicatorUI CreateIndicatorUI(Vector3 position, string name, Color color)
     {
         IndicatorUI indicator = Instantiate(_indicatorPrefab).GetComponent<IndicatorUI>();
         indicator.transform.parent = _canvasNoRayCast.transform;
@@ -354,6 +361,8 @@ public class UIManager : MonoBehaviour
         indicator.GetComponent<RectTransform>().anchoredPosition = Vector2.zero;
         indicator.GetComponent<RectTransform>().rotation = Quaternion.identity;
         indicator.SetIndicatorTargetPosition(position);
+        indicator.SetIndicatorTargetName(name);
+        indicator.SetIndicatorColor(color);
         return indicator;
     }
 
@@ -366,12 +375,12 @@ public class UIManager : MonoBehaviour
         }
     }
 
+    // Mission Region
     public void SetMissionRegionIndicator(Vector3 position)
     {
         _missionRegionIndicator.GetComponent<IndicatorUI>().SetIndicatorTargetPosition(position);
     }
 
-    // Mission Region
     public void ShowMissionRegionWarning(bool show, bool isWarningRegionRight)
     {
         GetComponent<MissionRegionWarning>().ShowMissionRegionWarning(show, isWarningRegionRight);
@@ -422,6 +431,7 @@ public class UIManager : MonoBehaviour
         SetInteractableButtonAll(true);
         ShowMissionCompleteOrFailed(false, false);
         SetSubjectText("");
+        ShowMiniMap(false);
     }
 
     public void OnStartLevel()
@@ -432,7 +442,8 @@ public class UIManager : MonoBehaviour
         ShowMissionCompleteOrFailed(false, false);
         ShowMissionRegionWarning(false, false);
         ClearMissionObjectives();
-        SetSubjectText("");        
+        SetSubjectText("");
+        ShowMiniMap(true);
     }
 
     public void OnEndLevel(LevelEndTypes type)
@@ -442,6 +453,7 @@ public class UIManager : MonoBehaviour
         SetVisibleControllerUI(false);
         SetInteractableButtonAll(false);
         SetFingerTarget(FingerTarget.None);
+        ShowMiniMap(false);
     }
 
     void Update()

@@ -37,7 +37,7 @@ public class LevelManager : MonoBehaviour
     Vector3 _startPoint = Vector3.zero;
 
     IndicatorUI _goalIndicator = null;    
-    Vector3 _goalPoint = Vector3.zero;
+    Transform _goalPoint;
 
     Vector2 _missionRegion = Vector2.zero;
     List<RegionMarkerFX> _regionMarkerFXs = new List<RegionMarkerFX>();
@@ -158,10 +158,10 @@ public class LevelManager : MonoBehaviour
     // Goal Point
     public Vector3 GetGoalPoint()
     {
-        return _goalPoint;
+        return _goalPoint.position;
     }
 
-    public void RegistGoalPoint(Vector3 goalPoint)
+    public void RegistGoalPoint(Transform goalPoint)
     {
         if(null == _goalIndicator)
         {
@@ -172,8 +172,6 @@ public class LevelManager : MonoBehaviour
 
     public void DestroyGoalIndicator()
     {
-        Debug.Log("DestroyGoalIndicator: " + ((null == _goalIndicator) ? "null" : "something"));
-
         UIManager.Instance.DestroyIndicatorUI(ref _goalIndicator);
     }
 

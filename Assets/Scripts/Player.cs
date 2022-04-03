@@ -695,7 +695,8 @@ public class Player : MonoBehaviour
         UpdateAnimationController(transform.position, position, _isGround);
 
         // update transform
-        float invGroundRatio = _isLanding ? Mathf.Max(0.0f, Mathf.Min(1.0f, (position.y - Constants.GROUND_HEIGHT) * 0.2f)) : 1.0f;
+        float invGroundRatio = 1.0f - _landingGearRatio;// Mathf.Max(0.0f, Mathf.Min(1.0f, (position.y - Constants.GROUND_HEIGHT) * 0.2f));
+
         float velocityRatioY = Mathf.Max(-1.0f, Mathf.Min(1.0f, _inputY));
         float pitch = _absVelocityRatioX * velocityRatioY * invGroundRatio * 25.0f;
         float yaw = (_frontDirection * 0.5f + 0.5f) * (_goalFrontDirectionFlag ? -180.0f : 180.0f) + 180.0f;

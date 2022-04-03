@@ -4,8 +4,10 @@ using UnityEngine;
 
 public class GoalPoint : MonoBehaviour
 {
+    public string _goalPointName;
+
     void Awake()
     {
-        LevelManager.Instance.RegistGoalPoint(transform.position);
+        LevelManager.Instance.RegistGoalPoint(transform, _goalPointName);
     }
 }

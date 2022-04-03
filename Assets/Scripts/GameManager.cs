@@ -125,7 +125,7 @@ public class GameManager : MonoBehaviour
         bool isMissionSucessOrFailed = LevelEndTypes.MissionSucess == type || LevelEndTypes.MissionFailed == type;
         Player.Instance.SetControllable(false);        
         MainCamera.Instance.SetTrackingPlayer(false);
-        ActorScriptManager.Instance.ClearActorScriptsPages();        
+        ActorScriptManager.Instance.ClearActorScriptsPages();
         UIManager.Instance.OnEndLevel(type);
         LevelManager.Instance.OnEndLevel(type);
 

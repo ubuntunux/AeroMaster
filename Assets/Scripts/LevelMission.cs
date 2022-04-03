@@ -6,6 +6,7 @@ using TMPro;
 public enum MissionPhase
 {
     None,
+    Intro,
     MissionObjective,
     Complete,
     Failed,
@@ -39,13 +40,10 @@ public class LevelMission : LevelBase
 
         UIManager.Instance.SetVisibleControllerUI(false);
 
-        // set mission objectives
-        UIManager.Instance.RegistMissionObjective("Landing", "F.O.S.A의 해상 본부에 착륙", 60.0f);
-
         // set scripts
         ActorScriptManager.Instance.GenerateActorScriptsPages(_textScripts);
 
-        _phase = MissionPhase.None;
+        _phase = MissionPhase.Intro;
     }
 
     override public void OnExitLevel()
@@ -71,45 +69,38 @@ public class LevelMission : LevelBase
 
     override public void UpdateLevel()
     {
-        if(MissionPhase.None == _phase)
+        // check mission failed
+        if(MissionPhase.Failed != _phase)
         {
-            // first update
+            bool isTimeUp = UIManager.Instance.IsMissionObjectiveTimeUp("Landing");
+            if(false == GameManager.Instance.CheckMissionRegion() || 
+               false == Player.Instance.isAlive() || 
+               isTimeUp)
+            {
+                SetMissionFailed();
+            }
+        }
+
+        if(MissionPhase.Intro == _phase)
+        {
             if(UIManager.Instance.CheckSubjectTextDone())
             {
                 if(ActorScriptManager.Instance.SetPageAndCheckReadDone("Intro"))
                 {
                     UIManager.Instance.SetVisibleControllerUI(true);
+                    // set mission objectives
+                    UIManager.Instance.RegistMissionObjective("Landing", "F.O.S.A의 해상 본부에 착륙", 60.0f);
                     _phase = MissionPhase.MissionObjective;
                 }
             }
         }
         else if(MissionPhase.MissionObjective == _phase)
         {
-            bool isTimeUp = UIManager.Instance.IsMissionObjectiveTimeUp("Landing");
-
-            if(Player.Instance.isAlive() && false == isTimeUp)
+            Vector3 goalPoint = LevelManager.Instance.GetGoalPoint();
+            if(Player.Instance.IsLanded() && Player.Instance.CheckIsInTargetRange(goalPoint, Constants.GOAL_IN_DISTANCE))
             {
-                Vector3 goalPoint = LevelManager.Instance.GetGoalPoint();                
-                if(Player.Instance.IsLanded() && 
-                   Player.Instance.CheckIsInTargetRange(goalPoint, Constants.GOAL_IN_DISTANCE))
-                {
-                    UIManager.Instance.SetMissionObjectiveState("Landing", MissionObjectiveState.Success);
-
-                    SetMissionComplete();
-                }
-            }
-            else
-            {
-                SetMissionFailed();
-            }
-        }
-
-        // check mission failed
-        if(MissionPhase.Failed != _phase)
-        {
-            if(false == GameManager.Instance.CheckMissionRegion())
-            {
-                SetMissionFailed();
+                UIManager.Instance.SetMissionObjectiveState("Landing", MissionObjectiveState.Success);
+                SetMissionComplete();
             }
         }
         

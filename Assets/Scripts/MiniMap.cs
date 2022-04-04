@@ -5,10 +5,11 @@ using UnityEngine;
 
 public class MiniMap : MonoBehaviour
 {
-    float _heightRatio = 1.0f;
-    Vector2 _mini_map_distance;
+    float _heightRatio = 1.0f;    
     Vector2 _padding;
     Vector2 _half_size;
+    Vector2 _mini_map_distance;
+    Vector2 _world_to_minimap;
 
     // Singleton instantiation
     private static MiniMap _instance;
@@ -24,6 +25,11 @@ public class MiniMap : MonoBehaviour
         }
     }
 
+    void Awake()
+    {
+        _instance = this;
+    }
+
     public Vector2 GetMiniMapDistance()
     {
         return _mini_map_distance;
@@ -34,6 +40,11 @@ public class MiniMap : MonoBehaviour
         return _half_size;
     }
 
+    public Vector2 GetWorldToMiniMap()
+    {
+        return _world_to_minimap;
+    }
+
     // Start is called before the first frame update
     void Start()
     {
@@ -42,5 +53,6 @@ public class MiniMap : MonoBehaviour
         _half_size = GetComponent<RectTransform>().sizeDelta * 0.5f - _padding;
         _mini_map_distance.x = Constants.LIMITED_ALTITUDE / _heightRatio;
         _mini_map_distance.y = Constants.LIMITED_ALTITUDE;
+        _world_to_minimap = _half_size / _mini_map_distance;
     }
 }

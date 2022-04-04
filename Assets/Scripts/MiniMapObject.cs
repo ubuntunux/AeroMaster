@@ -6,9 +6,12 @@ using UnityEngine;
 public class MiniMapObject : MonoBehaviour
 {
     Transform _targetTransform = null;
+    BoxCollider _collider = null;
 
-    public void Initialize(Transform targetTransform)
+    public void Initialize(Transform targetTransform, BoxCollider collider = null)
     {
+        _collider = collider;
+
         if(null != targetTransform)
         {
             transform.SetParent(MiniMap.Instance.gameObject.transform, false);
@@ -21,22 +24,18 @@ public class MiniMapObject : MonoBehaviour
         if(null != _targetTransform)
         {
             Vector3 playerPosition = Player.Instance.GetPosition();
-            Vector2 v = (_targetTransform.position - playerPosition) / MiniMap.Instance.GetMiniMapDistance();
-            if(Mathf.Max(Mathf.Abs(v.x), Mathf.Abs(v.y)) <= 1.0f)
+            Vector2 v = _targetTransform.position - playerPosition;
+            GetComponent<RectTransform>().anchoredPosition = v * MiniMap.Instance.GetWorldToMiniMap();
+            if(null != _collider)
             {
-                if(false == GetComponent<Image>().enabled)
-                {
-                    GetComponent<Image>().enabled = true;
-                }
+                Vector3 locaBound = _targetTransform.InverseTransformVector(_collider.bounds.size);
+                locaBound.x *= _targetTransform.localScale.x;
+                locaBound.y *= _targetTransform.localScale.y;
+                locaBound.z *= _targetTransform.localScale.z;
 
-                GetComponent<RectTransform>().anchoredPosition = v * MiniMap.Instance.GetHalfSize();
-            }
-            else
-            {
-                if(GetComponent<Image>().enabled)
-                {
-                    GetComponent<Image>().enabled = false;
-                }
+                GetComponent<RectTransform>().sizeDelta = locaBound * MiniMap.Instance.GetWorldToMiniMap();
+                Vector3 angles = _targetTransform.rotation.eulerAngles;
+                GetComponent<RectTransform>().rotation = Quaternion.Euler(angles.x, angles.y, angles.z);
             }
         }
     }

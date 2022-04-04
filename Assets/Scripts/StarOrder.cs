@@ -13,6 +13,8 @@ public class StarOrder : MonoBehaviour
 
     public void GetStarOrder()
     {
+        GetComponent<MiniMapRegister>().DestroyMiniMapObject();
+
         AudioManager.Instance._audioStarOrder.Play();
         _disappearTimer = DISAPPEAR_TIME;
         _disappear = true;        
@@ -35,7 +37,7 @@ public class StarOrder : MonoBehaviour
             _disappearTimer -= Time.deltaTime;
             if(_disappearTimer <= 0.0f)
             {
-                Destroy(gameObject);
+                Destroy(gameObject);                
             }
             else
             {

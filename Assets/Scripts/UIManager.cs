@@ -22,7 +22,7 @@ public class UIManager : MonoBehaviour
     public GameObject _btnGoRight;
     public GameObject _btnGoLeft;
     public GameObject _btnLanding;
-    public GameObject _slideVerticalVelocity;    
+    public GameObject _slideVerticalVelocity;
     public GameObject _imageMissionComplete;
     public GameObject _imageMissionFailed;
     public GameObject _layerControllerUI;

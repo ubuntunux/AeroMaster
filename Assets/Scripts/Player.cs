@@ -35,7 +35,7 @@ public class Player : MonoBehaviour
     public AudioSource _jetFlyby;
     public GameObject _destroyFX;
     public GameObject _impactWaterFX;
-    public GameObject _sliderVerticalVelocity;    
+    public GameObject _sliderVerticalVelocity;
 
     public delegate void Callback();
     Callback _callbackOnClickGoRight = null;
@@ -232,6 +232,11 @@ public class Player : MonoBehaviour
         {
             SetLanding();
         }
+    }
+
+    public float GetInputY()
+    {
+        return _inputY;
     }
 
     public float GetVelocityRatio()
@@ -524,10 +529,10 @@ public class Player : MonoBehaviour
         }
 
         // limited altitude control
-        // if(Constants.LIMITED_ALTITUDE <= GetPosition().y && 0.0f < input.y)
-        // {
-        //     input.y = 0.0f;
-        // }
+        if(Constants.LIMITED_ALTITUDE <= GetPosition().y && 0.0f < input.y)
+        {
+            input.y = 0.0f;
+        }
 
         // make input smooth
         float inputYVelocity = (0.0f == input.y ? Constants.INPUT_Y_DAMPING : Constants.INPUT_Y_VELOCITY) * Time.deltaTime;
@@ -543,9 +548,6 @@ public class Player : MonoBehaviour
         // clamp input
         if(1.0f < _inputY) _inputY = 1.0f;
         else if(_inputY < -1.0f) _inputY = -1.0f;
-
-        // apply to ui
-        _sliderVerticalVelocity.GetComponent<Slider>().value = _inputY;
 
         // Acceleration
         if(_isAcceleration)

@@ -82,6 +82,11 @@ public class Player : MonoBehaviour
         return _isGround;
     }
 
+    public float GetLandingGearRatio()
+    {
+        return _landingGearRatio;
+    }
+
     public Vector3 GetPosition()
     {
         return transform.position;
@@ -502,18 +507,6 @@ public class Player : MonoBehaviour
         }
     }
 
-    public void GetInputDelta(ref Vector2 input)
-    {
-        #if UNITY_ANDROID
-            input = GameManager.Instance.GetAltitudeTouchDelta();
-        #elif UNITY_IPHONE
-            // todo
-        #else
-            input.x = Input.GetAxis("Horizontal");
-            input.y = Input.GetAxis("Vertical");
-        #endif
-    }
-
     void ControllShip()
     {
         Vector2 input = Vector2.zero;
@@ -525,7 +518,7 @@ public class Player : MonoBehaviour
         }
         else if(GetControllable())
         {
-            GetInputDelta(ref input);
+            GameManager.Instance.GetInputDelta(ref input);
         }
 
         // limited altitude control

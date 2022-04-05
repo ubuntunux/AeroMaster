@@ -740,6 +740,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 215543228}
+  - component: {fileID: 215543229}
   m_Layer: 5
   m_Name: LayerControllerUI
   m_TagString: Untagged
@@ -770,6 +771,34 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &215543229
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 215543227}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d577c966c3d04ec5cb23313f87dfa2eb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _controlAccelLeft: {fileID: 1735361943}
+  _controlAccelRight: {fileID: 678351248}
+  _controlLanding: {fileID: 1658939476}
+  _controlVerticalVelocity: {fileID: 888798918}
+  _controlVerticalVelocityTop: {fileID: 1733948204}
+  _controlVerticalVelocityBottom: {fileID: 1401965700}
+  _top_on: {fileID: 21300000, guid: 9ea5d8aff2632c1b189b02302fd149e9, type: 3}
+  _top_off: {fileID: 21300000, guid: f9ce16240e77bb09f913ad36a9d55c7b, type: 3}
+  _bottom_on: {fileID: 21300000, guid: a4a0eee78abd5dc7ea6b12ef51303dc4, type: 3}
+  _bottom_off: {fileID: 21300000, guid: bb67755e8d7270b388454d0255242502, type: 3}
+  _accel_left_on: {fileID: 21300000, guid: 3bd4cd8f584f9c435a406c1392d0175f, type: 3}
+  _accel_left_off: {fileID: 21300000, guid: 9985e27d25fe3a3d584dea3780c339d5, type: 3}
+  _accel_right_on: {fileID: 21300000, guid: dc84414dfc780f62a973903feb18cb17, type: 3}
+  _accel_right_off: {fileID: 21300000, guid: 1e77adfe34bdcc4939008259a5f4d48e, type: 3}
+  _landing_on: {fileID: 21300000, guid: 632f86a482e9af94d91b19aa63cf47af, type: 3}
+  _landing_off: {fileID: 21300000, guid: 46df89707acc4f5a4ae8fff14dd4bda8, type: 3}
 --- !u!1 &320369102
 GameObject:
   m_ObjectHideFlags: 0
@@ -1627,7 +1656,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0.5}
   m_AnchorMax: {x: 1, y: 0.5}
-  m_AnchoredPosition: {x: 350.00006, y: -188.6}
+  m_AnchoredPosition: {x: 377.1, y: -181.6}
   m_SizeDelta: {x: 100, y: 85.7}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &678351250
@@ -1660,8 +1689,8 @@ MonoBehaviour:
     m_FadeDuration: 0.1
   m_SpriteState:
     m_HighlightedSprite: {fileID: 21300000, guid: dc84414dfc780f62a973903feb18cb17, type: 3}
-    m_PressedSprite: {fileID: 21300000, guid: dc84414dfc780f62a973903feb18cb17, type: 3}
-    m_SelectedSprite: {fileID: 21300000, guid: dc84414dfc780f62a973903feb18cb17, type: 3}
+    m_PressedSprite: {fileID: 0}
+    m_SelectedSprite: {fileID: 0}
     m_DisabledSprite: {fileID: 0}
   m_AnimationTriggers:
     m_NormalTrigger: Normal
@@ -1674,9 +1703,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 191007074}
-        m_TargetAssemblyTypeName: Player, Assembly-CSharp
-        m_MethodName: OnClickGoRight
+      - m_Target: {fileID: 215543229}
+        m_TargetAssemblyTypeName: ControllerUI, Assembly-CSharp
+        m_MethodName: OnClickAccelRight
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -2156,7 +2185,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 0.78431374}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -4337,8 +4366,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -14.999878, y: -100.000015}
-  m_SizeDelta: {x: 300, y: 300}
+  m_AnchoredPosition: {x: -14.999878, y: -73}
+  m_SizeDelta: {x: 300, y: 200}
   m_Pivot: {x: 1, y: 1}
 --- !u!114 &1352841569
 MonoBehaviour:
@@ -4609,7 +4638,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1511630056}
-  - component: {fileID: 1511630057}
   m_Layer: 5
   m_Name: Slider_VerticalVelocity
   m_TagString: Untagged
@@ -4639,25 +4667,6 @@ RectTransform:
   m_AnchoredPosition: {x: -386, y: -79.30104}
   m_SizeDelta: {x: 20, y: 160}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &1511630057
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1511630055}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dc148439305fa6752ad097fd7d41463a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _controlVerticalVelocity: {fileID: 888798918}
-  _controlVerticalVelocityTop: {fileID: 1733948204}
-  _controlVerticalVelocityBottom: {fileID: 1401965700}
-  _top_on: {fileID: 21300000, guid: 9ea5d8aff2632c1b189b02302fd149e9, type: 3}
-  _top_off: {fileID: 21300000, guid: f9ce16240e77bb09f913ad36a9d55c7b, type: 3}
-  _bottom_on: {fileID: 21300000, guid: a4a0eee78abd5dc7ea6b12ef51303dc4, type: 3}
-  _bottom_off: {fileID: 21300000, guid: bb67755e8d7270b388454d0255242502, type: 3}
 --- !u!1 &1528480661
 GameObject:
   m_ObjectHideFlags: 0
@@ -4931,7 +4940,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0.5}
   m_AnchorMax: {x: 1, y: 0.5}
-  m_AnchoredPosition: {x: 250.00009, y: -188.6}
+  m_AnchoredPosition: {x: 277.1001, y: -181.6}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1658939478
@@ -4993,8 +5002,8 @@ MonoBehaviour:
     m_FadeDuration: 0.1
   m_SpriteState:
     m_HighlightedSprite: {fileID: 21300000, guid: 632f86a482e9af94d91b19aa63cf47af, type: 3}
-    m_PressedSprite: {fileID: 21300000, guid: 632f86a482e9af94d91b19aa63cf47af, type: 3}
-    m_SelectedSprite: {fileID: 21300000, guid: 632f86a482e9af94d91b19aa63cf47af, type: 3}
+    m_PressedSprite: {fileID: 0}
+    m_SelectedSprite: {fileID: 0}
     m_DisabledSprite: {fileID: 0}
   m_AnimationTriggers:
     m_NormalTrigger: Normal
@@ -5007,8 +5016,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 191007074}
-        m_TargetAssemblyTypeName: Player, Assembly-CSharp
+      - m_Target: {fileID: 215543229}
+        m_TargetAssemblyTypeName: ControllerUI, Assembly-CSharp
         m_MethodName: OnClickLanding
         m_Mode: 1
         m_Arguments:
@@ -5244,7 +5253,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0.5}
   m_AnchorMax: {x: 1, y: 0.5}
-  m_AnchoredPosition: {x: 150.00009, y: -188.6}
+  m_AnchoredPosition: {x: 177.10008, y: -181.6}
   m_SizeDelta: {x: 100, y: 85.7}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1735361945
@@ -5290,8 +5299,8 @@ MonoBehaviour:
     m_FadeDuration: 0.1
   m_SpriteState:
     m_HighlightedSprite: {fileID: 21300000, guid: 3bd4cd8f584f9c435a406c1392d0175f, type: 3}
-    m_PressedSprite: {fileID: 21300000, guid: 3bd4cd8f584f9c435a406c1392d0175f, type: 3}
-    m_SelectedSprite: {fileID: 21300000, guid: 3bd4cd8f584f9c435a406c1392d0175f, type: 3}
+    m_PressedSprite: {fileID: 0}
+    m_SelectedSprite: {fileID: 0}
     m_DisabledSprite: {fileID: 0}
   m_AnimationTriggers:
     m_NormalTrigger: Normal
@@ -5304,9 +5313,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 191007074}
-        m_TargetAssemblyTypeName: Player, Assembly-CSharp
-        m_MethodName: OnClickGoLeft
+      - m_Target: {fileID: 215543229}
+        m_TargetAssemblyTypeName: ControllerUI, Assembly-CSharp
+        m_MethodName: OnClickAccelLeft
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

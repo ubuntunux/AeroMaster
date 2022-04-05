@@ -12,12 +12,12 @@ public enum LevelEndTypes
 
 abstract public class LevelBase: MonoBehaviour
 {
+    abstract public int GetMissionTime();
     abstract public string GetMissionTitle();
     abstract public string GetMissionDetails();
     abstract public void OnStartLevel();
     abstract public void OnExitLevel();
     abstract public void UpdateLevel();
-    abstract public int GetMissionTime();
 }
 
 public class LevelManager : MonoBehaviour
@@ -137,6 +137,11 @@ public class LevelManager : MonoBehaviour
     public bool IsLevelLobby()
     {
         return _levelLobbyPrefab == _currentLevelPrefab;
+    }
+
+    public bool IsMissionLevel()
+    {
+        return false == IsLevelProfile() && false == IsLevelLobby();
     }
 
     public int GetMissionTime()

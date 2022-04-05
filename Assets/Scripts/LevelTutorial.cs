@@ -177,7 +177,7 @@ public class LevelTutorial : LevelBase
             else
             {
                 Vector2 input = Vector2.zero;
-                Player.Instance.GetInputDelta(ref input);
+                GameManager.Instance.GetInputDelta(ref input);
                 if(0.3f < input.y)
                 {
                     // Set auto take off

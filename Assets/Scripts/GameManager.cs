@@ -55,6 +55,18 @@ public class GameManager : MonoBehaviour
     }
 #endif
 
+    public void GetInputDelta(ref Vector2 input)
+    {
+        #if UNITY_ANDROID
+            input = GetAltitudeTouchDelta();
+        #elif UNITY_IPHONE
+            // todo
+        #else
+            input.x = Input.GetAxis("Horizontal");
+            input.y = Input.GetAxis("Vertical");
+        #endif
+    }
+
     public bool GetPaused()
     {
         return _paused;

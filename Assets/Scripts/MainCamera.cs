@@ -99,7 +99,8 @@ public class MainCamera : MonoBehaviour
             const float CAMERA_OFFSET_Z = 6.0f;
             float frontDirection = Player.Instance.GetFrontDirection();
             float AbsVelocityRatioX = Player.Instance.GetMaxVelocityRatio();
-            float groundRatio = Mathf.Max(0.0f, Mathf.Min(1.0f, 1.0f - (Player.Instance.GetPosition().y - Constants.GROUND_HEIGHT) * 0.2f));
+            // float groundRatio = Mathf.Max(0.0f, Mathf.Min(1.0f, 1.0f - (Player.Instance.GetPosition().y - Constants.GROUND_HEIGHT) * 0.2f));
+            float groundRatio = Player.Instance.GetLandingGearRatio();
 
             cameraPosition.x += AbsVelocityRatioX * frontDirection * CAMERA_OFFSET_X;
             cameraPosition.y += 1.0f + AbsVelocityRatioX * groundRatio * CAMERA_OFFSET_Y;

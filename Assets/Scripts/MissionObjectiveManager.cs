@@ -12,6 +12,12 @@ public class MissionObjectiveManager : MonoBehaviour
     List<MissionObjective> _missionObjectives = new List<MissionObjective>();
     const float PADDING = 5.0f;
 
+    public void ShowMissionObjective(bool show)
+    {
+        show = show && (0 < _missionObjectives.Count);
+        _missionObjectiveLayer.SetActive(show);
+    }
+
     float GetMissionObjectiveHeight()
     {
         return _missionObjectivePrefab.GetComponent<RectTransform>().rect.height;

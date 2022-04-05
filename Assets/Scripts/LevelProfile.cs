@@ -7,16 +7,6 @@ public class LevelProfile : LevelBase
     bool _isFirstUpdate = true;
     int _profileIndex = 0;
 
-    override public string GetMissionTitle()
-    {
-        return "";
-    }
-
-    override public string GetMissionDetails()
-    {
-        return "";
-    }
-
     public void OnClickProfile0()
     {
         OnClickProfile(0);

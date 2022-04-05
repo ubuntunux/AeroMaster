@@ -137,16 +137,24 @@ public class UIManager : MonoBehaviour
         return _layerControllerUI.activeSelf;
     }
 
+    void UpdateVisibleControllerUI()
+    {
+        bool show = _visibleLayerControllerUI && _visibleLayerControllerUIByActorScript;
+        _layerControllerUI.SetActive(show);
+        ShowMiniMap(show);
+        //GetComponent<MissionObjectiveManager>().ShowMissionObjective(show);
+    }
+
     public void SetVisibleControllerUI(bool show)
     {
         _visibleLayerControllerUI = show;
-        _layerControllerUI.SetActive(_visibleLayerControllerUI && _visibleLayerControllerUIByActorScript);
+        UpdateVisibleControllerUI();
     }
 
     public void SetVisibleControllerUIByActorScript(bool show)
     {
         _visibleLayerControllerUIByActorScript = show;
-        _layerControllerUI.SetActive(_visibleLayerControllerUI && _visibleLayerControllerUIByActorScript);
+        UpdateVisibleControllerUI();
     }
 
     public void ShowMissionCompleteOrFailed(bool show, bool isMissionSuccess)

@@ -13,8 +13,6 @@ public enum LevelEndTypes
 abstract public class LevelBase: MonoBehaviour
 {
     abstract public int GetMissionTime();
-    abstract public string GetMissionTitle();
-    abstract public string GetMissionDetails();
     abstract public void OnStartLevel();
     abstract public void OnExitLevel();
     abstract public void UpdateLevel();

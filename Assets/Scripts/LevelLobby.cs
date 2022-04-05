@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using TMPro;
 
 public class LevelLobby : LevelBase
@@ -8,40 +9,30 @@ public class LevelLobby : LevelBase
     public GameObject _textMissionTitle;
     public GameObject _textMissionBody;
     public GameObject _layerMissionDetail;
+    public GameObject _imageMission;
 
     bool _isFirstUpdate = true;
     GameObject _levelPrefab = null;
 
-    override public string GetMissionTitle()
+    public void OnClickLevel(MissionInfo missionInfo)
     {
-        return "";
-    }
-
-    override public string GetMissionDetails()
-    {
-        return "";
-    }
-
-    public void OnClickTutorial()
-    {
-        OnClickLevel(LevelManager.Instance.GetLevelTutorialPrefab());
-    }
-
-    public void OnClickMission()
-    {
-        OnClickLevel(LevelManager.Instance.GetLevelMissionPrefab());
-    }
-
-    public void OnClickLevel(GameObject levelPrefab)
-    {
+        GameObject levelPrefab = missionInfo.GetLevelPrefab();
         if(null != levelPrefab)
         {
             _layerMissionDetail.SetActive(true);
 
+            _textMissionTitle.GetComponent<TextMeshProUGUI>().text = missionInfo.GetMissionTitle();
+            _textMissionBody.GetComponent<TextMeshProUGUI>().text = missionInfo.GetMissionDetail();
+            
+            // set mission image
+            _imageMission.GetComponent<Image>().sprite = missionInfo.GetImageMission();
+            float width = _imageMission.GetComponent<Image>().sprite.rect.width;
+            float height = _imageMission.GetComponent<Image>().sprite.rect.height;
+            Vector2 sizeDelta =_imageMission.GetComponent<RectTransform>().sizeDelta;
+            sizeDelta.x = sizeDelta.y * width / height;
+            _imageMission.GetComponent<RectTransform>().sizeDelta = sizeDelta;
+
             _levelPrefab = levelPrefab;
-            LevelBase level = levelPrefab.GetComponent<LevelBase>();
-            _textMissionTitle.GetComponent<TextMeshProUGUI>().text = level.GetMissionTitle();
-            _textMissionBody.GetComponent<TextMeshProUGUI>().text = level.GetMissionDetails();
         }
     }
 

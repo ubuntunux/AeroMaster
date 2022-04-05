@@ -20,25 +20,10 @@ public enum TutorialPhase
 
 public class LevelTutorial : LevelBase
 {
-    public GameObject _startMarker;
-    [TextArea]
-    public string _textMissionTitle;
-    [TextArea]
-    public string _textMissionDetail;
     [TextArea]
     public string _textScripts;
 
     TutorialPhase _phase = TutorialPhase.None;
-    
-    override public string GetMissionTitle()
-    {
-        return _textMissionTitle;
-    }
-
-    override public string GetMissionDetails()
-    {
-        return _textMissionDetail;
-    }
 
     public void CallbackOnClickGoRight()
     {
@@ -123,7 +108,7 @@ public class LevelTutorial : LevelBase
         // update mission states
         if(TutorialPhase.None == _phase)
         {
-            UIManager.Instance.SetSubjectText(GetMissionTitle());
+            UIManager.Instance.SetSubjectText("RAVEN'S NEST BOOT CAMP");
             _phase = TutorialPhase.Intro;
         }
         else if(TutorialPhase.Intro == _phase)

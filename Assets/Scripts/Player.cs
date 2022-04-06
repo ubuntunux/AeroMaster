@@ -340,10 +340,10 @@ public class Player : MonoBehaviour
         _velocityY = 0.0f;
         _absVelocityRatioY = 0.0f;
         _isAcceleration = false;
-        _isLanding = true;
+        _isLanding = false;
+        _isGround = false;
         _goalFrontDirectionFlag = true;
-        _frontDirection = 1.0f;
-        _isGround = true;
+        _frontDirection = 1.0f;        
         _isAlive = true;
     }
 

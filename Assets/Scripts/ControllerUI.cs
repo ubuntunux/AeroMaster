@@ -90,6 +90,12 @@ public class ControllerUI : MonoBehaviour
         {
             Vector2 input = Vector2.zero;
             GameManager.Instance.GetInputDelta(ref input);
+
+        #if UNITY_ANDROID            
+            // nothing
+        #elif UNITY_IPHONE
+            // nothing
+        #else
             if(input.x < 0.0f)
             {
                 OnClickAccelLeft();
@@ -102,6 +108,7 @@ public class ControllerUI : MonoBehaviour
             {
                 OnClickLanding();
             }
+        #endif
 
             // vertical speed
             float verticalVelocity = Player.Instance.GetInputY() * 55.0f;

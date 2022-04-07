@@ -28,7 +28,6 @@ public class LevelProfile : LevelBase
         GameManager.Instance.SetLevelStart();
 
         UIManager.Instance.SetVisibleControllerUI(false);
-        UIManager.Instance.ShowMiniMap(false);
 
         Player.Instance.SetControllable(false);
         Player.Instance.SetInvincibility(true);

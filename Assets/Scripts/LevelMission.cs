@@ -60,7 +60,7 @@ public class LevelMission : LevelBase
         {
             bool isTimeUp = UIManager.Instance.IsMissionObjectiveTimeUp("Landing");
             if(false == GameManager.Instance.CheckMissionRegion() || 
-               false == Player.Instance.isAlive() || 
+               false == Player.Instance.IsAlive() || 
                isTimeUp)
             {
                 SetMissionFailed();

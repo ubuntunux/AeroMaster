@@ -50,18 +50,12 @@ public class IndicatorUI : MonoBehaviour
             LevelBase level = LevelManager.Instance.GetCurrentLevel();
             if(null != level)
             {
-                RectTransform CanvasRect = UIManager.Instance._canvasNoRayCast.GetComponent<RectTransform>();
-                float halfScreenSizeX = CanvasRect.sizeDelta.x * 0.5f;
-                float halfScreenSizeY = CanvasRect.sizeDelta.y * 0.5f;
-                Vector2 ViewportPosition = MainCamera.Instance.GetComponent<Camera>().WorldToViewportPoint(_targetPosition);
-                Vector2 WorldObject_ScreenPosition = new Vector2(
-                    ((ViewportPosition.x * CanvasRect.sizeDelta.x) - halfScreenSizeX),
-                    ((ViewportPosition.y * CanvasRect.sizeDelta.y) - halfScreenSizeY)
-                );
+                Vector2 WorldObject_ScreenPosition = UIManager.Instance.WorldToScreen(_targetPosition);
+                Vector2 screenSize = UIManager.Instance.GetScreenSize();
                 float padding = 80.0f;
                 float lengthRatio = Mathf.Max(
-                    Mathf.Abs(WorldObject_ScreenPosition.x / (halfScreenSizeX - padding)), 
-                    Mathf.Abs(WorldObject_ScreenPosition.y / (halfScreenSizeY - padding))
+                    Mathf.Abs(WorldObject_ScreenPosition.x / (screenSize.x * 0.5f - padding)), 
+                    Mathf.Abs(WorldObject_ScreenPosition.y / (screenSize.y * 0.5f - padding))
                 );
 
                 if(1.0f < lengthRatio)

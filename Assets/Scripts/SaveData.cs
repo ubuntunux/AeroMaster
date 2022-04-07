@@ -32,6 +32,7 @@ public class SaveData
         if(null != loadData)
         {
             _instance = loadData;
+            //_instance = new SaveData();
         }
         else
         {
@@ -52,5 +53,6 @@ public class PlayerData
     public string _playerName = "";
     public int _score = 0;
     public int _playerModelIndex = 0;
-    public bool _tutorialCompleted = false;
+    public int _tutorialCompleted = 0;
+    public int _hp = 100;
 }

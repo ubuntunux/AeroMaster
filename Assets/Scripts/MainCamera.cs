@@ -68,11 +68,10 @@ public class MainCamera : MonoBehaviour
         _cameraHandMove.SetShake(shakeDuration, shakeIntensity, shakeRandomTerm);
     }
 
-    public void SetCameraShakeByDestroy()
+    public void SetCameraShakeByDestroy(float CameraShakeIntensity = 1.0f)
     {
         const float CameraShakeDuration = 1.0f;
-        const  float CameraShakeRandomTerm = 0.01f;
-        const  float CameraShakeIntensity = 1.0f;
+        const float CameraShakeRandomTerm = 0.01f;
         _cameraShake.SetShake(CameraShakeDuration, CameraShakeIntensity, CameraShakeRandomTerm);
     }
 

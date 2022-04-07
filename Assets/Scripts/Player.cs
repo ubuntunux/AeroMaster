@@ -33,9 +33,11 @@ public class Player : MonoBehaviour
     public AudioSource _flyingLoop;
     public AudioSource _radioLoop;
     public AudioSource _jetFlyby;
+    public GameObject _damageFX;
     public GameObject _destroyFX;
-    public GameObject _impactWaterFX;
+    public GameObject _impactWaterFX;    
     public GameObject _sliderVerticalVelocity;
+    public GameObject _hpBar;
 
     public delegate void Callback();
     Callback _callbackOnClickGoRight = null;
@@ -72,7 +74,7 @@ public class Player : MonoBehaviour
         }
     }
 
-    public bool isAlive()
+    public bool IsAlive()
     {
         return _isAlive;
     }
@@ -331,6 +333,8 @@ public class Player : MonoBehaviour
         SetAnimationState(AnimationState.Idle);
         StopAllSound();
 
+        _hpBar.GetComponent<HPBar>().InitializeHPBar(null, SaveData.Instance._playerData._hp);
+
         _inputY = 0.0f;
         _flyingTime = 0.0f;
         _landingGearRatio = 0.0f;        
@@ -340,7 +344,7 @@ public class Player : MonoBehaviour
         _velocityY = 0.0f;
         _absVelocityRatioY = 0.0f;
         _isAcceleration = false;
-        _isLanding = false;
+        _isLanding = true;
         _isGround = false;
         _goalFrontDirectionFlag = true;
         _frontDirection = 1.0f;        
@@ -369,17 +373,24 @@ public class Player : MonoBehaviour
     {
         if("Ground" == other.gameObject.tag)
         {
+            bool damaged = false;
+
             if(_velocityY < 0.0f)
             {
                 if(_velocityY < Constants.SPEED_FOR_DESTROY || _landingGearRatio < 0.5f)
                 {
-                    SetDestroy(DestroyType.Explosion);
-                }
-                _velocityY = 0.0f;
+                    SetDamage(Mathf.Abs(_velocityY) * 10.0f + 10.0f);
+                    damaged = true;
+                }                
+
+                _velocityY = (IsAlive() && damaged) ? (_velocityY * -0.5f) : 0.0f;
             }
 
-            _flyingTime = 0.0f;
-            _isGround = true;            
+            if(false == damaged && IsAlive())
+            {
+                _flyingTime = 0.0f;
+                _isGround = true;
+            }
         }
     }
 
@@ -480,7 +491,7 @@ public class Player : MonoBehaviour
 
     public void SetDestroy(DestroyType destroyType)
     {
-        if(false == _invincibility && _isAlive)
+        if(false == _invincibility && IsAlive())
         {
             MainCamera.Instance.SetCameraShakeByDestroy();
             
@@ -504,6 +515,25 @@ public class Player : MonoBehaviour
             SetControllable(false);
             StopAllSound();
             _isAlive = false;
+        }
+    }
+
+    public void SetDamage(float damage)
+    {
+        if(false == _invincibility && IsAlive())
+        {
+            _hpBar.GetComponent<HPBar>().SetDamage(damage);
+
+            if(_hpBar.GetComponent<HPBar>().IsAlive())
+            {
+                MainCamera.Instance.SetCameraShakeByDestroy(0.1f);
+                GameObject damageFX = (GameObject)GameObject.Instantiate(_damageFX);
+                damageFX.transform.SetParent(transform, false);
+            }
+            else
+            {
+                SetDestroy(DestroyType.Explosion);
+            }
         }
     }
 

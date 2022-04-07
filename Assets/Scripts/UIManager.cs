@@ -33,6 +33,7 @@ public class UIManager : MonoBehaviour
     public GameObject _textWindow;
     public GameObject _imageFinger;
     public GameObject _miniMap;
+    public GameObject _hpBar;
 
     // indicator
     public GameObject _indicatorPrefab;
@@ -141,7 +142,8 @@ public class UIManager : MonoBehaviour
     {
         bool show = _visibleLayerControllerUI && _visibleLayerControllerUIByActorScript;
         _layerControllerUI.SetActive(show);
-        ShowMiniMap(show);
+        _miniMap.SetActive(show);
+        _hpBar.SetActive(show);
         //GetComponent<MissionObjectiveManager>().ShowMissionObjective(show);
     }
 
@@ -199,12 +201,6 @@ public class UIManager : MonoBehaviour
     void Start()
     {
         _visibleLayerControllerUI = GetVisibleControllerUI();
-    }
-
-    // MiniMap
-    public void ShowMiniMap(bool show)
-    {
-        _miniMap.SetActive(show);
     }
 
     // Text Window
@@ -432,6 +428,20 @@ public class UIManager : MonoBehaviour
     }
 
     // UIManager
+    public Vector2 GetScreenSize()
+    {
+        return UIManager.Instance._canvasNoRayCast.GetComponent<RectTransform>().sizeDelta;
+    }
+
+    public Vector2 WorldToScreen(Vector3 targetPosition)
+    {
+        RectTransform CanvasRect = UIManager.Instance._canvasNoRayCast.GetComponent<RectTransform>();
+        Vector2 ViewportPosition = MainCamera.Instance.GetComponent<Camera>().WorldToViewportPoint(targetPosition);
+        ViewportPosition.x -= 0.5f;
+        ViewportPosition.y -= 0.5f;        
+        return ViewportPosition * CanvasRect.sizeDelta;
+    }
+
     public void ResetUIManager()
     {
         _layeyExit.SetActive(false);
@@ -439,7 +449,6 @@ public class UIManager : MonoBehaviour
         SetInteractableButtonAll(true);
         ShowMissionCompleteOrFailed(false, false);
         SetSubjectText("");
-        ShowMiniMap(false);
     }
 
     public void OnStartLevel()
@@ -451,7 +460,6 @@ public class UIManager : MonoBehaviour
         ShowMissionRegionWarning(false, false);
         ClearMissionObjectives();
         SetSubjectText("");
-        ShowMiniMap(true);
     }
 
     public void OnEndLevel(LevelEndTypes type)
@@ -461,7 +469,6 @@ public class UIManager : MonoBehaviour
         SetVisibleControllerUI(false);
         SetInteractableButtonAll(false);
         SetFingerTarget(FingerTarget.None);
-        ShowMiniMap(false);
     }
 
     void Update()

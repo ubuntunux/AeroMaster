@@ -333,7 +333,7 @@ public class Player : MonoBehaviour
         SetAnimationState(AnimationState.Idle);
         StopAllSound();
 
-        _hpBar.GetComponent<HPBar>().InitializeHPBar(null, SaveData.Instance._playerData._hp);
+        _hpBar.GetComponent<HPBar>().InitializeHPBar(transform, SaveData.Instance._playerData._hp);
 
         _inputY = 0.0f;
         _flyingTime = 0.0f;

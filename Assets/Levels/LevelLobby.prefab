@@ -631,7 +631,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "MISSION 5 - \uCD94\uACA9"
+  m_text: "MISSION 5 - F.O.S.A\uB97C \uBC29\uC5B4\uD558\uB77C"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 017bd413f35be5b04abd4146bbae0329, type: 2}
   m_sharedMaterial: {fileID: 6064055248812053776, guid: 017bd413f35be5b04abd4146bbae0329, type: 2}
@@ -867,10 +867,10 @@ RectTransform:
   m_Father: {fileID: 2108202433845673797}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -457, y: 33}
-  m_SizeDelta: {x: 80, y: 80}
+  m_AnchorMin: {x: 0, y: 0.5}
+  m_AnchorMax: {x: 0, y: 0.5}
+  m_AnchoredPosition: {x: 138, y: 257.00003}
+  m_SizeDelta: {x: 80, y: 60}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &1758829927498897045
 CanvasRenderer:
@@ -1019,7 +1019,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "MISSION 3 - \uBCA0\uB124\uB515\uD2B8 \uBC15\uC0AC \uAD6C\uCD9C\uC791\uC804"
+  m_text: "MISSION 3 - \uBCA0\uB124\uB515\uD2B8\uB97C \uAD6C\uCD9C \uD558\uB77C"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 017bd413f35be5b04abd4146bbae0329, type: 2}
   m_sharedMaterial: {fileID: 6064055248812053776, guid: 017bd413f35be5b04abd4146bbae0329, type: 2}
@@ -1215,8 +1215,8 @@ MonoBehaviour:
   m_UiScaleMode: 1
   m_ReferencePixelsPerUnit: 100
   m_ScaleFactor: 1
-  m_ReferenceResolution: {x: 1000, y: 1000}
-  m_ScreenMatchMode: 0
+  m_ReferenceResolution: {x: 1000, y: 600}
+  m_ScreenMatchMode: 1
   m_MatchWidthOrHeight: 0
   m_PhysicalUnit: 3
   m_FallbackScreenDPI: 96
@@ -1283,10 +1283,10 @@ RectTransform:
   m_Father: {fileID: 2108202433845673797}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 1}
-  m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: -289.6, y: -48}
-  m_SizeDelta: {x: 250, y: 450}
+  m_AnchorMin: {x: 0, y: 0.5}
+  m_AnchorMax: {x: 0, y: 0.5}
+  m_AnchoredPosition: {x: 244, y: 225}
+  m_SizeDelta: {x: 292, y: 500}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!222 &7128853412808751667
 CanvasRenderer:
@@ -1525,7 +1525,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "MISSION 7 - \uBC99\uCEE4 \uBC84\uC2A4\uD130"
+  m_text: "MISSION 7 - \uBC18\uACA9"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 017bd413f35be5b04abd4146bbae0329, type: 2}
   m_sharedMaterial: {fileID: 6064055248812053776, guid: 017bd413f35be5b04abd4146bbae0329, type: 2}
@@ -1631,10 +1631,10 @@ RectTransform:
   m_Father: {fileID: 2108202433845673797}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 1}
-  m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: 165.4, y: -48}
-  m_SizeDelta: {x: 650, y: 450}
+  m_AnchorMin: {x: 0, y: 0.5}
+  m_AnchorMax: {x: 0, y: 0.5}
+  m_AnchoredPosition: {x: 770.9, y: 225}
+  m_SizeDelta: {x: 691, y: 500}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!222 &55713737677155204
 CanvasRenderer:
@@ -1706,9 +1706,9 @@ RectTransform:
   m_Father: {fileID: 6729267394699541219}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 25, y: -343}
+  m_AnchorMin: {x: 0.5, y: 1}
+  m_AnchorMax: {x: 0.5, y: 1}
+  m_AnchoredPosition: {x: -321, y: -356}
   m_SizeDelta: {x: 600, y: 120}
   m_Pivot: {x: 0, y: 0.5}
 --- !u!222 &7140937212997087065
@@ -1873,7 +1873,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "MISSION 9 - \uADC0\uD658"
+  m_text: "MISSION 9 - \uC9D1\uACB0 \uADF8\uB9AC\uACE0 \uC804\uBA74\uC804"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 017bd413f35be5b04abd4146bbae0329, type: 2}
   m_sharedMaterial: {fileID: 6064055248812053776, guid: 017bd413f35be5b04abd4146bbae0329, type: 2}
@@ -2133,9 +2133,9 @@ RectTransform:
   m_Father: {fileID: 6729267394699541219}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 25, y: -25}
+  m_AnchorMin: {x: 0.5, y: 1}
+  m_AnchorMax: {x: 0.5, y: 1}
+  m_AnchoredPosition: {x: -321, y: -25}
   m_SizeDelta: {x: 600, y: 25}
   m_Pivot: {x: 0, y: 0.5}
 --- !u!222 &8351039445750081680
@@ -2269,9 +2269,9 @@ RectTransform:
   m_Father: {fileID: 6729267394699541219}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -201}
+  m_AnchorMin: {x: 0.5, y: 1}
+  m_AnchorMax: {x: 0.5, y: 1}
+  m_AnchoredPosition: {x: 0, y: -448.5}
   m_SizeDelta: {x: 160, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &8616911673774194644
@@ -2567,7 +2567,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "MISSION 8 - \uC9D1\uACB0 \uADF8\uB9AC\uACE0 \uCD1D\uB825\uC804"
+  m_text: "MISSION 8 - \uBC99\uCEE4 \uBC84\uC2A4\uD130"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 017bd413f35be5b04abd4146bbae0329, type: 2}
   m_sharedMaterial: {fileID: 6064055248812053776, guid: 017bd413f35be5b04abd4146bbae0329, type: 2}
@@ -3214,10 +3214,10 @@ RectTransform:
   m_Father: {fileID: 2108202433845673797}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -457, y: -55}
-  m_SizeDelta: {x: 80, y: 80}
+  m_AnchorMin: {x: 0, y: 0.5}
+  m_AnchorMax: {x: 0, y: 0.5}
+  m_AnchoredPosition: {x: 224, y: 256}
+  m_SizeDelta: {x: 80, y: 60}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &3830435945186238950
 CanvasRenderer:
@@ -3366,7 +3366,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "MISSION 6 - \uBC18\uACA9"
+  m_text: "MISSION 6 - \uCD94\uACA9"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 017bd413f35be5b04abd4146bbae0329, type: 2}
   m_sharedMaterial: {fileID: 6064055248812053776, guid: 017bd413f35be5b04abd4146bbae0329, type: 2}
@@ -4214,10 +4214,10 @@ RectTransform:
   m_Father: {fileID: 6729267394699541219}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 61}
-  m_SizeDelta: {x: 500, y: 216}
+  m_AnchorMin: {x: 0.5, y: 1}
+  m_AnchorMax: {x: 0.5, y: 1}
+  m_AnchoredPosition: {x: 0, y: -174}
+  m_SizeDelta: {x: 500, y: 200}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &4925923132208353104
 CanvasRenderer:
@@ -4322,7 +4322,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "MISSION 4 - F.O.S.A\uB97C \uC9C0\uCF1C\uB77C"
+  m_text: "MISSION 4 - \uB0A0\uB2E4\uB78C\uC950 \uC791\uC804"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 017bd413f35be5b04abd4146bbae0329, type: 2}
   m_sharedMaterial: {fileID: 6064055248812053776, guid: 017bd413f35be5b04abd4146bbae0329, type: 2}
@@ -4456,7 +4456,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: MISSION 10 - ENDING
+  m_text: "MISSION 10 - \uADC0\uD658"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 017bd413f35be5b04abd4146bbae0329, type: 2}
   m_sharedMaterial: {fileID: 6064055248812053776, guid: 017bd413f35be5b04abd4146bbae0329, type: 2}

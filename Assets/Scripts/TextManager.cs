@@ -23,7 +23,7 @@ public class TextManager : MonoBehaviour
 
     // constants
     float _textSpeed = 50.0f;
-    int _numTextCountPerLine = 40;
+    int _numTextCountPerLine = 100;
     int _numTextLineCountPerPage = 4;
 
     public bool IsActivated()

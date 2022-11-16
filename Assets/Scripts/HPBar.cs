@@ -8,10 +8,10 @@ public class HPBar : MonoBehaviour
 
     public float _initialHP = 100.0f;
     float _hp = 0.0f;
-    float _initialHPBarWidth = 100.0f;
+    float _initialHPBarWidth = 10.0f;
     Transform _targetTransform = null;
 
-    void Start()
+    void Awake()
     {
         _initialHPBarWidth = _hpBar.GetComponent<RectTransform>().sizeDelta.x;
     }
@@ -76,7 +76,10 @@ public class HPBar : MonoBehaviour
     {
         if(null != _targetTransform && gameObject.activeSelf)
         {
-            Vector2 WorldObject_ScreenPosition = UIManager.Instance.WorldToScreen(_targetTransform.position);
+            Vector3 targetPosition = _targetTransform.position;
+            targetPosition.y += 1.5f;
+
+            Vector2 WorldObject_ScreenPosition = UIManager.Instance.WorldToScreen(targetPosition);
             GetComponent<RectTransform>().anchoredPosition = WorldObject_ScreenPosition;
         }
     }

@@ -22,6 +22,8 @@ public class LevelTutorial : LevelBase
 {
     [TextArea]
     public string _textScripts;
+    public Light _sun = null;
+    public Material _skyBox = null;
 
     TutorialPhase _phase = TutorialPhase.None;
 
@@ -70,6 +72,16 @@ public class LevelTutorial : LevelBase
     {
         GameManager.Instance.SetLevelEnd(LevelEndTypes.MissionFailed);
         _phase = TutorialPhase.Failed;
+    }
+
+     override public Light GetSun()
+    {
+        return _sun;
+    }
+
+    override public Material GetSkybox()
+    {
+        return _skyBox;
     }
 
     override public void OnStartLevel()

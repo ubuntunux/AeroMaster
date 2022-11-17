@@ -12,10 +12,12 @@ public enum LevelEndTypes
 
 abstract public class LevelBase: MonoBehaviour
 {
-    abstract public int GetMissionTime();
+    abstract public int GetMissionTime();    
     abstract public void OnStartLevel();
     abstract public void OnExitLevel();
     abstract public void UpdateLevel();
+    abstract public Light GetSun();
+    abstract public Material GetSkybox();
 }
 
 public class LevelManager : MonoBehaviour
@@ -31,6 +33,7 @@ public class LevelManager : MonoBehaviour
     bool _firstUpdate = true;
     bool _levelEnded = false;
     float _levelExitTime = 0.0f;
+    Color _initialFogColor;
 
     Vector3 _startPoint = Vector3.zero;
 
@@ -52,6 +55,11 @@ public class LevelManager : MonoBehaviour
             }
             return _instance;
         }
+    }
+
+    void Awake()
+    {
+        _initialFogColor = RenderSettings.fogColor;
     }
 
     void Start()
@@ -230,6 +238,25 @@ public class LevelManager : MonoBehaviour
         }
     }
 
+    public void UpdateRenderSetting()
+    {
+        LevelBase currentLevel = GetCurrentLevel();
+        if(null != currentLevel)
+        {
+            Light sun = currentLevel.GetSun();
+            Color sunColor = sun.color;
+            float sunIntensity = (sunColor.r + sunColor.g + sunColor.b) * 0.33333f * sun.intensity;                
+            
+            RenderSettings.fogColor = _initialFogColor * sunIntensity;
+
+            RenderSettings.ambientIntensity = 1;
+            RenderSettings.reflectionIntensity = sunIntensity;
+            Material skybox = currentLevel.GetSkybox();
+            RenderSettings.skybox = new Material(skybox);
+            RenderSettings.skybox.SetFloat("_Exposure", 0.55f * sunIntensity);
+        }
+    }
+
     // Level event
     public void BeforeCreateNewLevel()
     {
@@ -242,6 +269,7 @@ public class LevelManager : MonoBehaviour
 
     public void OnStartLevel()
     {
+        UpdateRenderSetting();
         UpdateRegionMarkerFXs();
 
         _levelEnded = false;

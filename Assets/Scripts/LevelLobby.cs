@@ -10,6 +10,8 @@ public class LevelLobby : LevelBase
     public GameObject _textMissionBody;
     public GameObject _layerMissionDetail;
     public GameObject _imageMission;
+    public Light _sun = null;
+    public Material _skyBox = null;
 
     bool _isFirstUpdate = true;
     GameObject _levelPrefab = null;
@@ -49,6 +51,16 @@ public class LevelLobby : LevelBase
         _layerMissionDetail.SetActive(false);
     }
 
+     override public Light GetSun()
+    {
+        return _sun;
+    }
+
+    override public Material GetSkybox()
+    {
+        return _skyBox;
+    }
+
     override public void OnStartLevel()
     {        
         GameManager.Instance.SetLevelStart();
@@ -66,6 +78,8 @@ public class LevelLobby : LevelBase
     override public void OnExitLevel()
     {
     }
+
+    
 
     override public int GetMissionTime()
     {

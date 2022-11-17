@@ -3,22 +3,34 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 
-public enum MissionPhase
-{
-    None,
-    Intro,
-    MissionObjective,
-    Complete,
-    Failed,
-};
-
 public class LevelMission : LevelBase
 {
+    enum MissionPhase
+    {
+        None,
+        Intro,
+        MissionObjective,
+        Complete,
+        Failed,
+    };
+
     [TextArea]
     public string _textScripts;
+    public Light _sun = null;
+    public Material _skyBox = null;
 
     MissionPhase _phase = MissionPhase.None;
     float _missionTime = 0.0f;
+
+     override public Light GetSun()
+    {
+        return _sun;
+    }
+
+    override public Material GetSkybox()
+    {
+        return _skyBox;
+    }
 
     override public void OnStartLevel()
     {

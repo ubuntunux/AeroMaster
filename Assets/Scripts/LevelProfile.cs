@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class LevelProfile : LevelBase
 {
+    public Light _sun = null;
+    public Material _skyBox = null;
+
     bool _isFirstUpdate = true;
     int _profileIndex = 0;
 
@@ -21,6 +24,16 @@ public class LevelProfile : LevelBase
     {
         _profileIndex = profileIndex;
         LevelManager.Instance.GoToLevelLobby();
+    }
+
+    override public Light GetSun()
+    {
+        return _sun;
+    }
+
+    override public Material GetSkybox()
+    {
+        return _skyBox;
     }
 
     override public void OnStartLevel()

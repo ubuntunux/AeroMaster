@@ -21,7 +21,7 @@ public class HPBar : MonoBehaviour
         if(null != targetTransform)
         {
             _targetTransform = targetTransform;
-            transform.SetParent(UIManager.Instance._canvasNoRayCast.transform, false);
+            transform.SetParent(UIManager.Instance._layerHPBar.transform, false);
         }
         
         if(hp <= 0)

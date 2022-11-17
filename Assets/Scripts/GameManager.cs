@@ -157,6 +157,9 @@ public class GameManager : MonoBehaviour
         _audioMaster.GetFloat("MasterVolume", out _masterVolumeStore);
         _audioMaster.GetFloat("MusicVolume", out _musicVolumeStore);
 
+        // music off
+        OnClickToggleMusic();
+
         ResetGameManager();        
     }
 
@@ -216,6 +219,34 @@ public class GameManager : MonoBehaviour
         }
 
         return true;
+    }
+
+    // Tag
+    public bool isBackgroundTag(string tag)
+    {
+        if("Wall" == tag || "Ground" == tag || "Water" == tag)
+        {
+            return true;
+        }
+        return false;
+    }
+
+    public bool isDamageZoneTag(string tag)
+    {
+        if("Ground" == tag)
+        {
+            return true;
+        }
+        return false;
+    }
+
+    public bool isKillZoneTag(string tag)
+    {
+        if("Wall" == tag || "Water" == tag)
+        {
+            return true;
+        }
+        return false;
     }
 
     // Update is called once per frame

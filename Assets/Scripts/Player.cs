@@ -19,7 +19,7 @@ public enum AnimationState
     Landing
 };
 
-public class Player : MonoBehaviour
+public class Player : ShipBase
 {
     public GameObject[] _meshObjects;
     int _playerModelIndex = 0;

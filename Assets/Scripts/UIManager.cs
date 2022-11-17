@@ -33,7 +33,7 @@ public class UIManager : MonoBehaviour
     public GameObject _textWindow;
     public GameObject _imageFinger;
     public GameObject _miniMap;
-    public GameObject _hpBar;
+    public GameObject _layerHPBar;
 
     // indicator
     public GameObject _indicatorPrefab;
@@ -143,8 +143,7 @@ public class UIManager : MonoBehaviour
         bool show = _visibleLayerControllerUI && _visibleLayerControllerUIByActorScript;
         _layerControllerUI.SetActive(show);
         _miniMap.SetActive(show);
-        _hpBar.SetActive(show);
-        //GetComponent<MissionObjectiveManager>().ShowMissionObjective(show);
+        _layerHPBar.SetActive(show);
     }
 
     public void SetVisibleControllerUI(bool show)

@@ -5,11 +5,14 @@ using UnityEngine;
 
 public class MiniMap : MonoBehaviour
 {
-    float _heightRatio = 1.0f;    
+    float _heightRatio = 1.0f;
     Vector2 _padding;
     Vector2 _half_size;
     Vector2 _mini_map_distance;
     Vector2 _world_to_minimap;
+
+    public GameObject _layerCharacter = null;
+    public GameObject _layerBackground = null;    
 
     // Singleton instantiation
     private static MiniMap _instance;

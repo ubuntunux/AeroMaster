@@ -123,15 +123,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 58daaabaa02edcf898b7b19c36fe0f69, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _startMarker: {fileID: 0}
-  _textMissionTitle: RAVEN'S NEST BOOT CAMP
-  _textMissionDetail: "Raven's Nest \uC6A9\uBCD1 \uB7AD\uD0B9 1\uC704\uC600\uB358
-    \uB9AD.\n\uADF8\uB294 F.O.S.A\uC758 \uC6A9\uBCD1\uC73C\uB85C \uD65C\uB3D9\uD558\uB358
-    \uC911 \uC758\uBB38\uC758 \uC8FD\uC74C\uC744 \uB9DE\uC774\uD55C\uB2E4.\n\uB9AD\uC758
-    \uB3D9\uC0DD \uBE0C\uB77C\uC774\uD2B8\uB294 \uD615\uC758 \uC8FD\uC74C\uC758 \uBE44\uBC00\uC744
-    \uD30C\uD5E4\uCE58\uAE30 \uC704\uD574\nRaven\u2019s Nest\uC758 \uC6A9\uBCD1\uC774
-    \uB418\uAE30\uB85C \uACB0\uC2EC\uD558\uACE0 Raven\u2019s Nest Boot Camp\uB85C
-    \uD5A5\uD55C\uB2E4."
   _textScripts: "#Intro#\n[Operator]\nRaven's Nest\uC758 \uD30C\uC77C\uB7FF \uC2DC\uD5D8\uC744
     \uC9C4\uD589 \uD558\uACA0\uC2B5\uB2C8\uB2E4.\n\uAC00\uC18D, \uC774\uB959, \uD134,
     \uCC29\uB959\uC744 \uC21C\uC11C\uB300\uB85C \uC218\uD589\uD558\uC138\uC694.\n[Bright]\n\uCCC7,

@@ -11,10 +11,7 @@ public class MiniMapRegister : MonoBehaviour
     {
         if(null != _miniMapObject)
         {
-            _miniMapObject.GetComponent<MiniMapObject>().Initialize(
-                transform, 
-                _renderByCollider ? GetComponent<BoxCollider>() : null
-            );
+            _miniMapObject.GetComponent<MiniMapObject>().Initialize(transform,  _renderByCollider ? GetComponent<BoxCollider>() : null);
         }
     }
 

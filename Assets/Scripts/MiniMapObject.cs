@@ -14,8 +14,19 @@ public class MiniMapObject : MonoBehaviour
 
         if(null != targetTransform)
         {
-            transform.SetParent(MiniMap.Instance.gameObject.transform, false);
+            gameObject.tag = targetTransform.gameObject.tag;
+            GameObject layer = null;
+            if(GameManager.Instance.isBackgroundTag(targetTransform.gameObject.tag))
+            {
+                layer = MiniMap.Instance._layerBackground;
+            }
+            else
+            {
+                layer = MiniMap.Instance._layerCharacter;
+            }
+            transform.SetParent(layer.transform, false);
         }
+
         _targetTransform = targetTransform;
     }
 
@@ -24,19 +35,27 @@ public class MiniMapObject : MonoBehaviour
         if(null != _targetTransform)
         {
             Vector3 playerPosition = Player.Instance.GetPosition();
-            Vector2 v = _targetTransform.position - playerPosition;
-            GetComponent<RectTransform>().anchoredPosition = v * MiniMap.Instance.GetWorldToMiniMap();
+            Vector3 position;
             if(null != _collider)
             {
-                Vector3 locaBound = _targetTransform.InverseTransformVector(_collider.bounds.size);
-                locaBound.x *= _targetTransform.localScale.x;
-                locaBound.y *= _targetTransform.localScale.y;
-                locaBound.z *= _targetTransform.localScale.z;
+                Vector3 localPosition = _targetTransform.InverseTransformPoint(_collider.bounds.center);
+                position = _targetTransform.position + localPosition - playerPosition;
 
-                GetComponent<RectTransform>().sizeDelta = locaBound * MiniMap.Instance.GetWorldToMiniMap();
+                Vector3 localBound = _targetTransform.InverseTransformVector(_collider.bounds.size);
+                localBound.x *= _targetTransform.localScale.x;
+                localBound.y *= _targetTransform.localScale.y;
+                localBound.z *= _targetTransform.localScale.z;
+                GetComponent<RectTransform>().sizeDelta = localBound * MiniMap.Instance.GetWorldToMiniMap();
+
                 Vector3 angles = _targetTransform.rotation.eulerAngles;
                 GetComponent<RectTransform>().rotation = Quaternion.Euler(angles.x, angles.y, angles.z);
             }
+            else
+            {
+                position = _targetTransform.position - playerPosition;
+            }
+
+            GetComponent<RectTransform>().anchoredPosition = position * MiniMap.Instance.GetWorldToMiniMap();
         }
     }
 }

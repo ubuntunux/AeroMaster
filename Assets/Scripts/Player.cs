@@ -19,7 +19,7 @@ public enum AnimationState
     Landing
 };
 
-public class Player : ShipBase
+public class Player : AirCraftBase
 {
     public GameObject[] _meshObjects;
     int _playerModelIndex = 0;

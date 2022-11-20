@@ -21,7 +21,6 @@ public enum AnimationState
 
 public class Player : AirCraftBase
 {
-    public GameObject[] _meshObjects;
     int _playerModelIndex = 0;
     GameObject _meshObject;
     Animator _animator;
@@ -416,7 +415,7 @@ public class Player : AirCraftBase
     
     public void SetPlayerShipModel(int index)
     {
-        if(index < _meshObjects.Length && null != _meshObjects[index])
+        if(index < CharacterManager.Instance.GetCharacterModelCount())
         {
             _playerModelIndex = index;
             SaveData.Instance._playerData._playerModelIndex = index;
@@ -426,14 +425,14 @@ public class Player : AirCraftBase
 
     public void LoadPlayerShipModel()
     {
-        if(_playerModelIndex < _meshObjects.Length)
+        if(_playerModelIndex < CharacterManager.Instance.GetCharacterModelCount())
         {
             if(null != _meshObject)
             {
                 Destroy(_meshObject);
             }
 
-            _meshObject = Instantiate(_meshObjects[_playerModelIndex]);            
+            _meshObject = CharacterManager.Instance.CreateCharacterModel(_playerModelIndex);
             _meshObject.transform.SetParent(transform, false);
             _meshObject.transform.localPosition = Vector3.zero;
             _animator = _meshObject.GetComponent<Animator>();

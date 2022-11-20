@@ -2,6 +2,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum UnitType
+{
+    None,
+    AirCraft
+}
+
 public enum DestroyType
 {
     Explosion,
@@ -12,8 +18,10 @@ public class CharacterManager : MonoBehaviour
 {
     public GameObject[] _meshObjects;
     public GameObject _prefabPlayer;
+    public GameObject _prefabEnemy;
 
     GameObject _player;
+    GameObject _enemy;
 
     // Singleton instantiation
     static CharacterManager _instance;
@@ -33,6 +41,9 @@ public class CharacterManager : MonoBehaviour
     {
         _player = Instantiate(_prefabPlayer, Vector3.zero, Quaternion.identity);
         _player.transform.SetParent(transform, false);
+
+        _enemy = Instantiate(_prefabEnemy, Vector3.zero, Quaternion.identity);
+        _enemy.transform.SetParent(transform, false);
     }
 
     public Player GetPlayer()

@@ -4,15 +4,38 @@ using UnityEngine;
 
 public class UnitBase : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    public GameObject _prefabMeshObject;
+    protected GameObject _meshObject;
+    protected Animator _animator;
+
+    void Awake()
     {
-        
+        if(null != _prefabMeshObject)
+        {
+            CreateMeshObject(_prefabMeshObject);
+        }
     }
 
-    // Update is called once per frame
-    void Update()
+    public void CreateMeshObject(GameObject prefab)
     {
-        
+        if(null != _meshObject)
+        {
+            Destroy(_meshObject);
+        }
+
+        _meshObject = Instantiate(prefab);
+        _meshObject.transform.SetParent(transform, false);
+        _meshObject.transform.localPosition = Vector3.zero;
+        _animator = _meshObject.GetComponent<Animator>();
+    }
+
+    public virtual bool IsPlayer()
+    {
+        return false;
+    }
+
+    public virtual UnitType GetUnit()
+    {
+        return UnitType.None;
     }
 }

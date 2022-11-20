@@ -469,7 +469,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 19800000, guid: 9cdd2f28fb55d3db3b8c0506bd8cba54, type: 3}
       propertyPath: EmissionModule.enabled
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 19800004, guid: 9cdd2f28fb55d3db3b8c0506bd8cba54, type: 3}
       propertyPath: EmissionModule.enabled

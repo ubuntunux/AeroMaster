@@ -15,9 +15,6 @@ public enum AnimationState
 
 public class AirCraftBase : UnitBase
 {
-    int _playerModelIndex = 0;
-    GameObject _meshObject;
-    Animator _animator;
     AnimationState _animationState = AnimationState.None;
     float _landingGearRatio = 0.0f;
 
@@ -30,11 +27,6 @@ public class AirCraftBase : UnitBase
     public GameObject _destroyFX;
     public GameObject _impactWaterFX;
     public GameObject _hpBar;
-
-    public delegate void Callback();
-    Callback _callbackOnClickGoRight = null;
-    Callback _callbackOnClickGoLeft = null;
-    Callback _callbackOnClickLanding = null;
 
     float _absVelocityX = 0.0f;    
     float _velocityY = 0.0f;
@@ -51,6 +43,11 @@ public class AirCraftBase : UnitBase
     bool _controllable = false;
     bool _autoTakeOff = false;
     bool _invincibility = false;
+
+    public override UnitType GetUnit()
+    {
+        return UnitType.AirCraft;
+    }
 
     public bool IsAlive()
     {
@@ -165,60 +162,6 @@ public class AirCraftBase : UnitBase
         return _isLanding && _isGround && 0.0f == _absVelocityX;
     }
 
-    public void SetCallbackOnClickGoRight(Callback callback)
-    {
-        _callbackOnClickGoRight = callback;
-    }
-
-    public void SetCallbackOnClickGoLeft(Callback callback)
-    {
-        _callbackOnClickGoLeft = callback;
-    }
-
-    public void SetCallbackOnClickLanding(Callback callback)
-    {
-        _callbackOnClickLanding = callback;
-    }
-
-    public void OnClickGoRight()
-    {
-        if(null != _callbackOnClickGoRight)
-        {
-            _callbackOnClickGoRight();
-        }
-
-        if(GetControllable())
-        {
-            SetAccleration(true);
-        }
-    }
-
-    public void OnClickGoLeft()
-    {
-        if(null != _callbackOnClickGoLeft)
-        {
-            _callbackOnClickGoLeft();
-        }
-
-        if(GetControllable())
-        {
-            SetAccleration(false);
-        }
-    }
-
-    public void OnClickLanding()
-    {
-        if(null != _callbackOnClickLanding)
-        {
-            _callbackOnClickLanding();
-        }
-
-        if(GetControllable())
-        {
-            SetLanding();
-        }
-    }
-
     public float GetInputY()
     {
         return _inputY;
@@ -292,11 +235,6 @@ public class AirCraftBase : UnitBase
         _flyingLoop.Stop();
         _radioLoop.Pause();
         _jetFlyby.Stop();
-    }
-
-    public void LoadPlayerData(PlayerData playerData)
-    {
-        SetPlayerShipModel(playerData._playerModelIndex);
     }
 
     public void ResetPlayer(Vector3 startPoint)
@@ -377,44 +315,6 @@ public class AirCraftBase : UnitBase
         if("Ground" == other.gameObject.tag)
         {
             _isGround = false;
-        }
-    }
-
-    //
-    public void AddScore(int score)
-    {
-        SaveData.Instance._playerData._score += score;
-    }
-
-    //
-    public int GetPlayerShipModel()
-    {
-        return _playerModelIndex;
-    }
-    
-    public void SetPlayerShipModel(int index)
-    {
-        if(index < CharacterManager.Instance.GetCharacterModelCount())
-        {
-            _playerModelIndex = index;
-            SaveData.Instance._playerData._playerModelIndex = index;
-            LoadPlayerShipModel();
-        }
-    }
-
-    public void LoadPlayerShipModel()
-    {
-        if(_playerModelIndex < CharacterManager.Instance.GetCharacterModelCount())
-        {
-            if(null != _meshObject)
-            {
-                Destroy(_meshObject);
-            }
-
-            _meshObject = CharacterManager.Instance.CreateCharacterModel(_playerModelIndex);
-            _meshObject.transform.SetParent(transform, false);
-            _meshObject.transform.localPosition = Vector3.zero;
-            _animator = _meshObject.GetComponent<Animator>();
         }
     }
 
@@ -665,7 +565,7 @@ public class AirCraftBase : UnitBase
         }
     }
 
-    void Update()
+    void FixedUpdate()
     {
         if(_isAlive)
         {
@@ -712,5 +612,11 @@ public class AirCraftBase : UnitBase
         float roll = Mathf.Cos(_frontDirection * Mathf.PI * 0.5f) * 90.0f * invGroundRatio;
         transform.localRotation = Quaternion.Euler(roll, yaw, pitch);
         transform.position = position;
+
+        // TEST CODE
+        if(false == IsPlayer())
+        {
+            transform.position = CharacterManager.Instance.GetPlayer().transform.position;
+        }
     }
 }

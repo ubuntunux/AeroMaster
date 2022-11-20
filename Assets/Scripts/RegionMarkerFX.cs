@@ -13,7 +13,7 @@ public class RegionMarkerFX : MonoBehaviour
     void Update()
     {
         Vector3 position = transform.position;
-        position.y = Player.Instance.GetPosition().y;
+        position.y = CharacterManager.Instance.GetPlayer().GetPosition().y;
         transform.position = position;
     }
 }

@@ -125,7 +125,7 @@ public class GameManager : MonoBehaviour
         MainCamera.Instance.ResetMainCamera();
 
         Vector3 startPoint = LevelManager.Instance.GetStartPoint();
-        Player.Instance.ResetPlayer(startPoint);
+        CharacterManager.Instance.GetPlayer().ResetPlayer(startPoint);
 
         _audioMaster.SetFloat("MusicVolume", _musicVolumeStore);
         _lastTouchPositionY = 0.0f;
@@ -135,7 +135,7 @@ public class GameManager : MonoBehaviour
     public void SetLevelEnd(LevelEndTypes type)
     {
         bool isMissionSucessOrFailed = LevelEndTypes.MissionSucess == type || LevelEndTypes.MissionFailed == type;
-        Player.Instance.SetControllable(false);        
+        CharacterManager.Instance.GetPlayer().SetControllable(false);        
         MainCamera.Instance.SetTrackingPlayer(false);
         ActorScriptManager.Instance.ClearActorScriptsPages();
         UIManager.Instance.OnEndLevel(type);
@@ -173,10 +173,10 @@ public class GameManager : MonoBehaviour
         UIManager.Instance.ResetUIManager();
         LevelManager.Instance.ResetLevelManager();
 
-        Player.Instance.LoadPlayerData(SaveData.Instance._playerData);
-        Player.Instance.ResetPlayer(Vector3.zero);
-        Player.Instance.SetControllable(false);
-        Player.Instance.SetInvincibility(false);
+        CharacterManager.Instance.GetPlayer().LoadPlayerData(SaveData.Instance._playerData);
+        CharacterManager.Instance.GetPlayer().ResetPlayer(Vector3.zero);
+        CharacterManager.Instance.GetPlayer().SetControllable(false);
+        CharacterManager.Instance.GetPlayer().SetInvincibility(false);
 
         MainCamera.Instance.ResetMainCamera();
 
@@ -190,8 +190,8 @@ public class GameManager : MonoBehaviour
         
         if(Vector2.zero != region)
         {   
-            Vector3 playerPosition = Player.Instance.GetPosition();
-            bool isRightDirection = 1.0f == Player.Instance.GetFrontDirection();
+            Vector3 playerPosition = CharacterManager.Instance.GetPlayer().GetPosition();
+            bool isRightDirection = 1.0f == CharacterManager.Instance.GetPlayer().GetFrontDirection();
             float minToPlayer = playerPosition.x - region.x;
             float playerToMax = region.y - playerPosition.x;
 

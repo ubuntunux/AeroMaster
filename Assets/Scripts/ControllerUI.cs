@@ -51,7 +51,7 @@ public class ControllerUI : MonoBehaviour
         _controlAccelRight.GetComponent<Image>().sprite = _accel_right_off;
         _controlLanding.GetComponent<Image>().sprite = _landing_off;
 
-        Player.Instance.OnClickGoLeft();
+        CharacterManager.Instance.GetPlayer().OnClickGoLeft();
     }
 
     public void OnClickAccelRight()
@@ -60,7 +60,7 @@ public class ControllerUI : MonoBehaviour
         _controlAccelRight.GetComponent<Image>().sprite = _accel_right_on;
         _controlLanding.GetComponent<Image>().sprite = _landing_off;
 
-        Player.Instance.OnClickGoRight();
+        CharacterManager.Instance.GetPlayer().OnClickGoRight();
     }
 
     public void OnClickLanding()
@@ -69,7 +69,7 @@ public class ControllerUI : MonoBehaviour
         _controlAccelRight.GetComponent<Image>().sprite = _accel_right_off;
         _controlLanding.GetComponent<Image>().sprite = _landing_on;
 
-        Player.Instance.OnClickLanding();
+        CharacterManager.Instance.GetPlayer().OnClickLanding();
     }
 
     public void ResetControllerUI()
@@ -111,7 +111,7 @@ public class ControllerUI : MonoBehaviour
         #endif
 
             // vertical speed
-            float verticalVelocity = Player.Instance.GetInputY() * 55.0f;
+            float verticalVelocity = CharacterManager.Instance.GetPlayer().GetInputY() * 55.0f;
             _controlVerticalVelocity.transform.localPosition = new Vector3(0.0f, verticalVelocity, 0.0f);
 
             if(0.0f < verticalVelocity && _prevVerticalVelocity <= verticalVelocity)

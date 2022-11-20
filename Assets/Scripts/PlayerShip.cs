@@ -18,17 +18,17 @@ public class PlayerShip : MonoBehaviour
 
     void OnTriggerEnter(Collider other)
     {
-        Player.Instance.OnTriggerEnter(other);
+        CharacterManager.Instance.GetPlayer().OnTriggerEnter(other);
     }
 
     void OnTriggerStay(Collider other)
     {
-        Player.Instance.OnTriggerStay(other);
+        CharacterManager.Instance.GetPlayer().OnTriggerStay(other);
     }
 
     void OnTriggerExit(Collider other)
     {
-        Player.Instance.OnTriggerExit(other);
+        CharacterManager.Instance.GetPlayer().OnTriggerExit(other);
     }
 
     void OnCollisionEnter(Collision collision)

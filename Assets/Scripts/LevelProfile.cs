@@ -42,15 +42,15 @@ public class LevelProfile : LevelBase
 
         UIManager.Instance.SetVisibleControllerUI(false);
 
-        Player.Instance.SetControllable(false);
-        Player.Instance.SetInvincibility(true);
-        Player.Instance.SetAutoFlyingDirection(true);
-        Player.Instance.SetAnimationState(AnimationState.Flying);
+        CharacterManager.Instance.GetPlayer().SetControllable(false);
+        CharacterManager.Instance.GetPlayer().SetInvincibility(true);
+        CharacterManager.Instance.GetPlayer().SetAutoFlyingDirection(true);
+        CharacterManager.Instance.GetPlayer().SetAnimationState(AnimationState.Flying);
     }
 
     override public void OnExitLevel()
     {
-        Player.Instance.SetPlayerShipModel(_profileIndex);
+        CharacterManager.Instance.GetPlayer().SetPlayerShipModel(_profileIndex);
         SaveData.Instance.Save(Constants.DefaultDataName);
     }
 

@@ -71,7 +71,7 @@ public class IndicatorUI : MonoBehaviour
                 float angle = Mathf.Atan2(WorldObject_ScreenPosition.y, WorldObject_ScreenPosition.x) * Mathf.Rad2Deg;
                 _indicator.GetComponent<RectTransform>().rotation = Quaternion.Euler(0.0f, 0.0f, angle - 90.0f);
 
-                Vector3 toTarget = _targetPosition - Player.Instance.GetPosition();
+                Vector3 toTarget = _targetPosition - CharacterManager.Instance.GetPlayer().GetPosition();
                 int dist = (int)Mathf.Sqrt(toTarget.x * toTarget.x + toTarget.y * toTarget.y) * 5;
                 if(0 < _targetName.Length)
                 {

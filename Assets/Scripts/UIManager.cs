@@ -486,9 +486,9 @@ public class UIManager : MonoBehaviour
         // debug
         _textTime.GetComponent<TextMeshProUGUI>().text = "Mission Time: " + LevelManager.Instance.GetMissionTime().ToString();
         _debugTextLanguage.GetComponent<TextMeshProUGUI>().text = "Language: " + CultureInfo.CurrentCulture.Name;
-        _debugTextVelocityX.GetComponent<TextMeshProUGUI>().text = string.Format("Horizontal Speed: {0:F1}", Player.Instance.GetAbsVelocityX());
-        _debugTextVelocityY.GetComponent<TextMeshProUGUI>().text = string.Format("Vertical Speed: {0:F1}", Player.Instance.GetVelocityY());
-        _debugTextAltitude.GetComponent<TextMeshProUGUI>().text = string.Format("Altitude: {0:F1}", Player.Instance.GetAltitude());
+        _debugTextVelocityX.GetComponent<TextMeshProUGUI>().text = string.Format("Horizontal Speed: {0:F1}", CharacterManager.Instance.GetPlayer().GetAbsVelocityX());
+        _debugTextVelocityY.GetComponent<TextMeshProUGUI>().text = string.Format("Vertical Speed: {0:F1}", CharacterManager.Instance.GetPlayer().GetVelocityY());
+        _debugTextAltitude.GetComponent<TextMeshProUGUI>().text = string.Format("Altitude: {0:F1}", CharacterManager.Instance.GetPlayer().GetAltitude());
 
         // fps
         _frameCount += 1;

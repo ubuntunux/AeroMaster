@@ -34,7 +34,7 @@ public class MiniMapObject : MonoBehaviour
     {
         if(null != _targetTransform)
         {
-            Vector3 playerPosition = Player.Instance.GetPosition();
+            Vector3 playerPosition = CharacterManager.Instance.GetPlayer().GetPosition();
             Vector3 position;
             if(null != _collider)
             {

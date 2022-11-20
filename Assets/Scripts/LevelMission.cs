@@ -72,7 +72,7 @@ public class LevelMission : LevelBase
         {
             bool isTimeUp = UIManager.Instance.IsMissionObjectiveTimeUp("Landing");
             if(false == GameManager.Instance.CheckMissionRegion() || 
-               false == Player.Instance.IsAlive() || 
+               false == CharacterManager.Instance.GetPlayer().IsAlive() || 
                isTimeUp)
             {
                 SetMissionFailed();
@@ -95,7 +95,7 @@ public class LevelMission : LevelBase
         else if(MissionPhase.MissionObjective == _phase)
         {
             Vector3 goalPoint = LevelManager.Instance.GetGoalPoint();
-            if(Player.Instance.IsLanded() && Player.Instance.CheckIsInTargetRange(goalPoint, Constants.GOAL_IN_DISTANCE))
+            if(CharacterManager.Instance.GetPlayer().IsLanded() && CharacterManager.Instance.GetPlayer().CheckIsInTargetRange(goalPoint, Constants.GOAL_IN_DISTANCE))
             {
                 UIManager.Instance.SetMissionObjectiveState("Landing", MissionObjectiveState.Success);
                 SetMissionComplete();

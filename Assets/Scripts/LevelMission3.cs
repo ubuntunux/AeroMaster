@@ -39,10 +39,10 @@ public class LevelMission3 : LevelBase
 
         UIManager.Instance.SetVisibleControllerUI(false);
 
-        //Player.Instance.SetControllable(false);
-        //Player.Instance.SetInvincibility(true);
-        Player.Instance.SetAutoFlyingDirection(true);
-        Player.Instance.SetAnimationState(AnimationState.Flying);
+        //CharacterManager.Instance.GetPlayer().SetControllable(false);
+        //CharacterManager.Instance.GetPlayer().SetInvincibility(true);
+        CharacterManager.Instance.GetPlayer().SetAutoFlyingDirection(true);
+        CharacterManager.Instance.GetPlayer().SetAnimationState(AnimationState.Flying);
 
         // set scripts
         ActorScriptManager.Instance.GenerateActorScriptsPages(_textScripts);
@@ -78,7 +78,7 @@ public class LevelMission3 : LevelBase
         {
             bool isTimeUp = UIManager.Instance.IsMissionObjectiveTimeUp("Landing");
             if(false == GameManager.Instance.CheckMissionRegion() || 
-               false == Player.Instance.IsAlive() || 
+               false == CharacterManager.Instance.GetPlayer().IsAlive() || 
                isTimeUp)
             {
                 SetMissionFailed();
@@ -101,7 +101,7 @@ public class LevelMission3 : LevelBase
         else if(MissionPhase.MissionObjective == _phase)
         {
             Vector3 goalPoint = LevelManager.Instance.GetGoalPoint();
-            if(Player.Instance.IsLanded() && Player.Instance.CheckIsInTargetRange(goalPoint, Constants.GOAL_IN_DISTANCE))
+            if(CharacterManager.Instance.GetPlayer().IsLanded() && CharacterManager.Instance.GetPlayer().CheckIsInTargetRange(goalPoint, Constants.GOAL_IN_DISTANCE))
             {
                 UIManager.Instance.SetMissionObjectiveState("Landing", MissionObjectiveState.Success);
                 SetMissionComplete();

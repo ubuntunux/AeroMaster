@@ -30,8 +30,8 @@ public class LevelTutorial : LevelBase
     public void CallbackOnClickGoRight()
     {
         UIManager.Instance.SetMissionObjectiveState("Acceleration", MissionObjectiveState.Success);
-        Player.Instance.SetAccleration(true);
-        Player.Instance.SetCallbackOnClickGoRight(null);
+        CharacterManager.Instance.GetPlayer().SetAccleration(true);
+        CharacterManager.Instance.GetPlayer().SetCallbackOnClickGoRight(null);
         UIManager.Instance.SetInteractableGoRightButton(false);
         UIManager.Instance.SetFingerTarget(FingerTarget.None);
     }
@@ -39,8 +39,8 @@ public class LevelTutorial : LevelBase
     public void CallbackOnClickGoLeft()
     {
         UIManager.Instance.SetMissionObjectiveState("Turn", MissionObjectiveState.Success);
-        Player.Instance.SetAccleration(false);
-        Player.Instance.SetCallbackOnClickGoLeft(null);
+        CharacterManager.Instance.GetPlayer().SetAccleration(false);
+        CharacterManager.Instance.GetPlayer().SetCallbackOnClickGoLeft(null);
         UIManager.Instance.SetInteractableGoLeftButton(false);
         UIManager.Instance.SetFingerTarget(FingerTarget.None);
     }
@@ -48,15 +48,15 @@ public class LevelTutorial : LevelBase
     public void CallbackOnClickLanding()
     {
         UIManager.Instance.SetMissionObjectiveState("Landing", MissionObjectiveState.Success);
-        Player.Instance.SetCallbackOnClickLanding(null);
-        Player.Instance.SetLanding();
+        CharacterManager.Instance.GetPlayer().SetCallbackOnClickLanding(null);
+        CharacterManager.Instance.GetPlayer().SetLanding();
         UIManager.Instance.SetInteractableLandingButton(false);
         UIManager.Instance.SetFingerTarget(FingerTarget.None);
     }
 
     void CallbackSetPhaseTurn()
     {
-        Player.Instance.SetCallbackOnClickGoLeft(CallbackOnClickGoLeft);
+        CharacterManager.Instance.GetPlayer().SetCallbackOnClickGoLeft(CallbackOnClickGoLeft);
         UIManager.Instance.SetInteractableButtonAll(false);
         UIManager.Instance.SetInteractableGoLeftButton(true);
         UIManager.Instance.SetFingerTarget(FingerTarget.GoLeft);        
@@ -88,8 +88,8 @@ public class LevelTutorial : LevelBase
     {
         GameManager.Instance.SetLevelStart();
 
-        Player.Instance.SetControllable(false);
-        Player.Instance.SetInvincibility(true);
+        CharacterManager.Instance.GetPlayer().SetControllable(false);
+        CharacterManager.Instance.GetPlayer().SetInvincibility(true);
         
         UIManager.Instance.SetVisibleControllerUI(false);
 
@@ -140,13 +140,13 @@ public class LevelTutorial : LevelBase
                 UIManager.Instance.SetInteractableButtonAll(false);
                 UIManager.Instance.SetInteractableGoRightButton(true);
                 UIManager.Instance.SetFingerTarget(FingerTarget.GoRight);
-                Player.Instance.SetCallbackOnClickGoRight(CallbackOnClickGoRight);
+                CharacterManager.Instance.GetPlayer().SetCallbackOnClickGoRight(CallbackOnClickGoRight);
                 _phase = TutorialPhase.Acceleration;
             }
         }
         else if(TutorialPhase.Acceleration == _phase)
         {
-            if(1.0f == Player.Instance.GetAbsVelocityRatioX())
+            if(1.0f == CharacterManager.Instance.GetPlayer().GetAbsVelocityRatioX())
             {
                 if(ActorScriptManager.Instance.SetPageAndCheckReadDone("TakeOff"))
                 {
@@ -159,14 +159,14 @@ public class LevelTutorial : LevelBase
         }
         else if(TutorialPhase.TakeOff == _phase)
         {
-            if(Player.Instance.GetAutoTakeOff())
+            if(CharacterManager.Instance.GetPlayer().GetAutoTakeOff())
             {
                 // Check plane altitude
                 const float TAKE_OFF_ALTITUDE = 1.0f;
-                if(TAKE_OFF_ALTITUDE <= Player.Instance.GetAltitude())
+                if(TAKE_OFF_ALTITUDE <= CharacterManager.Instance.GetPlayer().GetAltitude())
                 {
                     UIManager.Instance.SetMissionObjectiveState("TakeOff", MissionObjectiveState.Success);
-                    Player.Instance.SetAutoTakeOff(false);
+                    CharacterManager.Instance.GetPlayer().SetAutoTakeOff(false);
                     ActorScriptManager.Instance.SetPage("Turn", CallbackSetPhaseTurn);
                     _phase = TutorialPhase.Turn;
                 }
@@ -179,18 +179,18 @@ public class LevelTutorial : LevelBase
                 {
                     // Set auto take off
                     UIManager.Instance.SetFingerTarget(FingerTarget.None);
-                    Player.Instance.SetAutoTakeOff(true);
+                    CharacterManager.Instance.GetPlayer().SetAutoTakeOff(true);
                 }
             }
         }
         else if(TutorialPhase.Turn == _phase)
         {
-            if(Player.Instance.GetFrontDirection() <= -0.9f)
+            if(CharacterManager.Instance.GetPlayer().GetFrontDirection() <= -0.9f)
             {
                 if(ActorScriptManager.Instance.SetPageAndCheckReadDone("Landing"))
                 {
                     // TutorialPhase.Landing
-                    Player.Instance.SetCallbackOnClickLanding(CallbackOnClickLanding);
+                    CharacterManager.Instance.GetPlayer().SetCallbackOnClickLanding(CallbackOnClickLanding);
                     UIManager.Instance.SetInteractableButtonAll(false);
                     UIManager.Instance.SetInteractableLandingButton(true);
                     UIManager.Instance.SetFingerTarget(FingerTarget.Landing);
@@ -200,7 +200,7 @@ public class LevelTutorial : LevelBase
         }
         else if(TutorialPhase.Landing == _phase)
         {
-            if(0.0f == Player.Instance.GetAbsVelocityRatioX() && Player.Instance.GetIsGround())
+            if(0.0f == CharacterManager.Instance.GetPlayer().GetAbsVelocityRatioX() && CharacterManager.Instance.GetPlayer().GetIsGround())
             {
                 if(ActorScriptManager.Instance.SetPageAndCheckReadDone("Done"))
                 {

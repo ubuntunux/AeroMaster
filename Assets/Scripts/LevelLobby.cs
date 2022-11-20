@@ -67,8 +67,8 @@ public class LevelLobby : LevelBase
 
         UIManager.Instance.SetVisibleControllerUI(false);
 
-        Player.Instance.SetControllable(false);
-        Player.Instance.SetInvincibility(true);
+        CharacterManager.Instance.GetPlayer().SetControllable(false);
+        CharacterManager.Instance.GetPlayer().SetInvincibility(true);
 
         MainCamera.Instance.SetCameraPosition(new Vector3(-1.0f, 1.0f, -3.0f));
 

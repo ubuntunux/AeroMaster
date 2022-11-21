@@ -5,7 +5,9 @@ using UnityEngine;
 
 public class Player : AirCraftBase
 {
-    int _playerModelIndex = 0;
+    int _playerModelIndex = 0;    
+    bool _autoTakeOff = false;
+    bool _controllable = false;
     
     public delegate void Callback();
     Callback _callbackOnClickGoRight = null;
@@ -15,6 +17,16 @@ public class Player : AirCraftBase
     public override bool IsPlayer()
     {
         return true;
+    }
+
+    public bool GetControllable()
+    {
+        return _isAlive && _controllable && UIManager.Instance.GetVisibleControllerUI();
+    }
+
+    public void SetControllable(bool controllable)
+    {
+        _controllable = controllable;
     }
 
     public void SetCallbackOnClickGoRight(Callback callback)
@@ -71,6 +83,21 @@ public class Player : AirCraftBase
         }
     }
 
+    public bool GetAutoTakeOff()
+    {
+        return _autoTakeOff;
+    }
+
+    public void SetAutoTakeOff(bool autoTakeOff)
+    {
+        if(false == _isAlive)
+        {
+            return;
+        }
+
+        _autoTakeOff = autoTakeOff;
+    }
+
     public void AddScore(int score)
     {
         SaveData.Instance._playerData._score += score;
@@ -102,6 +129,39 @@ public class Player : AirCraftBase
         {
             GameObject model = CharacterManager.Instance.CreateCharacterModel(_playerModelIndex);
             CreateMeshObject(model);
+        }
+    }
+
+    public void ResetPlayer(Vector3 startPoint)
+    {
+        ResetUnit();
+
+        transform.localRotation = Quaternion.Euler(0.0f, 0.0f, 0.0f);        
+        SetPosition(startPoint);
+        SetControllable(true);
+        _autoTakeOff = false;
+    }
+
+    public override void UpdateControllerInput(ref Vector2 input)
+    {
+        if(_autoTakeOff)
+        {
+            input.y = 1.0f;
+        }
+        else if(GetControllable())
+        {
+            GameManager.Instance.GetInputDelta(ref input);
+        }
+    }
+
+    public override void OnTriggerEnter(Collider other)
+    {
+        base.OnTriggerEnter(other);
+
+        if("StarOrder" == other.gameObject.tag)
+        {
+            CharacterManager.Instance.GetPlayer().AddScore(1);
+            other.gameObject.GetComponent<StarOrder>().GetStarOrder();
         }
     }
 }

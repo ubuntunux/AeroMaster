@@ -28,4 +28,41 @@ public class AudioManager : MonoBehaviour
     {
         _audioBeepLoop.loop = true;
     }
+
+    public bool IsPlayingAudio(AudioSource audio)
+    {
+        return (null != audio) ? audio.isPlaying : false;
+    }
+
+    public void SetAudioVolume(AudioSource audio, float volume)
+    {
+        if(null != audio)
+        {
+            audio.volume = volume;
+        }
+    }
+
+    public void PlayAudio(AudioSource audio)
+    {
+        if(null != audio)
+        {
+            audio.Play();
+        }
+    }
+
+    public void StopAudio(AudioSource audio)
+    {
+        if(null != audio)
+        {
+            audio.Stop();
+        }
+    }
+
+    public void PauseAudio(AudioSource audio)
+    {
+        if(null != audio)
+        {
+            audio.Pause();
+        }
+    }
 }

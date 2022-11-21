@@ -18,10 +18,8 @@ public class CharacterManager : MonoBehaviour
 {
     public GameObject[] _meshObjects;
     public GameObject _prefabPlayer;
-    public GameObject _prefabEnemy;
 
     GameObject _player;
-    GameObject _enemy;
 
     // Singleton instantiation
     static CharacterManager _instance;
@@ -37,13 +35,10 @@ public class CharacterManager : MonoBehaviour
         }
     }
 
-    void Awake()
+    void Start()
     {
         _player = Instantiate(_prefabPlayer, Vector3.zero, Quaternion.identity);
         _player.transform.SetParent(transform, false);
-
-        _enemy = Instantiate(_prefabEnemy, Vector3.zero, Quaternion.identity);
-        _enemy.transform.SetParent(transform, false);
     }
 
     public Player GetPlayer()
@@ -58,6 +53,6 @@ public class CharacterManager : MonoBehaviour
 
     public GameObject CreateCharacterModel(int index)
     {
-        return (index < _meshObjects.Length) ? Instantiate(_meshObjects[index]) : null;
+        return (index < _meshObjects.Length) ? _meshObjects[index] : null;
     }
 }

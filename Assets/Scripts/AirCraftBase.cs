@@ -23,10 +23,6 @@ public class AirCraftBase : UnitBase
     public AudioSource _flyingLoop;
     public AudioSource _radioLoop;
     public AudioSource _jetFlyby;
-    public GameObject _damageFX;
-    public GameObject _destroyFX;
-    public GameObject _impactWaterFX;
-    public GameObject _hpBar;
 
     float _absVelocityX = 0.0f;    
     float _velocityY = 0.0f;
@@ -38,25 +34,10 @@ public class AirCraftBase : UnitBase
     bool _goalFrontDirectionFlag = true; 
     float _frontDirection = 1.0f;
     float _flyingTime = 0.0f;
-    bool _isAlive = false;
-    bool _isGround = false;
-    bool _controllable = false;
-    bool _autoTakeOff = false;
-    bool _invincibility = false;
 
-    public override UnitType GetUnit()
+    public override UnitType GetUnitType()
     {
         return UnitType.AirCraft;
-    }
-
-    public bool IsAlive()
-    {
-        return _isAlive;
-    }
-
-    public bool GetIsGround()
-    {
-        return _isGround;
     }
 
     public float GetLandingGearRatio()
@@ -77,26 +58,6 @@ public class AirCraftBase : UnitBase
     public float GetAltitude()
     {
         return GetPosition().y - Constants.GROUND_HEIGHT;
-    }
-
-    public bool GetAutoTakeOff()
-    {
-        return _autoTakeOff;
-    }
-
-    public void SetAutoTakeOff(bool autoTakeOff)
-    {
-        if(false == _isAlive)
-        {
-            return;
-        }
-
-        _autoTakeOff = autoTakeOff;
-    }
-
-    public void SetInvincibility(bool invincibility)
-    {
-        _invincibility = invincibility;
     }
 
     public void SetAutoFlyingDirection(bool isRightDirection)
@@ -124,15 +85,23 @@ public class AirCraftBase : UnitBase
         if(isRightDirection != _goalFrontDirectionFlag && (-1.0f == _frontDirection || 1.0f == _frontDirection))
         {
             _goalFrontDirectionFlag = isRightDirection;
-            _jetFlyby.Play();
+
+            if(IsPlayer())
+            {
+                AudioManager.Instance.PlayAudio(_jetFlyby);
+            }
         }
 
         if(false == _isAcceleration)
         {
             _isAcceleration = true;
             _isLanding = false;
-            _jetEngineStart.Play();
-            _jetEngineEnd.Stop();
+
+            if(IsPlayer())
+            {
+                AudioManager.Instance.PlayAudio(_jetEngineStart);
+                AudioManager.Instance.StopAudio(_jetEngineEnd);
+            }
         }
     }
 
@@ -147,8 +116,12 @@ public class AirCraftBase : UnitBase
         {
             _isAcceleration = false;
             _isLanding = true;
-            _jetEngineStart.Stop();
-            _jetEngineEnd.Play();
+
+            if(IsPlayer())
+            {
+                AudioManager.Instance.StopAudio(_jetEngineStart);
+                AudioManager.Instance.PlayAudio(_jetEngineEnd);
+            }
         }
     }
 
@@ -213,11 +186,6 @@ public class AirCraftBase : UnitBase
         _goalFrontDirectionFlag = isRight;
     }
 
-    void SetVisible(bool show)
-    {
-        _meshObject.SetActive(show);
-    }
-
     bool GetAfterBurnerEmission()
     {
         return _meshObject.GetComponent<PlayerShip>().GetAfterBurnerEmission();
@@ -228,64 +196,50 @@ public class AirCraftBase : UnitBase
         _meshObject.GetComponent<PlayerShip>().SetAfterBurnerEmission(emission);
     }
 
-    void StopAllSound()
+    public override void StopAllSound()
     {
-        _jetEngineStart.Stop();
-        _jetEngineEnd.Stop();
-        _flyingLoop.Stop();
-        _radioLoop.Pause();
-        _jetFlyby.Stop();
+        if(IsPlayer())
+        {
+            AudioManager.Instance.StopAudio(_jetEngineStart);
+            AudioManager.Instance.StopAudio(_jetEngineEnd);
+            AudioManager.Instance.StopAudio(_flyingLoop);
+            AudioManager.Instance.StopAudio(_jetFlyby);
+            AudioManager.Instance.PauseAudio(_radioLoop);
+        }
     }
 
-    public void ResetPlayer(Vector3 startPoint)
-    {
-        transform.localRotation = Quaternion.Euler(0.0f, 0.0f, 0.0f);        
-        SetPosition(startPoint);
-        
-        SetControllable(true);
-        SetInvincibility(false);
-        SetVisible(true);
+    public override void ResetUnit()
+    {   
+        base.ResetUnit();
+
         SetAfterBurnerEmission(false);
         SetAnimationState(AnimationState.Idle);
         StopAllSound();
 
         _hpBar.GetComponent<HPBar>().InitializeHPBar(transform, SaveData.Instance._playerData._hp);
-
         _inputY = 0.0f;
         _flyingTime = 0.0f;
-        _landingGearRatio = 0.0f;        
-        _autoTakeOff = false;
+        _landingGearRatio = 0.0f;
         _absVelocityX = 0.0f;
         _absVelocityRatioX = 0.0f;
         _velocityY = 0.0f;
         _absVelocityRatioY = 0.0f;
         _isAcceleration = false;
-        _isLanding = true;
-        _isGround = false;
+        _isLanding = true;        
         _goalFrontDirectionFlag = true;
-        _frontDirection = 1.0f;        
-        _isAlive = true;
+        _frontDirection = 1.0f;
+
+        // Set FlyingState
+        if(false == IsPlayer())
+        {
+            SetAfterBurnerEmission(true);
+            SetAutoFlyingDirection(true);
+            SetAnimationState(AnimationState.Flying);
+        }
     }
 
     // physics collide
-    public void OnTriggerEnter(Collider other)
-    {
-        if("StarOrder" == other.gameObject.tag)
-        {
-            CharacterManager.Instance.GetPlayer().AddScore(1);
-            other.gameObject.GetComponent<StarOrder>().GetStarOrder();
-        }
-        else if("Wall" == other.gameObject.tag)
-        {
-            SetDestroy(DestroyType.Explosion);
-        }
-        else if("Water" == other.gameObject.tag)
-        {
-            SetDestroy(DestroyType.ImpactWater);
-        }
-    }
-
-    public void OnTriggerStay(Collider other)
+    public override void OnTriggerStay(Collider other)
     {
         if("Ground" == other.gameObject.tag)
         {
@@ -310,31 +264,26 @@ public class AirCraftBase : UnitBase
         }
     }
 
-    public void OnTriggerExit(Collider other)
-    {
-        if("Ground" == other.gameObject.tag)
-        {
-            _isGround = false;
-        }
-    }
-
     void UpdateAudios(float absVelocityRatioX)
     {
-        float flyingAudioVolume = _isAlive ? absVelocityRatioX : 0.0f;
-        if(false == _flyingLoop.isPlaying && 0.0f < flyingAudioVolume)
+        if(IsPlayer())
         {
-            _flyingLoop.Play();
-            _radioLoop.Play();
+            float flyingAudioVolume = _isAlive ? absVelocityRatioX : 0.0f;
+            if(false == AudioManager.Instance.IsPlayingAudio(_flyingLoop) && 0.0f < flyingAudioVolume)
+            {
+                AudioManager.Instance.PlayAudio(_flyingLoop);
+                AudioManager.Instance.PlayAudio(_radioLoop);
+            }
+            else if(_flyingLoop.isPlaying && 0.0f == flyingAudioVolume)
+            {
+                AudioManager.Instance.StopAudio(_flyingLoop);
+                AudioManager.Instance.PauseAudio(_radioLoop);
+            }
+            
+            AudioManager.Instance.SetAudioVolume(_flyingLoop, flyingAudioVolume);
+            AudioManager.Instance.SetAudioVolume(_radioLoop, flyingAudioVolume);
+            AudioManager.Instance.SetAudioVolume(_jetFlyby, flyingAudioVolume);
         }
-        else if(_flyingLoop.isPlaying && 0.0f == flyingAudioVolume)
-        {
-            _flyingLoop.Stop();
-            _radioLoop.Pause();
-        }
-        
-        _flyingLoop.volume = flyingAudioVolume;
-        _radioLoop.volume = flyingAudioVolume;
-        _jetFlyby.volume = flyingAudioVolume;
     }
 
     void UpdateParticles(float absVelocityRatioX)
@@ -349,146 +298,6 @@ public class AirCraftBase : UnitBase
         {
             SetAfterBurnerEmission(false);
         }
-    }
-
-    public bool GetControllable()
-    {
-        return _controllable && UIManager.Instance.GetVisibleControllerUI();
-    }
-
-    public void SetControllable(bool controllable)
-    {
-        _controllable = controllable;
-    }
-
-    public void SetForceDestroy()
-    {
-        _invincibility = false;
-        SetDestroy(DestroyType.Explosion);
-    }
-
-    public void SetDestroy(DestroyType destroyType)
-    {
-        if(false == _invincibility && IsAlive())
-        {
-            MainCamera.Instance.SetCameraShakeByDestroy();
-            
-            GameObject destroyFX_Prefab = null;
-            if(DestroyType.Explosion == destroyType)
-            {
-                destroyFX_Prefab = _destroyFX;
-            }
-            else if(DestroyType.ImpactWater == destroyType)
-            {
-                destroyFX_Prefab = _impactWaterFX;
-            }
-
-            if(null != destroyFX_Prefab)
-            {
-                GameObject destroyFX = (GameObject)GameObject.Instantiate(destroyFX_Prefab);
-                destroyFX.transform.SetParent(transform, false);
-            }
-            
-            SetVisible(false);
-            SetControllable(false);
-            StopAllSound();
-            _isAlive = false;
-        }
-    }
-
-    public void SetDamage(float damage)
-    {
-        if(false == _invincibility && IsAlive())
-        {
-            _hpBar.GetComponent<HPBar>().SetDamage(damage);
-
-            if(_hpBar.GetComponent<HPBar>().IsAlive())
-            {
-                MainCamera.Instance.SetCameraShakeByDestroy(0.1f);
-                GameObject damageFX = (GameObject)GameObject.Instantiate(_damageFX);
-                damageFX.transform.SetParent(transform, false);
-            }
-            else
-            {
-                SetDestroy(DestroyType.Explosion);
-            }
-        }
-    }
-
-    void ControllShip()
-    {
-        Vector2 input = Vector2.zero;
-
-        // input
-        if(_autoTakeOff)
-        {
-            input.y = 1.0f;
-        }
-        else if(GetControllable())
-        {
-            GameManager.Instance.GetInputDelta(ref input);
-        }
-
-        // limited altitude control
-        if(Constants.LIMITED_ALTITUDE <= GetPosition().y && 0.0f < input.y)
-        {
-            input.y = 0.0f;
-        }
-
-        // make input smooth
-        float inputYVelocity = (0.0f == input.y ? Constants.INPUT_Y_DAMPING : Constants.INPUT_Y_VELOCITY) * Time.deltaTime;
-        if(_inputY < input.y)
-        {
-            _inputY = Mathf.Min(input.y, _inputY + inputYVelocity);
-        }
-        else if(input.y < _inputY)
-        {
-            _inputY = Mathf.Max(input.y, _inputY - inputYVelocity);
-        }
-    
-        // clamp input
-        if(1.0f < _inputY) _inputY = 1.0f;
-        else if(_inputY < -1.0f) _inputY = -1.0f;
-
-        // Acceleration
-        if(_isAcceleration)
-        {
-            _absVelocityX = Mathf.Min(Constants.VELOCITY_LIMIT_X, _absVelocityX + Constants.ACCEL_X * Time.deltaTime);
-        }
-
-        // Landing
-        if(_isLanding)
-        {
-            float damping = Constants.ACCEL_X * (_isGround ? 1.0f : 0.5f);
-            _absVelocityX = Mathf.Max(0.0f, _absVelocityX - damping * Time.deltaTime);
-        }
-        _absVelocityRatioX = _absVelocityX / Constants.VELOCITY_LIMIT_X;
-        float double_absVelocityRatioX = _absVelocityRatioX * _absVelocityRatioX;
-        
-        // Front direction
-        _frontDirection += (_goalFrontDirectionFlag ? Time.deltaTime : -Time.deltaTime) * _absVelocityRatioX * Constants.TURN_SPEED;
-        _frontDirection = Mathf.Min(1.0f, Mathf.Max(-1.0f, _frontDirection));
-
-        // control vertical velocity
-        if(0.0f != _inputY || (1.0f == _absVelocityRatioX && 0.0f != _velocityY))
-        {
-            float goalVelocity = Constants.VELOCITY_LIMIT_Y * double_absVelocityRatioX * _inputY;
-            float velocityDiff = goalVelocity - _velocityY;
-            if(0.0f != velocityDiff)
-            {
-                float velocityAccel = Mathf.Abs(Constants.ACCEL_Y * double_absVelocityRatioX * Time.deltaTime);
-                velocityAccel = Mathf.Min(Mathf.Abs(velocityDiff), velocityAccel);
-                _velocityY += (0.0f < velocityDiff) ? velocityAccel : -velocityAccel;
-            }
-        }
-
-        // apply flying gravity
-        if(_absVelocityRatioX < 1.0f && false == _isGround)
-        {
-            _velocityY -= Constants.GRAVITY * (1.0f - double_absVelocityRatioX) * Time.deltaTime;
-        }
-
-        _absVelocityRatioY = Mathf.Min(1.0f, Mathf.Max(0.0f, Mathf.Abs(_velocityY / Constants.VELOCITY_LIMIT_Y)));
     }
 
     public void SetAnimationState(AnimationState state)
@@ -565,6 +374,82 @@ public class AirCraftBase : UnitBase
         }
     }
 
+    public virtual void UpdateControllerInput(ref Vector2 input)
+    {
+        // NPC
+        SetAccleration(true);
+        //input.y = 1.0f;
+    }
+
+    void ControllShip()
+    {
+        Vector2 input = Vector2.zero;
+
+        // input
+        UpdateControllerInput(ref input);
+
+        // limited altitude control
+        if(Constants.LIMITED_ALTITUDE <= GetPosition().y && 0.0f < input.y)
+        {
+            input.y = 0.0f;
+        }
+
+        // make input smooth
+        float inputYVelocity = (0.0f == input.y ? Constants.INPUT_Y_DAMPING : Constants.INPUT_Y_VELOCITY) * Time.deltaTime;
+        if(_inputY < input.y)
+        {
+            _inputY = Mathf.Min(input.y, _inputY + inputYVelocity);
+        }
+        else if(input.y < _inputY)
+        {
+            _inputY = Mathf.Max(input.y, _inputY - inputYVelocity);
+        }
+    
+        // clamp input
+        if(1.0f < _inputY) _inputY = 1.0f;
+        else if(_inputY < -1.0f) _inputY = -1.0f;
+
+        // Acceleration
+        if(_isAcceleration)
+        {
+            _absVelocityX = Mathf.Min(Constants.VELOCITY_LIMIT_X, _absVelocityX + Constants.ACCEL_X * Time.deltaTime);
+        }
+
+        // Landing
+        if(_isLanding)
+        {
+            float damping = Constants.ACCEL_X * (_isGround ? 1.0f : 0.5f);
+            _absVelocityX = Mathf.Max(0.0f, _absVelocityX - damping * Time.deltaTime);
+        }
+        _absVelocityRatioX = _absVelocityX / Constants.VELOCITY_LIMIT_X;
+        float double_absVelocityRatioX = _absVelocityRatioX * _absVelocityRatioX;
+        
+        // Front direction
+        _frontDirection += (_goalFrontDirectionFlag ? Time.deltaTime : -Time.deltaTime) * _absVelocityRatioX * Constants.TURN_SPEED;
+        _frontDirection = Mathf.Min(1.0f, Mathf.Max(-1.0f, _frontDirection));
+
+        // control vertical velocity
+        if(false == _isLanding && (0.0f != _inputY || (1.0f == _absVelocityRatioX && 0.0f != _velocityY)))
+        {
+            float goalVelocity = Constants.VELOCITY_LIMIT_Y * double_absVelocityRatioX * _inputY;
+            float velocityDiff = goalVelocity - _velocityY;
+            if(0.0f != velocityDiff)
+            {
+                float velocityAccel = Mathf.Abs(Constants.ACCEL_Y * double_absVelocityRatioX * Time.deltaTime);
+                velocityAccel = Mathf.Min(Mathf.Abs(velocityDiff), velocityAccel);
+                _velocityY += (0.0f < velocityDiff) ? velocityAccel : -velocityAccel;
+            }
+        }
+
+        // apply flying gravity
+        if(_absVelocityRatioX < 1.0f && false == _isGround)
+        {
+            _velocityY -= Constants.GRAVITY * (1.0f - double_absVelocityRatioX) * Time.deltaTime;
+        }
+
+        _absVelocityRatioY = Mathf.Min(1.0f, Mathf.Max(0.0f, Mathf.Abs(_velocityY / Constants.VELOCITY_LIMIT_Y)));
+    }
+
     void FixedUpdate()
     {
         if(_isAlive)
@@ -612,11 +497,5 @@ public class AirCraftBase : UnitBase
         float roll = Mathf.Cos(_frontDirection * Mathf.PI * 0.5f) * 90.0f * invGroundRatio;
         transform.localRotation = Quaternion.Euler(roll, yaw, pitch);
         transform.position = position;
-
-        // TEST CODE
-        if(false == IsPlayer())
-        {
-            transform.position = CharacterManager.Instance.GetPlayer().transform.position;
-        }
     }
 }

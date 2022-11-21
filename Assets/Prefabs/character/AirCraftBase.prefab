@@ -560,15 +560,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _prefabMeshObject: {fileID: 6998882817761685238, guid: e159051daf725a6bea5b1113b24bcae6, type: 3}
+  _damageFX: {fileID: 3416642399044722855, guid: 04274d35e2fdf1b0aaac19bb9b8e7e3d, type: 3}
+  _destroyFX: {fileID: 3416642399044722855, guid: 15af16c8cfafabcb0a90f13732980cfe, type: 3}
+  _impactWaterFX: {fileID: 3416642399044722855, guid: 1f7926a9d101831ebae30d04eae2e4b8, type: 3}
+  _hpBar: {fileID: 180299845355635483}
   _jetEngineStart: {fileID: 3207509245743368714}
   _jetEngineEnd: {fileID: 6325103026130837615}
   _flyingLoop: {fileID: 5663422004254319509}
   _radioLoop: {fileID: 4563596619638649015}
   _jetFlyby: {fileID: 673056097433483939}
-  _damageFX: {fileID: 3416642399044722855, guid: 04274d35e2fdf1b0aaac19bb9b8e7e3d, type: 3}
-  _destroyFX: {fileID: 3416642399044722855, guid: 15af16c8cfafabcb0a90f13732980cfe, type: 3}
-  _impactWaterFX: {fileID: 3416642399044722855, guid: 1f7926a9d101831ebae30d04eae2e4b8, type: 3}
-  _hpBar: {fileID: 180299845355635483}
 --- !u!114 &6427738391230425815
 MonoBehaviour:
   m_ObjectHideFlags: 0

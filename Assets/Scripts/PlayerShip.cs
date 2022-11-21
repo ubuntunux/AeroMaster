@@ -4,7 +4,24 @@ using UnityEngine;
 
 public class PlayerShip : MonoBehaviour
 {
+    public float _speed = 1.0f;
     public GameObject _afterBurnerParticle;
+    UnitBase _unitObject = null;
+
+    public UnitBase GetUnitObject()
+    {
+        return _unitObject;
+    }
+
+    public void SetUnitObject(UnitBase unitObject)
+    {
+        _unitObject = unitObject;
+    }
+
+    public float GetSpeed()
+    {
+        return _speed;
+    }
 
     public bool GetAfterBurnerEmission()
     {
@@ -18,17 +35,17 @@ public class PlayerShip : MonoBehaviour
 
     void OnTriggerEnter(Collider other)
     {
-        CharacterManager.Instance.GetPlayer().OnTriggerEnter(other);
+        _unitObject.OnTriggerEnter(other);
     }
 
     void OnTriggerStay(Collider other)
     {
-        CharacterManager.Instance.GetPlayer().OnTriggerStay(other);
+        _unitObject.OnTriggerStay(other);
     }
 
     void OnTriggerExit(Collider other)
     {
-        CharacterManager.Instance.GetPlayer().OnTriggerExit(other);
+        _unitObject.OnTriggerExit(other);
     }
 
     void OnCollisionEnter(Collision collision)

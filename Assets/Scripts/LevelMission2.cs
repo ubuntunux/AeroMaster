@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 
-public class LevelMission : LevelBase
+public class LevelMission2 : LevelBase
 {
     enum MissionPhase
     {

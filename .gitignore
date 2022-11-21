@@ -59,7 +59,7 @@ sysinfo.txt
 crashlytics-build.properties
 
 # Custom
-.idea/
+/.idea/
 Externals/
 Bin/
 *.png~

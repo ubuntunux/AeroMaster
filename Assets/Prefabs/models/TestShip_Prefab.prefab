@@ -378,9 +378,10 @@ GameObject:
   - component: {fileID: 4350363120544217560}
   - component: {fileID: 1338410395353701344}
   - component: {fileID: 5508824914307909646}
+  - component: {fileID: 3122865335550010525}
   m_Layer: 0
   m_Name: TestShip_Prefab
-  m_TagString: Player
+  m_TagString: Unit
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -432,6 +433,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e2a4b35e7a773271e9eb34343af2b674, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _initialHP: 100
+  _speed: 1
   _afterBurnerParticle: {fileID: 1547335440813227966}
 --- !u!65 &5508824914307909646
 BoxCollider:
@@ -446,6 +449,22 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 10, y: 5, z: 10}
   m_Center: {x: 0, y: 3.83, z: 1.83}
+--- !u!54 &3122865335550010525
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9155338702811048925}
+  serializedVersion: 2
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0
+  m_UseGravity: 0
+  m_IsKinematic: 1
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!1001 &1547335440813193502
 PrefabInstance:
   m_ObjectHideFlags: 0

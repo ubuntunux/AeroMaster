@@ -520,7 +520,7 @@ GameObject:
   - component: {fileID: -746782600551823790}
   - component: {fileID: 6427738391230425815}
   m_Layer: 0
-  m_Name: AirCraftBase
+  m_Name: AirCraftUnit
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

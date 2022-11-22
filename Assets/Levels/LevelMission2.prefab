@@ -452,7 +452,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3092399277986571980}
   m_Layer: 0
-  m_Name: Special
+  m_Name: Trigger
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1357,11 +1357,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5942564228469518444, guid: 0c80247f17e0f16e98db36d17989005b, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -67.73
+      value: -30.37
       objectReference: {fileID: 0}
     - target: {fileID: 5942564228469518444, guid: 0c80247f17e0f16e98db36d17989005b, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 2.25
+      value: 24.99
       objectReference: {fileID: 0}
     - target: {fileID: 5942564228469518444, guid: 0c80247f17e0f16e98db36d17989005b, type: 3}
       propertyPath: m_LocalPosition.z

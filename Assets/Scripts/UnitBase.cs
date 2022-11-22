@@ -148,9 +148,12 @@ public class UnitBase : MonoBehaviour
         }
         else if("Unit" == other.gameObject.tag)
         {
-            UnitBase unit = other.gameObject.GetComponent<UnitBase>();
-            unit.SetDestroy(DestroyType.Explosion);
-            SetDestroy(DestroyType.Explosion);
+            if(IsPlayer())
+            {
+                UnitBase unit = other.gameObject.GetComponent<UnitModelBase>().GetUnitObject();                        
+                unit.SetDestroy(DestroyType.Explosion);
+                SetDestroy(DestroyType.Explosion);
+            }
         }
     }
 
@@ -173,8 +176,12 @@ public class UnitBase : MonoBehaviour
 
     public virtual void ResetUnit()
     {
+        int initialHP = IsPlayer() ? SaveData.Instance._playerData._hp : _modelObject.GetComponent<UnitModelBase>().GetInitialHP();
+        _hpBar.GetComponent<HPBar>().InitializeHPBar(transform, initialHP);
+
         SetInvincibility(false);
         SetVisible(true);
+
         _isGround = false;
         _isAlive = true;
     }

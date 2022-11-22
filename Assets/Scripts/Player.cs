@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
-public class Player : AirCraftBase
+public class Player : AirCraftUnit
 {
-    int _playerModelIndex = 0;    
+    int _playerModelIndex = 0;
     bool _autoTakeOff = false;
     bool _controllable = false;
     

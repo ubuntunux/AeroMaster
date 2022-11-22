@@ -4,13 +4,7 @@ using UnityEngine;
 
 public class AirCraftModel : UnitModelBase
 {
-    public float _speed = 1.0f;
     public GameObject _afterBurnerParticle;
-    
-    public float GetSpeed()
-    {
-        return _speed;
-    }
 
     public bool GetAfterBurnerEmission()
     {

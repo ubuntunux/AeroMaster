@@ -13,7 +13,7 @@ public enum AnimationState
     Landing
 };
 
-public class AirCraftBase : UnitBase
+public class AirCraftUnit : UnitBase
 {
     AnimationState _animationState = AnimationState.None;
     float _landingGearRatio = 0.0f;
@@ -26,6 +26,7 @@ public class AirCraftBase : UnitBase
 
     float _velocity_limit_x = Constants.VELOCITY_LIMIT_X;
     float _velocity_limit_y = Constants.VELOCITY_LIMIT_Y;
+    float _acceleration_x = Constants.ACCEL_X;
 
     float _absVelocityX = 0.0f;    
     float _velocityY = 0.0f;
@@ -216,8 +217,10 @@ public class AirCraftBase : UnitBase
         base.CreateModelObject(prefab);
 
         AirCraftModel model =  _modelObject.GetComponent<AirCraftModel>();
-        _velocity_limit_x = Constants.VELOCITY_LIMIT_X * model.GetSpeed();
-        _velocity_limit_y = Constants.VELOCITY_LIMIT_Y * model.GetSpeed();
+        float speed = model.GetSpeed();
+        _velocity_limit_x = Constants.VELOCITY_LIMIT_X * speed;
+        _velocity_limit_y = Constants.VELOCITY_LIMIT_Y * speed;
+        _acceleration_x = Constants.ACCEL_X * speed;
     }
 
     public override void ResetUnit()
@@ -228,7 +231,6 @@ public class AirCraftBase : UnitBase
         SetAnimationState(AnimationState.Idle);
         StopAllSound();
 
-        _hpBar.GetComponent<HPBar>().InitializeHPBar(transform, SaveData.Instance._playerData._hp);
         _inputY = 0.0f;
         _flyingTime = 0.0f;
         _landingGearRatio = 0.0f;
@@ -389,8 +391,26 @@ public class AirCraftBase : UnitBase
     public virtual void UpdateControllerInput(ref Vector2 input)
     {
         // NPC
-        SetAccleration(true);
-        //input.y = 1.0f;
+        Vector3 playerPos = CharacterManager.Instance.GetPlayer().GetPosition();
+        Vector3 pos = GetPosition();
+
+        // Landing Routine
+        // if(pos.y < 3.0 && _velocityY == 0.0f)
+        // {
+        //     Debug.Log("Landing y: " + pos.y.ToString() + " vel: " + _velocityY.ToString() + " _landingGearRatio: " + _landingGearRatio.ToString());
+        //     if(false == _isLanding)
+        //     {
+        //         SetLanding();
+        //     }
+        // }
+        // else
+        // {
+        //     if(3.0 < pos.y)
+        //     {
+        //         SetAccleration(pos.x < playerPos.x);
+        //         input.y = Mathf.Min(1.0f, Mathf.Max(-1.0f, playerPos.y - pos.y));
+        //     }
+        // }
     }
 
     void ControllShip()
@@ -424,13 +444,13 @@ public class AirCraftBase : UnitBase
         // Acceleration
         if(_isAcceleration)
         {
-            _absVelocityX = Mathf.Min(_velocity_limit_x, _absVelocityX + Constants.ACCEL_X * Time.deltaTime);
+            _absVelocityX = Mathf.Min(_velocity_limit_x, _absVelocityX + _acceleration_x * Time.deltaTime);
         }
 
         // Landing
         if(_isLanding)
         {
-            float damping = Constants.ACCEL_X * (_isGround ? 1.0f : 0.5f);
+            float damping = _acceleration_x * (_isGround ? 1.0f : 0.5f);
             _absVelocityX = Mathf.Max(0.0f, _absVelocityX - damping * Time.deltaTime);
         }
         _absVelocityRatioX = _absVelocityX / _velocity_limit_x;
@@ -470,7 +490,7 @@ public class AirCraftBase : UnitBase
         }
         else
         {
-            _absVelocityX = Mathf.Max(0.0f, _absVelocityX - Constants.ACCEL_X * Time.deltaTime);
+            _absVelocityX = Mathf.Max(0.0f, _absVelocityX - _acceleration_x * Time.deltaTime);
             _absVelocityRatioX = _absVelocityX / _velocity_limit_x;
             if(false == _isGround)
             {

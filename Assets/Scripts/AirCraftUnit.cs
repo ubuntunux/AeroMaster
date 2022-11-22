@@ -15,15 +15,17 @@ public enum AnimationState
 
 public class AirCraftUnit : UnitBase
 {
-    AnimationState _animationState = AnimationState.None;
-    float _landingGearRatio = 0.0f;
-
+    public WeaponVulcan _weaponVulcanPrefab;
     public AudioSource _jetEngineStart;
     public AudioSource _jetEngineEnd;
     public AudioSource _flyingLoop;
     public AudioSource _radioLoop;
     public AudioSource _jetFlyby;
 
+    AnimationState _animationState = AnimationState.None;
+    WeaponVulcan _weaponVulcan0;
+    WeaponVulcan _weaponVulcan1;        
+    float _landingGearRatio = 0.0f;
     float _velocity_limit_x = Constants.VELOCITY_LIMIT_X;
     float _velocity_limit_y = Constants.VELOCITY_LIMIT_Y;
     float _acceleration_x = Constants.ACCEL_X;
@@ -35,6 +37,7 @@ public class AirCraftUnit : UnitBase
     float _inputY = 0.0f;
     bool _isAcceleration = false;
     bool _isLanding = true;
+    bool _isFireVulcan = false;
     bool _goalFrontDirectionFlag = true; 
     float _frontDirection = 1.0f;
     float _flyingTime = 0.0f;
@@ -62,6 +65,19 @@ public class AirCraftUnit : UnitBase
     public float GetAltitude()
     {
         return GetPosition().y - Constants.GROUND_HEIGHT;
+    }
+
+    public void SetFireVulcan(bool fire)
+    {
+        if(null != _weaponVulcan0)
+        {
+            _weaponVulcan0.SetFire(fire, true);
+        }
+
+        if(null != _weaponVulcan1)
+        {
+            _weaponVulcan1.SetFire(fire, null == _weaponVulcan0);
+        }
     }
 
     public void SetAutoFlyingDirection(bool isRightDirection)
@@ -92,7 +108,7 @@ public class AirCraftUnit : UnitBase
 
             if(IsPlayer())
             {
-                AudioManager.Instance.PlayAudio(_jetFlyby);
+                AudioManager.PlayAudio(_jetFlyby);
             }
         }
 
@@ -103,8 +119,8 @@ public class AirCraftUnit : UnitBase
 
             if(IsPlayer())
             {
-                AudioManager.Instance.PlayAudio(_jetEngineStart);
-                AudioManager.Instance.StopAudio(_jetEngineEnd);
+                AudioManager.PlayAudio(_jetEngineStart);
+                AudioManager.StopAudio(_jetEngineEnd);
             }
         }
     }
@@ -123,8 +139,8 @@ public class AirCraftUnit : UnitBase
 
             if(IsPlayer())
             {
-                AudioManager.Instance.StopAudio(_jetEngineStart);
-                AudioManager.Instance.PlayAudio(_jetEngineEnd);
+                AudioManager.StopAudio(_jetEngineStart);
+                AudioManager.PlayAudio(_jetEngineEnd);
             }
         }
     }
@@ -204,19 +220,40 @@ public class AirCraftUnit : UnitBase
     {
         if(IsPlayer())
         {
-            AudioManager.Instance.StopAudio(_jetEngineStart);
-            AudioManager.Instance.StopAudio(_jetEngineEnd);
-            AudioManager.Instance.StopAudio(_flyingLoop);
-            AudioManager.Instance.StopAudio(_jetFlyby);
-            AudioManager.Instance.PauseAudio(_radioLoop);
+            AudioManager.StopAudio(_jetEngineStart);
+            AudioManager.StopAudio(_jetEngineEnd);
+            AudioManager.StopAudio(_flyingLoop);
+            AudioManager.StopAudio(_jetFlyby);
+            AudioManager.PauseAudio(_radioLoop);
         }
+    }
+
+    public void CreateWeaponObjects(AirCraftModel model)
+    {
+        if(null != _weaponVulcan0)
+        {
+            Destroy(_weaponVulcan0);
+        }
+
+        if(null != _weaponVulcan1)
+        {
+            Destroy(_weaponVulcan1);
+        }
+
+        _weaponVulcan0 = Instantiate(_weaponVulcanPrefab);
+        _weaponVulcan0.InitializeWeaponObject(this, model.WeaponSlotVulcan0());
+        _weaponVulcan1 = Instantiate(_weaponVulcanPrefab);
+        _weaponVulcan1.InitializeWeaponObject(this, model.WeaponSlotVulcan1());
     }
 
     public override void CreateModelObject(GameObject prefab)
     {
         base.CreateModelObject(prefab);
 
-        AirCraftModel model =  _modelObject.GetComponent<AirCraftModel>();
+        AirCraftModel model = _modelObject.GetComponent<AirCraftModel>();
+
+        CreateWeaponObjects(model);
+
         float speed = model.GetSpeed();
         _velocity_limit_x = Constants.VELOCITY_LIMIT_X * speed;
         _velocity_limit_y = Constants.VELOCITY_LIMIT_Y * speed;
@@ -230,10 +267,11 @@ public class AirCraftUnit : UnitBase
         SetAfterBurnerEmission(false);
         SetAnimationState(AnimationState.Idle);
         StopAllSound();
+        SetFireVulcan(false);
 
         _inputY = 0.0f;
         _flyingTime = 0.0f;
-        _landingGearRatio = 0.0f;
+        _landingGearRatio = 1.0f;
         _absVelocityX = 0.0f;
         _absVelocityRatioX = 0.0f;
         _velocityY = 0.0f;
@@ -263,7 +301,7 @@ public class AirCraftUnit : UnitBase
             {
                 if(_velocityY < Constants.SPEED_FOR_DESTROY || _landingGearRatio < 0.5f)
                 {
-                    SetDamage(Mathf.Abs(_velocityY) * 10.0f + 10.0f);
+                    SetDamage(Mathf.Abs(_velocityY) * 10.0f + 10.0f, true);
                     damaged = true;
                 }                
 
@@ -283,20 +321,20 @@ public class AirCraftUnit : UnitBase
         if(IsPlayer())
         {
             float flyingAudioVolume = _isAlive ? absVelocityRatioX : 0.0f;
-            if(false == AudioManager.Instance.IsPlayingAudio(_flyingLoop) && 0.0f < flyingAudioVolume)
+            if(false == AudioManager.IsPlayingAudio(_flyingLoop) && 0.0f < flyingAudioVolume)
             {
-                AudioManager.Instance.PlayAudio(_flyingLoop);
-                AudioManager.Instance.PlayAudio(_radioLoop);
+                AudioManager.PlayAudio(_flyingLoop);
+                AudioManager.PlayAudio(_radioLoop);
             }
             else if(_flyingLoop.isPlaying && 0.0f == flyingAudioVolume)
             {
-                AudioManager.Instance.StopAudio(_flyingLoop);
-                AudioManager.Instance.PauseAudio(_radioLoop);
+                AudioManager.StopAudio(_flyingLoop);
+                AudioManager.PauseAudio(_radioLoop);
             }
             
-            AudioManager.Instance.SetAudioVolume(_flyingLoop, flyingAudioVolume);
-            AudioManager.Instance.SetAudioVolume(_radioLoop, flyingAudioVolume);
-            AudioManager.Instance.SetAudioVolume(_jetFlyby, flyingAudioVolume);
+            AudioManager.SetAudioVolume(_flyingLoop, flyingAudioVolume);
+            AudioManager.SetAudioVolume(_radioLoop, flyingAudioVolume);
+            AudioManager.SetAudioVolume(_jetFlyby, flyingAudioVolume);
         }
     }
 

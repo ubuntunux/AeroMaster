@@ -35,7 +35,7 @@ public class CharacterManager : MonoBehaviour
         }
     }
 
-    void Start()
+    public void InitializeCharacterManager()
     {
         _player = Instantiate(_prefabPlayer, Vector3.zero, Quaternion.identity);
         _player.transform.SetParent(transform, false);

@@ -5,6 +5,8 @@ using UnityEngine;
 public class AirCraftModel : UnitModelBase
 {
     public GameObject _afterBurnerParticle;
+    public GameObject _weaponSlotVulcan0;
+    public GameObject _weaponSlotVulcan1;
 
     public bool GetAfterBurnerEmission()
     {
@@ -14,5 +16,15 @@ public class AirCraftModel : UnitModelBase
     public void SetAfterBurnerEmission(bool emission)
     {
         _afterBurnerParticle.GetComponent<ParticleScript>().SetEmission(emission);
+    }
+
+    public GameObject WeaponSlotVulcan0()
+    {
+        return _weaponSlotVulcan0;
+    }
+
+    public GameObject WeaponSlotVulcan1()
+    {
+        return _weaponSlotVulcan1;
     }
 }

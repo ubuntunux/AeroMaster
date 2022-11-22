@@ -83,6 +83,16 @@ public class Player : AirCraftUnit
         }
     }
 
+    public void OnClickFireVulcan()
+    {
+        SetFireVulcan(true);
+    }
+
+    public void OnCancleFireVulcan()
+    {
+        SetFireVulcan(false);
+    }
+
     public bool GetAutoTakeOff()
     {
         return _autoTakeOff;

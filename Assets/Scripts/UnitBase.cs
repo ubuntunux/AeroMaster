@@ -88,13 +88,14 @@ public class UnitBase : MonoBehaviour
         SetDestroy(DestroyType.Explosion);
     }
 
-    public virtual void SetDestroy(DestroyType destroyType)
+    public virtual bool SetDestroy(DestroyType destroyType)
     {
         if(false == GetInvincibility() && IsAlive())
         {
-            MainCamera.Instance.SetCameraShakeByDestroy();
+            MainCamera.Instance.SetCameraShakeByDestroy(IsPlayer() ? 1.0f : 0.1f);
             
             GameObject destroyFX_Prefab = null;
+
             if(DestroyType.Explosion == destroyType)
             {
                 destroyFX_Prefab = _destroyFX;
@@ -113,10 +114,12 @@ public class UnitBase : MonoBehaviour
             SetVisible(false);
             StopAllSound();
             _isAlive = false;
+            return true;
         }
+        return false;
     }
 
-    public virtual void SetDamage(float damage)
+    public virtual void SetDamage(float damage, bool playDamageFX)
     {
         if(false == _invincibility && IsAlive())
         {
@@ -124,9 +127,16 @@ public class UnitBase : MonoBehaviour
 
             if(_hpBar.GetComponent<HPBar>().IsAlive())
             {
-                MainCamera.Instance.SetCameraShakeByDestroy(0.1f);
-                GameObject damageFX = (GameObject)GameObject.Instantiate(_damageFX);
-                damageFX.transform.SetParent(transform, false);
+                if(IsPlayer())
+                {
+                    MainCamera.Instance.SetCameraShakeByDestroy(0.1f);
+                }
+
+                if(playDamageFX)
+                {
+                    GameObject damageFX = Instantiate(_damageFX);
+                    damageFX.transform.SetParent(transform, false);
+                }
             }
             else
             {
@@ -150,7 +160,7 @@ public class UnitBase : MonoBehaviour
         {
             if(IsPlayer())
             {
-                UnitBase unit = other.gameObject.GetComponent<UnitModelBase>().GetUnitObject();                        
+                UnitBase unit = other.gameObject.GetComponent<UnitModelBase>().GetUnitObject();
                 unit.SetDestroy(DestroyType.Explosion);
                 SetDestroy(DestroyType.Explosion);
             }

@@ -173,6 +173,7 @@ public class GameManager : MonoBehaviour
         UIManager.Instance.ResetUIManager();
         LevelManager.Instance.ResetLevelManager();
 
+        CharacterManager.Instance.InitializeCharacterManager();
         CharacterManager.Instance.GetPlayer().LoadPlayerData(SaveData.Instance._playerData);
         CharacterManager.Instance.GetPlayer().ResetPlayer(Vector3.zero);
         CharacterManager.Instance.GetPlayer().SetControllable(false);

@@ -101,7 +101,7 @@ public class TextManager : MonoBehaviour
         }
 
         // play prompt sound
-        AudioManager.Instance.PlayAudio(_sndPrompt);
+        AudioManager.PlayAudio(_sndPrompt);
     }
 
     public void ResetCharacterText()
@@ -125,7 +125,7 @@ public class TextManager : MonoBehaviour
             {
                 // continue
                 _readTextDone = false;
-                AudioManager.Instance.PlayAudio(_sndPrompt);
+                AudioManager.PlayAudio(_sndPrompt);
             }
             else            
             {

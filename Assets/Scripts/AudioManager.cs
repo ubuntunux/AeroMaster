@@ -29,12 +29,12 @@ public class AudioManager : MonoBehaviour
         _audioBeepLoop.loop = true;
     }
 
-    public bool IsPlayingAudio(AudioSource audio)
+    public static bool IsPlayingAudio(AudioSource audio)
     {
         return (null != audio) ? audio.isPlaying : false;
     }
 
-    public void SetAudioVolume(AudioSource audio, float volume)
+    public static void SetAudioVolume(AudioSource audio, float volume)
     {
         if(null != audio)
         {
@@ -42,7 +42,7 @@ public class AudioManager : MonoBehaviour
         }
     }
 
-    public void PlayAudio(AudioSource audio)
+    public static void PlayAudio(AudioSource audio)
     {
         if(null != audio)
         {
@@ -50,7 +50,7 @@ public class AudioManager : MonoBehaviour
         }
     }
 
-    public void StopAudio(AudioSource audio)
+    public static void StopAudio(AudioSource audio)
     {
         if(null != audio)
         {
@@ -58,11 +58,31 @@ public class AudioManager : MonoBehaviour
         }
     }
 
-    public void PauseAudio(AudioSource audio)
+    public static void PauseAudio(AudioSource audio)
     {
         if(null != audio)
         {
             audio.Pause();
         }
+    }
+
+    public static IEnumerator FadeAudio(AudioSource audioSource, float duration, float targetVolume, bool killAudio)
+    {
+        if(null != audioSource)
+        {
+            float currentTime = 0;
+            float start = audioSource.volume;
+            while (currentTime < duration)
+            {
+                currentTime += Time.deltaTime;
+                audioSource.volume = Mathf.Lerp(start, targetVolume, currentTime / duration);
+                if(audioSource.volume == targetVolume && killAudio)
+                {
+                    StopAudio(audioSource);
+                }
+                yield return null;
+            }
+        }
+        yield break;
     }
 }

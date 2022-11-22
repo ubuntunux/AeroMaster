@@ -45,6 +45,16 @@ public class ControllerUI : MonoBehaviour
         _instance = this;
     }
 
+    public void OnClickFireVulcan()
+    {
+        CharacterManager.Instance.GetPlayer().OnClickFireVulcan();
+    }
+
+    public void OnCancleFireVulcan()
+    {
+        CharacterManager.Instance.GetPlayer().OnCancleFireVulcan();
+    }
+
     public void OnClickAccelLeft()
     {
         _controlAccelLeft.GetComponent<Image>().sprite = _accel_left_on;

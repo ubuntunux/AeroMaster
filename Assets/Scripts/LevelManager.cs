@@ -41,7 +41,9 @@ public class LevelManager : MonoBehaviour
     GoalPoint _goalPoint = null;
 
     Vector2 _missionRegion = Vector2.zero;
+
     List<RegionMarkerFX> _regionMarkerFXs = new List<RegionMarkerFX>();
+    List<GameObject> _bullets = new List<GameObject>();
 
     // Singleton instantiation
     static LevelManager _instance;
@@ -196,6 +198,27 @@ public class LevelManager : MonoBehaviour
         _goalPoint = null;
     }
 
+    // Bullets
+    public void RegistBulletObject(GameObject bullet)
+    {
+        _bullets.Add(bullet);
+    }
+
+    public void UnregistBulletObject(GameObject bullet)
+    {
+        _bullets.Remove(bullet);
+        Destroy(bullet);
+    }
+
+    public void ClearBulletObjects()
+    {
+        foreach(GameObject bullet in _bullets)
+        {
+            Destroy(bullet);
+        }
+        _bullets.Clear();
+    }
+
     // Mission Regions
     public Vector2 GetMissionRegion()
     {
@@ -262,6 +285,7 @@ public class LevelManager : MonoBehaviour
     {
         DestroyGoalPoint();
         ClearRegionMarkerFX();
+        ClearBulletObjects();
 
         _missionRegion = Vector2.zero;
         _startPoint = Vector3.zero;
@@ -280,6 +304,7 @@ public class LevelManager : MonoBehaviour
     {
         DestroyGoalPoint();
         ClearRegionMarkerFX();
+        ClearBulletObjects();
 
         _missionRegion = Vector2.zero;
         _startPoint = Vector3.zero;

@@ -16,7 +16,7 @@ public enum DestroyType
 
 public class CharacterManager : MonoBehaviour
 {
-    public GameObject[] _meshObjects;
+    public GameObject[] _modelObjects;
     public GameObject _prefabPlayer;
 
     GameObject _player;
@@ -48,11 +48,11 @@ public class CharacterManager : MonoBehaviour
 
     public int GetCharacterModelCount()
     {
-        return _meshObjects.Length;
+        return _modelObjects.Length;
     }
 
     public GameObject CreateCharacterModel(int index)
     {
-        return (index < _meshObjects.Length) ? _meshObjects[index] : null;
+        return (index < _modelObjects.Length) ? _modelObjects[index] : null;
     }
 }

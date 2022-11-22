@@ -4,25 +4,28 @@ using UnityEngine;
 
 public class UnitBase : MonoBehaviour
 {
-    public GameObject _prefabMeshObject;
+    public GameObject _prefabModelObject;
     public GameObject _damageFX;
     public GameObject _destroyFX;
     public GameObject _impactWaterFX;
     public GameObject _hpBar;
 
-    protected GameObject _meshObject;
+    protected GameObject _modelObject;
     protected Animator _animator;    
     protected bool _isAlive = false;
     protected bool _isGround = false;    
     protected bool _invincibility = false;
 
-    void Start()
+    public void Awake()
     {
-        if(null != _prefabMeshObject)
+        if(null != _prefabModelObject)
         {
-            CreateMeshObject(_prefabMeshObject);
+            CreateModelObject(_prefabModelObject);
         }
+    }
 
+    public void Start()
+    {
         ResetUnit();
     }
 
@@ -46,23 +49,23 @@ public class UnitBase : MonoBehaviour
         return _isGround;
     }
 
-    public void CreateMeshObject(GameObject prefab)
+    public virtual void CreateModelObject(GameObject prefab)
     {
-        if(null != _meshObject)
+        if(null != _modelObject)
         {
-            Destroy(_meshObject);
+            Destroy(_modelObject);
         }
 
-        _meshObject = Instantiate(prefab);
-        _meshObject.transform.SetParent(transform, false);
-        _meshObject.transform.localPosition = Vector3.zero;
-        _meshObject.GetComponent<PlayerShip>().SetUnitObject(this);
-        _animator = _meshObject.GetComponent<Animator>();
+        _modelObject = Instantiate(prefab);
+        _modelObject.transform.SetParent(transform, false);
+        _modelObject.transform.localPosition = Vector3.zero;
+        _modelObject.GetComponent<UnitModelBase>().SetUnitObject(this);
+        _animator = _modelObject.GetComponent<Animator>();
     }
 
     public void SetVisible(bool show)
     {
-        _meshObject.SetActive(show);
+        _modelObject.SetActive(show);
     }
 
     public bool GetInvincibility()
@@ -142,6 +145,12 @@ public class UnitBase : MonoBehaviour
         else if("Water" == other.gameObject.tag)
         {
             SetDestroy(DestroyType.ImpactWater);
+        }
+        else if("Unit" == other.gameObject.tag)
+        {
+            UnitBase unit = other.gameObject.GetComponent<UnitBase>();
+            unit.SetDestroy(DestroyType.Explosion);
+            SetDestroy(DestroyType.Explosion);
         }
     }
 

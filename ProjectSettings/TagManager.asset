@@ -10,6 +10,7 @@ TagManager:
   - GoalPoint
   - Wall
   - Water
+  - Unit
   layers:
   - Default
   - TransparentFX

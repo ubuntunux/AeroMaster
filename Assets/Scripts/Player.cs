@@ -103,32 +103,32 @@ public class Player : AirCraftBase
         SaveData.Instance._playerData._score += score;
     }
 
-    public int GetPlayerShipModel()
+    public int GetUnitModelIndex()
     {
         return _playerModelIndex;
     }
 
-    public void LoadPlayerData(PlayerData playerData)
-    {
-        SetPlayerShipModel(playerData._playerModelIndex);
-    }
-    
-    public void SetPlayerShipModel(int index)
+    public void SetUnitModelIndex(int index)
     {
         if(index < CharacterManager.Instance.GetCharacterModelCount())
         {
             _playerModelIndex = index;
             SaveData.Instance._playerData._playerModelIndex = index;
-            LoadPlayerShipModel();
+            LoadUnitModel();
         }
     }
 
-    public void LoadPlayerShipModel()
+    public void LoadPlayerData(PlayerData playerData)
+    {
+        SetUnitModelIndex(playerData._playerModelIndex);
+    }
+
+    public void LoadUnitModel()
     {
         if(_playerModelIndex < CharacterManager.Instance.GetCharacterModelCount())
         {
             GameObject model = CharacterManager.Instance.CreateCharacterModel(_playerModelIndex);
-            CreateMeshObject(model);
+            CreateModelObject(model);
         }
     }
 

@@ -24,6 +24,9 @@ public class AirCraftBase : UnitBase
     public AudioSource _radioLoop;
     public AudioSource _jetFlyby;
 
+    float _velocity_limit_x = Constants.VELOCITY_LIMIT_X;
+    float _velocity_limit_y = Constants.VELOCITY_LIMIT_Y;
+
     float _absVelocityX = 0.0f;    
     float _velocityY = 0.0f;
     float _absVelocityRatioX = 0.0f;
@@ -69,7 +72,7 @@ public class AirCraftBase : UnitBase
 
         _isAcceleration = true;
         _isLanding = false;        
-        _absVelocityX = Constants.VELOCITY_LIMIT_X;
+        _absVelocityX = _velocity_limit_x;
         _absVelocityRatioX = 1.0f;
         _goalFrontDirectionFlag = isRightDirection;
         _frontDirection = isRightDirection ? 1.0f : -1.0f;
@@ -142,7 +145,7 @@ public class AirCraftBase : UnitBase
 
     public float GetVelocityRatio()
     {
-        return Mathf.Min(1.0f, (_absVelocityX * _absVelocityX + _velocityY * _velocityY) / (Constants.VELOCITY_LIMIT_X * Constants.VELOCITY_LIMIT_X + Constants.VELOCITY_LIMIT_Y * Constants.VELOCITY_LIMIT_Y));
+        return Mathf.Min(1.0f, (_absVelocityX * _absVelocityX + _velocityY * _velocityY) / (_velocity_limit_x * _velocity_limit_x + _velocity_limit_y * _velocity_limit_y));
     }
 
     public float GetMaxVelocityRatio()
@@ -188,12 +191,12 @@ public class AirCraftBase : UnitBase
 
     bool GetAfterBurnerEmission()
     {
-        return _meshObject.GetComponent<PlayerShip>().GetAfterBurnerEmission();
+        return _modelObject.GetComponent<AirCraftModel>().GetAfterBurnerEmission();
     }
 
     void SetAfterBurnerEmission(bool emission)
     {
-        _meshObject.GetComponent<PlayerShip>().SetAfterBurnerEmission(emission);
+        _modelObject.GetComponent<AirCraftModel>().SetAfterBurnerEmission(emission);
     }
 
     public override void StopAllSound()
@@ -206,6 +209,15 @@ public class AirCraftBase : UnitBase
             AudioManager.Instance.StopAudio(_jetFlyby);
             AudioManager.Instance.PauseAudio(_radioLoop);
         }
+    }
+
+    public override void CreateModelObject(GameObject prefab)
+    {
+        base.CreateModelObject(prefab);
+
+        AirCraftModel model =  _modelObject.GetComponent<AirCraftModel>();
+        _velocity_limit_x = Constants.VELOCITY_LIMIT_X * model.GetSpeed();
+        _velocity_limit_y = Constants.VELOCITY_LIMIT_Y * model.GetSpeed();
     }
 
     public override void ResetUnit()
@@ -412,7 +424,7 @@ public class AirCraftBase : UnitBase
         // Acceleration
         if(_isAcceleration)
         {
-            _absVelocityX = Mathf.Min(Constants.VELOCITY_LIMIT_X, _absVelocityX + Constants.ACCEL_X * Time.deltaTime);
+            _absVelocityX = Mathf.Min(_velocity_limit_x, _absVelocityX + Constants.ACCEL_X * Time.deltaTime);
         }
 
         // Landing
@@ -421,7 +433,7 @@ public class AirCraftBase : UnitBase
             float damping = Constants.ACCEL_X * (_isGround ? 1.0f : 0.5f);
             _absVelocityX = Mathf.Max(0.0f, _absVelocityX - damping * Time.deltaTime);
         }
-        _absVelocityRatioX = _absVelocityX / Constants.VELOCITY_LIMIT_X;
+        _absVelocityRatioX = _absVelocityX / _velocity_limit_x;
         float double_absVelocityRatioX = _absVelocityRatioX * _absVelocityRatioX;
         
         // Front direction
@@ -431,7 +443,7 @@ public class AirCraftBase : UnitBase
         // control vertical velocity
         if(false == _isLanding && (0.0f != _inputY || (1.0f == _absVelocityRatioX && 0.0f != _velocityY)))
         {
-            float goalVelocity = Constants.VELOCITY_LIMIT_Y * double_absVelocityRatioX * _inputY;
+            float goalVelocity = _velocity_limit_y * double_absVelocityRatioX * _inputY;
             float velocityDiff = goalVelocity - _velocityY;
             if(0.0f != velocityDiff)
             {
@@ -447,7 +459,7 @@ public class AirCraftBase : UnitBase
             _velocityY -= Constants.GRAVITY * (1.0f - double_absVelocityRatioX) * Time.deltaTime;
         }
 
-        _absVelocityRatioY = Mathf.Min(1.0f, Mathf.Max(0.0f, Mathf.Abs(_velocityY / Constants.VELOCITY_LIMIT_Y)));
+        _absVelocityRatioY = Mathf.Min(1.0f, Mathf.Max(0.0f, Mathf.Abs(_velocityY / _velocity_limit_y)));
     }
 
     void FixedUpdate()
@@ -459,7 +471,7 @@ public class AirCraftBase : UnitBase
         else
         {
             _absVelocityX = Mathf.Max(0.0f, _absVelocityX - Constants.ACCEL_X * Time.deltaTime);
-            _absVelocityRatioX = _absVelocityX / Constants.VELOCITY_LIMIT_X;
+            _absVelocityRatioX = _absVelocityX / _velocity_limit_x;
             if(false == _isGround)
             {
                 _velocityY -= Constants.GRAVITY * Time.deltaTime;

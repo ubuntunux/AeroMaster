@@ -50,7 +50,7 @@ public class LevelProfile : LevelBase
 
     override public void OnExitLevel()
     {
-        CharacterManager.Instance.GetPlayer().SetPlayerShipModel(_profileIndex);
+        CharacterManager.Instance.GetPlayer().SetUnitModelIndex(_profileIndex);
         SaveData.Instance.Save(Constants.DefaultDataName);
     }
 

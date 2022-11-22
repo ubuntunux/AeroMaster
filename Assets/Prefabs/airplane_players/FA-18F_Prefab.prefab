@@ -371,6 +371,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e2a4b35e7a773271e9eb34343af2b674, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _speed: 0.5
   _afterBurnerParticle: {fileID: 1881012764942456149}
 --- !u!65 &7359337275780443542
 BoxCollider:

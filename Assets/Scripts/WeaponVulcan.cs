@@ -17,20 +17,23 @@ public class WeaponVulcan : WeaponBase
 
     public override void SetFire(bool fire, bool playSound)
     {
-        if(playSound)
+        if(fire != _isFire)
         {
-            if(fire)
+            if(playSound)
             {
-                AudioManager.SetAudioVolume(_fireLoop, 1.0f);
-                AudioManager.PlayAudio(_fireLoop);
+                if(fire)
+                {
+                    AudioManager.SetAudioVolume(_fireLoop, 1.0f);
+                    AudioManager.PlayAudio(_fireLoop);
+                }
+                else
+                {
+                    StartCoroutine(AudioManager.FadeAudio(_fireLoop, 0.1f, 0.0f, true));
+                }
             }
-            else
-            {
-                StartCoroutine(AudioManager.FadeAudio(_fireLoop, 0.1f, 0.0f, true));
-            }
-        }
 
-        _isFire = fire;
+            _isFire = fire;
+        }
     }
 
     void FixedUpdate()

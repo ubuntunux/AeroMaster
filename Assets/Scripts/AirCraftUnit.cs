@@ -432,23 +432,10 @@ public class AirCraftUnit : UnitBase
         Vector3 playerPos = CharacterManager.Instance.GetPlayer().GetPosition();
         Vector3 pos = GetPosition();
 
-        // Landing Routine
-        // if(pos.y < 3.0 && _velocityY == 0.0f)
-        // {
-        //     Debug.Log("Landing y: " + pos.y.ToString() + " vel: " + _velocityY.ToString() + " _landingGearRatio: " + _landingGearRatio.ToString());
-        //     if(false == _isLanding)
-        //     {
-        //         SetLanding();
-        //     }
-        // }
-        // else
-        // {
-        //     if(3.0 < pos.y)
-        //     {
-        //         SetAccleration(pos.x < playerPos.x);
-        //         input.y = Mathf.Min(1.0f, Mathf.Max(-1.0f, playerPos.y - pos.y));
-        //     }
-        // }
+        SetAccleration(pos.x < playerPos.x);
+        input.y = Mathf.Min(1.0f, Mathf.Max(-1.0f, playerPos.y - pos.y));
+
+        SetFireVulcan(Mathf.Abs(pos.x - playerPos.x) < 5.0f);
     }
 
     void ControllShip()

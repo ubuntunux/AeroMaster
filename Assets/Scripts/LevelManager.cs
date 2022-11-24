@@ -275,8 +275,11 @@ public class LevelManager : MonoBehaviour
             RenderSettings.ambientIntensity = 1;
             RenderSettings.reflectionIntensity = sunIntensity;
             Material skybox = currentLevel.GetSkybox();
-            RenderSettings.skybox = new Material(skybox);
-            RenderSettings.skybox.SetFloat("_Exposure", 0.55f * sunIntensity);
+            if(null != skybox)
+            {
+                RenderSettings.skybox = new Material(skybox);
+                RenderSettings.skybox.SetFloat("_Exposure", 0.55f * sunIntensity);
+            }
         }
     }
 

@@ -361,7 +361,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _sun: {fileID: 3398640813809240885}
-  _skyBox: {fileID: 2100000, guid: 1a53ed586b7e93a048adfc9469952a2c, type: 2}
+  _skyBox: {fileID: 2100000, guid: e5f05a6bb6a446379b7aa444fc824f49, type: 2}
 --- !u!1 &5517161709610796023
 GameObject:
   m_ObjectHideFlags: 0

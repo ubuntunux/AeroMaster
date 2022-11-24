@@ -1139,7 +1139,7 @@ MonoBehaviour:
   _layerMissionDetail: {fileID: 3912711881547513336}
   _imageMission: {fileID: 8324071704501333267}
   _sun: {fileID: 2847191281532074764}
-  _skyBox: {fileID: 2100000, guid: 1a53ed586b7e93a048adfc9469952a2c, type: 2}
+  _skyBox: {fileID: 2100000, guid: 1b633269e4ab8dc4f8434d5bc3ba1023, type: 2}
 --- !u!1 &2108202433845673798
 GameObject:
   m_ObjectHideFlags: 0

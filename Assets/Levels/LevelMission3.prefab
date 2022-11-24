@@ -98,7 +98,7 @@ MonoBehaviour:
     \uACF5\uC218\uBD80\uB300\uAC00 \uC791\uC804\uC744 \uC644\uB8CC\uD558\uBA74 \uBE44\uD589\uAE30\uC5D0
     \uD0DC\uC6CC \uC548\uC804\uD558\uAC8C \uBCF5\uADC0 \uC2DC\uD0A4\uC138\uC694.\n\uC774\uC0C1\uC785\uB2C8\uB2E4."
   _sun: {fileID: 3067354947891492897}
-  _skyBox: {fileID: 2100000, guid: 1a53ed586b7e93a048adfc9469952a2c, type: 2}
+  _skyBox: {fileID: 2100000, guid: 1b633269e4ab8dc4f8434d5bc3ba1023, type: 2}
 --- !u!1 &2793095216584059513
 GameObject:
   m_ObjectHideFlags: 0

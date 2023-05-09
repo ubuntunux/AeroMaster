@@ -45,6 +45,11 @@ public class ControllerUI : MonoBehaviour
         _instance = this;
     }
 
+    public void OnClickLockPitch()
+    {
+        CharacterManager.Instance.GetPlayer().OnClickLockPitch();
+    }
+
     public void OnClickFireVulcan()
     {
         CharacterManager.Instance.GetPlayer().OnClickFireVulcan();

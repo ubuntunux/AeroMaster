@@ -1,9 +1,9 @@
 {
-    "m_SelectedDeviceId": "ce12160cf0a758fe0c",
+    "m_SelectedDeviceId": "R3CT50K724B",
     "m_SelectedPackage": {
-        "deviceId": "ce12160cf0a758fe0c",
-        "name": "com.EnuriSoft.AeroMaster",
-        "processId": 12903,
+        "deviceId": "R3CT50K724B",
+        "name": "com.Ubuntunux.AeroMaster",
+        "processId": 20628,
         "exited": false
     },
     "m_SelectedPriority": 0,
@@ -42,6 +42,12 @@
             "deviceId": "ce12160cf0a758fe0c",
             "name": "com.EnuriSoft.AeroMaster",
             "processId": 12903,
+            "exited": false
+        },
+        {
+            "deviceId": "R3CT50K724B",
+            "name": "com.Ubuntunux.AeroMaster",
+            "processId": 20628,
             "exited": false
         }
     ],

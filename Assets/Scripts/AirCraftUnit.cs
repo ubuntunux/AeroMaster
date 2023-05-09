@@ -35,6 +35,8 @@ public class AirCraftUnit : UnitBase
     float _absVelocityRatioX = 0.0f;
     float _absVelocityRatioY = 0.0f;
     float _inputY = 0.0f;
+    float _pitch = 0.0f;
+    bool _lockPitch = true;
     bool _isAcceleration = false;
     bool _isLanding = true;
     bool _isFireVulcan = false;
@@ -65,6 +67,16 @@ public class AirCraftUnit : UnitBase
     public float GetAltitude()
     {
         return GetPosition().y - Constants.GROUND_HEIGHT;
+    }
+
+    public bool GetLockPitch()
+    {
+        return _lockPitch;
+    }
+
+    public void SetLockPitch(bool lockPitch)
+    {
+        _lockPitch = lockPitch;
     }
 
     public void SetFireVulcan(bool fire)
@@ -269,6 +281,7 @@ public class AirCraftUnit : UnitBase
         StopAllSound();
         SetFireVulcan(false);
 
+        _pitch = 0.0f;
         _inputY = 0.0f;
         _flyingTime = 0.0f;
         _landingGearRatio = 1.0f;
@@ -546,13 +559,23 @@ public class AirCraftUnit : UnitBase
         UpdateAnimationController(transform.position, position, _isGround);
 
         // update transform
-        float invGroundRatio = 1.0f - _landingGearRatio;// Mathf.Max(0.0f, Mathf.Min(1.0f, (position.y - Constants.GROUND_HEIGHT) * 0.2f));
-
+        float invGroundRatio = 1.0f - _landingGearRatio;
         float velocityRatioY = Mathf.Max(-1.0f, Mathf.Min(1.0f, _inputY));
-        float pitch = _absVelocityRatioX * velocityRatioY * invGroundRatio * 25.0f;
+        if(_lockPitch)
+        {
+            if(0.0f != _pitch)
+            {
+                float absPitch = Mathf.Max(0.0f, Mathf.Abs(_pitch) - Constants.PITCH_DAMPING * Time.deltaTime);
+                _pitch = (0.0f < _pitch) ? absPitch : -absPitch;
+            }
+        } 
+        else
+        {
+            _pitch = _absVelocityRatioX * velocityRatioY * invGroundRatio * 25.0f;
+        }
         float yaw = (_frontDirection * 0.5f + 0.5f) * (_goalFrontDirectionFlag ? -180.0f : 180.0f) + 180.0f;
         float roll = Mathf.Cos(_frontDirection * Mathf.PI * 0.5f) * 90.0f * invGroundRatio;
-        transform.localRotation = Quaternion.Euler(roll, yaw, pitch);
+        transform.localRotation = Quaternion.Euler(roll, yaw, _pitch);
         transform.position = position;
     }
 }

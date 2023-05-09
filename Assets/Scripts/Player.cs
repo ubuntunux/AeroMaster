@@ -83,6 +83,11 @@ public class Player : AirCraftUnit
         }
     }
 
+    public void OnClickLockPitch()
+    {
+        SetLockPitch(!GetLockPitch());
+    }
+
     public void OnClickFireVulcan()
     {
         SetFireVulcan(true);

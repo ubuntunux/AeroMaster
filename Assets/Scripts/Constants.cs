@@ -8,10 +8,11 @@ public class Constants : MonoBehaviour
     public const float TOUCH_DELTA = 0.1f;
     public const float TURN_SPEED = 1.5f;
     public const float ACCEL_X = 2.0f;
-    public const float ACCEL_Y = 20.0f;
+    public const float ACCEL_Y = 30.0f;
     public const float VELOCITY_LIMIT_X = 10.0f;
     public const float VELOCITY_LIMIT_Y = 5.0f;
     public const float DAMPING_X = 2.0f;
+    public const float PITCH_DAMPING = 50.0f;
     public const float INPUT_Y_DAMPING = 2.0f;
     public const float INPUT_Y_VELOCITY = 5.0f;
     public const float INPUT_Y_HEIGHT_RATIO = 0.1f;

@@ -42,7 +42,7 @@ public class LevelMission3 : LevelBase
         //CharacterManager.Instance.GetPlayer().SetControllable(false);
         //CharacterManager.Instance.GetPlayer().SetInvincibility(true);
         CharacterManager.Instance.GetPlayer().SetAutoFlyingDirection(true);
-        CharacterManager.Instance.GetPlayer().SetAnimationState(AnimationState.Flying);
+        CharacterManager.Instance.GetPlayer().SetAnimationState(AnimationState.Flying, true);
 
         // set scripts
         ActorScriptManager.Instance.GenerateActorScriptsPages(_textScripts);

@@ -13,6 +13,7 @@ public class HPBar : MonoBehaviour
 
     void Awake()
     {
+        Debug.Log("Create HP Bar");
         _initialHPBarWidth = _hpBar.GetComponent<RectTransform>().sizeDelta.x;
     }
 

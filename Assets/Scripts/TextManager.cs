@@ -46,7 +46,7 @@ public class TextManager : MonoBehaviour
         return _readTextAllDone;
     }
 
-    public void SetCharacterText(Characters character, string text, float readDoneTime)
+    public void SetCharacterText(Characters character, string text)
     {
         bool isEmpty = 0 == text.Length;// || Characters.None == character;
 
@@ -60,7 +60,7 @@ public class TextManager : MonoBehaviour
         _readTextDone = isEmpty;
         _readTextAllDone = isEmpty;
 
-        _textReadDoneTime = readDoneTime;
+        _textReadDoneTime = Mathf.Max(2.0f, (float)text.Length / _textSpeed * 3.0f);
         _textReadDoneTimer = 0.0f;
         _textTime = 0.0f;
         _pageIndex = 0;
@@ -106,7 +106,7 @@ public class TextManager : MonoBehaviour
 
     public void ResetCharacterText()
     {
-        SetCharacterText(Characters.None, "", 0.0f);
+        SetCharacterText(Characters.None, "");
     }
 
     public void SetDone()

@@ -45,7 +45,7 @@ public class LevelProfile : LevelBase
         CharacterManager.Instance.GetPlayer().SetControllable(false);
         CharacterManager.Instance.GetPlayer().SetInvincibility(true);
         CharacterManager.Instance.GetPlayer().SetAutoFlyingDirection(true);
-        CharacterManager.Instance.GetPlayer().SetAnimationState(AnimationState.Flying);
+        CharacterManager.Instance.GetPlayer().SetAnimationState(AnimationState.Flying, true);
     }
 
     override public void OnExitLevel()

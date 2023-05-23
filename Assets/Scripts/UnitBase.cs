@@ -82,6 +82,16 @@ public class UnitBase : MonoBehaviour
     {
     }
 
+    public void OnDestroy()
+    {
+        // explicit destroy, cause parent of hp bar is UIManager
+        if(null != _hpBar)
+        {
+            Destroy(_hpBar);
+            _hpBar = null;
+        }
+    }
+
     public void SetForceDestroy()
     {
         SetInvincibility(false);
@@ -109,6 +119,17 @@ public class UnitBase : MonoBehaviour
             {
                 GameObject destroyFX = (GameObject)GameObject.Instantiate(destroyFX_Prefab);
                 destroyFX.transform.SetParent(transform, false);
+            }
+            
+            MiniMapRegister miniMap = GetComponent<MiniMapRegister>();
+            if(null != miniMap)
+            {
+                miniMap.DestroyMiniMapObject();
+            }
+
+            if(null != _hpBar)
+            {
+                _hpBar.SetActive(false);
             }
             
             SetVisible(false);

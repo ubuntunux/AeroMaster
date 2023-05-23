@@ -60,6 +60,6 @@ crashlytics-build.properties
 
 # Custom
 /.idea/
-Externals/
+References/
 Bin/
 *.png~

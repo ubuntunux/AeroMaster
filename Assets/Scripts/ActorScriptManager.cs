@@ -24,7 +24,6 @@ public class ActorScriptManager : MonoBehaviour
 {
     const char PAGE_SEPERATOR = '#';
     string _pageKey = "";
-    float _readDoneTime = 0.0f;
     int _scriptIndex = 0;
     Dictionary<string, List<ActorScript>> _actorScriptsPages = new Dictionary<string, List<ActorScript>>();
     public delegate void Callback();
@@ -117,14 +116,14 @@ public class ActorScriptManager : MonoBehaviour
         return false;
     }
 
-    public bool SetPageAndCheckReadDone(string pageKey, Callback callbackOnPageReadDone = null, float readDoneTime = 0.0f)
+    public bool SetPageAndCheckReadDone(string pageKey, Callback callbackOnPageReadDone = null)
     {
-        SetPage(pageKey, callbackOnPageReadDone, readDoneTime);
+        SetPage(pageKey, callbackOnPageReadDone);
 
         return CheckPageReadDone(pageKey);
     }
 
-    public void SetPage(string pageKey, Callback callbackOnPageReadDone = null, float readDoneTime = 0.0f)
+    public void SetPage(string pageKey, Callback callbackOnPageReadDone = null)
     {
         if(pageKey != _pageKey)
         {
@@ -132,7 +131,6 @@ public class ActorScriptManager : MonoBehaviour
             _callbackOnPageReadDone = callbackOnPageReadDone;
             _scriptIndex = 0;
             _pageKey = pageKey;
-            _readDoneTime = readDoneTime;
 
             if(false == _actorScriptsPages.ContainsKey(pageKey))
             {
@@ -167,7 +165,7 @@ public class ActorScriptManager : MonoBehaviour
                 if(_scriptIndex < _actorScriptsPages[_pageKey].Count)
                 {
                     ActorScript actorScript = _actorScriptsPages[_pageKey][_scriptIndex];
-                    UIManager.Instance.SetCharacterText(actorScript._actor, actorScript._script, _readDoneTime);
+                    UIManager.Instance.SetCharacterText(actorScript._actor, actorScript._script);
                     ++_scriptIndex;
                 }
                 else if(textManager.IsActivated())

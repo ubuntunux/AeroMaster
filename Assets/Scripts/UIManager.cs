@@ -213,9 +213,9 @@ public class UIManager : MonoBehaviour
         return _textWindow.GetComponent<TextManager>();
     }
 
-    public void SetCharacterText(Characters character, string text, float timer)
+    public void SetCharacterText(Characters character, string text)
     {
-        _textWindow.GetComponent<TextManager>().SetCharacterText(character, text, timer);
+        _textWindow.GetComponent<TextManager>().SetCharacterText(character, text);
     }
     
     public void ResetCharacterText()

@@ -277,7 +277,7 @@ public class AirCraftUnit : UnitBase
         base.ResetUnit();
 
         SetAfterBurnerEmission(false);
-        SetAnimationState(AnimationState.Idle);
+        SetAnimationState(AnimationState.Idle, true);
         StopAllSound();
         SetFireVulcan(false);
 
@@ -299,7 +299,7 @@ public class AirCraftUnit : UnitBase
         {
             SetAfterBurnerEmission(true);
             SetAutoFlyingDirection(true);
-            SetAnimationState(AnimationState.Flying);
+            SetAnimationState(AnimationState.Flying, true);
         }
     }
 
@@ -365,10 +365,11 @@ public class AirCraftUnit : UnitBase
         }
     }
 
-    public void SetAnimationState(AnimationState state)
+    public void SetAnimationState(AnimationState state, bool forceUpdate = false)
     {
-        if(state != _animationState)
+        if(state != _animationState || forceUpdate)
         {
+            if(IsPlayer()) Debug.Log(state.ToString());
             switch(state)
             {
                 case AnimationState.Flying:
@@ -388,7 +389,7 @@ public class AirCraftUnit : UnitBase
                     _animator.SetTrigger("Idle");
                 } break;
             }
-            _animationState = state;
+            _animationState = state;            
         }
     }
 
@@ -442,13 +443,20 @@ public class AirCraftUnit : UnitBase
     public virtual void UpdateControllerInput(ref Vector2 input)
     {
         // NPC
-        Vector3 playerPos = CharacterManager.Instance.GetPlayer().GetPosition();
-        Vector3 pos = GetPosition();
+        if(false == IsPlayer())
+        {
+            Player player = CharacterManager.Instance.GetPlayer();
+            if(player.IsAlive())
+            {
+                Vector3 playerPos = player.GetPosition();
+                Vector3 pos = GetPosition();
 
-        SetAccleration(pos.x < playerPos.x);
-        input.y = Mathf.Min(1.0f, Mathf.Max(-1.0f, playerPos.y - pos.y));
+                SetAccleration(pos.x < playerPos.x);
+                input.y = Mathf.Min(1.0f, Mathf.Max(-1.0f, playerPos.y - pos.y));
 
-        SetFireVulcan(Mathf.Abs(pos.x - playerPos.x) < 5.0f);
+                SetFireVulcan(Mathf.Abs(pos.x - playerPos.x) < 5.0f);
+            }
+        }
     }
 
     void ControllShip()
@@ -528,12 +536,16 @@ public class AirCraftUnit : UnitBase
         }
         else
         {
-            _absVelocityX = Mathf.Max(0.0f, _absVelocityX - _acceleration_x * Time.deltaTime);
-            _absVelocityRatioX = _absVelocityX / _velocity_limit_x;
-            if(false == _isGround)
-            {
-                _velocityY -= Constants.GRAVITY * Time.deltaTime;
-            }
+            return;
+            // if(IsPlayer())
+            // {
+            //     _absVelocityX = Mathf.Max(0.0f, _absVelocityX - _acceleration_x * Time.deltaTime);
+            //     _absVelocityRatioX = _absVelocityX / _velocity_limit_x;
+            //     if(false == _isGround)
+            //     {
+            //         _velocityY -= Constants.GRAVITY * Time.deltaTime;
+            //     }
+            // }            
         }
 
         // check ground

@@ -3,7 +3,7 @@
     "m_SelectedPackage": {
         "deviceId": "R3CT50K724B",
         "name": "com.Ubuntunux.AeroMaster",
-        "processId": 315,
+        "processId": 11064,
         "exited": false
     },
     "m_SelectedPriority": 0,
@@ -54,6 +54,12 @@
             "deviceId": "R3CT50K724B",
             "name": "com.Ubuntunux.AeroMaster",
             "processId": 315,
+            "exited": false
+        },
+        {
+            "deviceId": "R3CT50K724B",
+            "name": "com.Ubuntunux.AeroMaster",
+            "processId": 11064,
             "exited": false
         }
     ],
